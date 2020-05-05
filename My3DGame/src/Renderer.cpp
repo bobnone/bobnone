@@ -1,24 +1,11 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "Renderer.h"
 #include <iostream>
-#include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "VertexArray.h"
-#include "SpriteComponent.h"
-#include "MeshComponent.h"
 #include "SkeletalMeshComponent.h"
 #include "UIScreen.h"
-#include "Game.h"
 #include "GBuffer.h"
-#include "PointLightComponent.h"
 
 Renderer::Renderer(Game* game) :mGame(game), mCurrentShader(nullptr), mMirrorBuffer(0), mMirrorTexture(nullptr), mGBuffer(nullptr)
 {
@@ -80,6 +67,13 @@ bool Renderer::Initialize(float screenWidth, float screenHeight)
 		SDL_Log("Failed to create render target for mirror.");
 		return false;
 	}
+	// Create TextureHandler
+	mTextureHandler = new TextureHandler();
+	if(!mTextureHandler->Initialize())
+	{
+		SDL_Log("Failed to create TextureHandler.");
+		return false;
+	}
 	// Create G-buffer
 	mGBuffer = new GBuffer();
 	int width = static_cast<int>(mScreenWidth);
@@ -117,6 +111,8 @@ void Renderer::Shutdown()
 	// Unset mCurrentShader pointer so you don't delete any actual shaders
 	mCurrentShader = nullptr;
 	delete mCurrentShader;
+	delete mTextureHandler;
+	mTextureHandler = nullptr;
 	SDL_GL_DeleteContext(mContext);
 	SDL_DestroyWindow(mWindow);
 }
@@ -257,6 +253,7 @@ Texture* Renderer::GetTexture(const std::string& fileName)
 		}
 		else
 		{
+			SDL_Log("FAILED TO LOAD TEXTURE: %s", fileName.c_str());
 			delete tex;
 			tex = nullptr;
 		}
@@ -509,7 +506,7 @@ void Renderer::Draw3DScene(unsigned int framebuffer, const matrix4& view, const 
 			SetLightUniforms(mCurrentShader, view);
 		}
 		std::vector<MeshComponent*>* meshVector = it->second;
-		for (auto  i = meshVector->begin(); i != meshVector->end(); ++i)// Note: mesh could also be a skeletal mesh coponent
+		for (auto  i = meshVector->begin(); i != meshVector->end(); ++i)// Note: mesh could also be a skeletal mesh component
 		{
 			MeshComponent* mesh = *i;
 			if (mesh->GetVisible())

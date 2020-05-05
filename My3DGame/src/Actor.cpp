@@ -13,13 +13,12 @@
 
 const char* Actor::TypeNames[NUM_ACTOR_TYPES] = {
 	"Actor",
-	"BallActor",
 	"FollowActor",
 	"PlaneActor",
 	"TargetActor",
 };
 
-Actor::Actor(Game* game) :mState(EActive), mPosition(vector3::Zero), mRotation(quaternion()), mScale(1.0f), mGame(game), mRecomputeTransform(true)
+Actor::Actor(Game* game) :mState(ACTOR_ACTIVE), mPosition(vector3::Zero), mRotation(quaternion()), mScale(1.0f), mGame(game), mRecomputeTransform(true)
 {
 	mGame->AddActor(this);
 }
@@ -35,7 +34,7 @@ Actor::~Actor()
 }
 void Actor::Update(float deltaTime)
 {
-	if (mState == EActive)
+	if (mState == ACTOR_ACTIVE)
 	{
 		if (mRecomputeTransform)
 		{
@@ -58,7 +57,7 @@ void Actor::UpdateActor(float deltaTime)
 }
 void Actor::ProcessInput(const uint8_t* keyState)
 {
-	if (mState == EActive)
+	if (mState == ACTOR_ACTIVE)
 	{
 		// First process input for components
 		for (auto comp : mComponents)
@@ -141,15 +140,15 @@ void Actor::LoadProperties(const rapidjson::Value& inObj)
 	{
 		if (state == "active")
 		{
-			SetState(EActive);
+			SetState(ACTOR_ACTIVE);
 		}
 		else if (state == "paused")
 		{
-			SetState(EPaused);
+			SetState(ACTOR_PAUSED);
 		}
 		else if (state == "dead")
 		{
-			SetState(EDead);
+			SetState(ACTOR_DEAD);
 		}
 	}
 	// Load position, rotation, and scale, and compute transform
@@ -161,11 +160,11 @@ void Actor::LoadProperties(const rapidjson::Value& inObj)
 void Actor::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
 	std::string state = "active";
-	if (mState == EPaused)
+	if (mState == ACTOR_PAUSED)
 	{
 		state = "paused";
 	}
-	else if (mState == EDead)
+	else if (mState == ACTOR_DEAD)
 	{
 		state = "dead";
 	}

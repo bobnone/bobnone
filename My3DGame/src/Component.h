@@ -16,7 +16,6 @@ public:
 	{
 		TComponent = 0,
 		TAudioComponent,
-		TBallMove,
 		TBoxComponent,
 		TCameraComponent,
 		TFollowCamera,

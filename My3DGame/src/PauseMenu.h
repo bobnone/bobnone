@@ -7,9 +7,10 @@
 // ----------------------------------------------------------------
 
 #pragma once
+#include "Game.h"
 #include "UIScreen.h"
 
-class PauseMenu : public UIScreen
+class PauseMenu:public UIScreen
 {
 public:
 	PauseMenu(class Game* game);

@@ -13,15 +13,14 @@
 #include <rapidjson/prettywriter.h>
 #include "Game.h"
 #include "Renderer.h"
-#include "BallActor.h"
 #include "FollowActor.h"
 #include "PlaneActor.h"
 #include "TargetActor.h"
 #include "AudioComponent.h"
-#include "BallMove.h"
 #include "BoxComponent.h"
 #include "CameraComponent.h"
 #include "FollowCamera.h"
+#include "MoveComponent.h"
 #include "MeshComponent.h"
 #include "SkeletalMeshComponent.h"
 #include "SpriteComponent.h"
@@ -37,7 +36,6 @@ const int LevelVersion = 1;
 std::unordered_map<std::string, ActorFunc> LevelLoader::sActorFactoryMap
 {
 	{ "Actor", &Actor::Create<Actor> },
-	{ "BallActor", &Actor::Create<BallActor> },
 	{ "FollowActor", &Actor::Create<FollowActor> },
 	{ "PlaneActor", &Actor::Create<PlaneActor> },
 	{ "TargetActor", &Actor::Create<TargetActor> },
@@ -45,7 +43,6 @@ std::unordered_map<std::string, ActorFunc> LevelLoader::sActorFactoryMap
 std::unordered_map<std::string, std::pair<int, ComponentFunc>> LevelLoader::sComponentFactoryMap
 {
 	{ "AudioComponent", { Component::TAudioComponent, &Component::Create<AudioComponent>} },
-	{ "BallMove", { Component::TBallMove, &Component::Create<BallMove> } },
 	{ "BoxComponent", { Component::TBoxComponent, &Component::Create<BoxComponent> } },
 	{ "CameraComponent", { Component::TCameraComponent, &Component::Create<CameraComponent> } },
 	{ "FollowCamera", { Component::TFollowCamera, &Component::Create<FollowCamera> } },

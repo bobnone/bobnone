@@ -1,11 +1,3 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #pragma once
 #include <string>
 #include <functional>
@@ -19,9 +11,9 @@ public:
 	// Tracks the Button's current state
 	enum ButtonState
 	{
-		NORMAL = 0,
-		HOVER,
-		CLICKED
+		BUTTON_NORMAL = 0,
+		BUTTON_HOVER,
+		BUTTON_CLICKED
 	};
 	Button(const std::string& name, class Game* game, class Font* font, std::function<void()> onClick, const vector2& pos);
 	~Button();
@@ -52,13 +44,13 @@ public:
 	}
 	bool IsHighlighted() const
 	{
-		return mState == HOVER;
+		return mState == BUTTON_HOVER;
 	}
 	bool IsClicked() const
 	{
-		return mState == CLICKED;
+		return mState == BUTTON_CLICKED;
 	}
-	// Handles mouse positioion
+	// Handles mouse positions
 	void ProcessInput(const vector2& mousePos);
 	// Returns true if the point is within the button's bounds
 	bool ContainsPoint(const vector2& pt) const;

@@ -1,19 +1,17 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #pragma once
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <SDL/SDL.h>
+#include "Game.h"
 #include "Math.h"
 #include "PointLightComponent.h"
 #include "GBuffer.h"
+#include "Texture.h"
+#include "TextureHandler.h"
+#include "SpriteComponent.h"
+#include "MeshComponent.h"
+#include "PointLightComponent.h"
 
 struct DirectionalLight
 {
@@ -139,6 +137,8 @@ private:
 	std::vector<class SkeletalMeshComponent*> mSkeletalMeshComps;
 	// Game
 	class Game* mGame;
+	// TextureHandler
+	class TextureHandler* mTextureHandler;
 	// The currently active shader
 	class Shader* mCurrentShader;
 	// Sprite vertex array

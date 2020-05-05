@@ -7,16 +7,34 @@
 // ----------------------------------------------------------------
 
 #pragma once
+#include <string>
 #include <unordered_map>
 #include <vector>
+#include <GL/glew.h>
 #include <SDL/SDL_types.h>
 #include "SoundEvent.h"
+#include "Actor.h"
 #include "Renderer.h"
-
+#include "Mouse.h"
+#include "PhysWorld.h"
+#include "AudioSystem.h"
+#include "HUD.h"
+#include "UIScreen.h"
+#include "FollowActor.h"
+#include "Font.h"
+#include "Skeleton.h"
+#include "Animation.h"
+#include "SpriteComponent.h"
 
 class Game
 {
 public:
+	enum GameState
+	{
+		GAME_PLAY,
+		GAME_PAUSED,
+		GAME_QUIT
+	};
 	Game();
 	bool Initialize();
 	void RunLoop();
@@ -27,10 +45,6 @@ public:
 	{
 		return mRenderer;
 	}
-	class Texture* GetTexture(const std::string& fileName)
-	{
-		return mRenderer->GetTexture(fileName);
-	}
 	class AudioSystem* GetAudioSystem()
 	{
 		return mAudioSystem;
@@ -38,6 +52,10 @@ public:
 	class PhysWorld* GetPhysWorld()
 	{
 		return mPhysWorld;
+	}
+	class Mouse* GetMouse()
+	{
+		return mMouse;
 	}
 	class HUD* GetHUD()
 	{
@@ -53,12 +71,6 @@ public:
 	{
 		return mFollowActor;
 	}
-	enum GameState
-	{
-		EGameplay,
-		EPaused,
-		EQuit
-	};
 	GameState GetState() const
 	{
 		return mGameState;
@@ -103,6 +115,7 @@ private:
 	class Renderer* mRenderer;
 	class AudioSystem* mAudioSystem;
 	class PhysWorld* mPhysWorld;
+	class Mouse* mMouse;
 	class HUD* mHUD;
 	Uint32 mTicksCount;
 	GameState mGameState;

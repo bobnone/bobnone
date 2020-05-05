@@ -17,7 +17,6 @@ public:
 	enum TypeID
 	{
 		TActor = 0,
-		TBallActor,
 		TFollowActor,
 		TPlaneActor,
 		TTargetActor,
@@ -25,11 +24,11 @@ public:
 		NUM_ACTOR_TYPES
 	};
 	static const char* TypeNames[NUM_ACTOR_TYPES];
-	enum State
+	enum ActorState
 	{
-		EActive,
-		EPaused,
-		EDead
+		ACTOR_ACTIVE,
+		ACTOR_PAUSED,
+		ACTOR_DEAD
 	};
 	Actor(class Game* game);
 	virtual ~Actor();
@@ -89,11 +88,11 @@ public:
 		return vector3::Transform(vector3::UnitX, mRotation);
 	}
 	void RotateToNewForward(const vector3& forward);
-	State GetState() const
+	ActorState GetState() const
 	{
 		return mState;
 	}
-	void SetState(State state)
+	void SetState(ActorState state)
 	{
 		mState = state;
 	}
@@ -141,7 +140,7 @@ public:
 	}
 private:
 	// Actor's state
-	State mState;
+	ActorState mState;
 	// Transform
 	matrix4 mWorldTransform;
 	vector3 mPosition;

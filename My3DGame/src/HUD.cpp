@@ -7,11 +7,7 @@
 // ----------------------------------------------------------------
 
 #include "HUD.h"
-#include "Game.h"
-#include "Renderer.h"
-#include "PhysWorld.h"
 #include "FollowActor.h"
-#include "TargetComponent.h"
 
 HUD::HUD(Game* game) :UIScreen(game), mRadarRange(2000.0f), mRadarRadius(92.0f), mTargetEnemy(false)
 {
@@ -30,8 +26,8 @@ HUD::~HUD()
 void HUD::Update(float deltaTime)
 {
 	UIScreen::Update(deltaTime);
-	UpdateCrosshair(deltaTime);
-	UpdateRadar(deltaTime);
+	UpdateCrosshair();
+	UpdateRadar();
 }
 void HUD::Draw(Shader* shader)
 {
@@ -52,20 +48,20 @@ void HUD::Draw(Shader* shader)
 	DrawTexture(shader, mHealthBar, vector2(-350.0f, -350.0f));
 	// Draw the mirror (bottom left)
 	Texture* mirror = mGame->GetRenderer()->GetMirrorTexture();
-	DrawTexture(shader, mirror, vector2(-350.0f, -250.0f), 1.0f, true);
-	Texture* tex = mGame->GetRenderer()->GetGBuffer()->GetTexture(GBuffer::EDiffuse);
-	//DrawTexture(shader, tex, vector2::Zero, 1.0f, true);
+	//DrawTexture(shader, mirror, Vector2(-350.0f, -250.0f), 1.0f, true);
+	Texture* tex = mGame->GetRenderer()->GetGBuffer()->GetTexture(GBuffer::GBUFFER_DIFFUSE);
+	//DrawTexture(shader, tex, Vector2::Zero, 1.0f, true);
 }
-void HUD::AddTargetComponent(TargetComponent* tc)
+void HUD::AddTargetComponent(TargetComponent * tc)
 {
 	mTargetComps.emplace_back(tc);
 }
-void HUD::RemoveTargetComponent(TargetComponent* tc)
+void HUD::RemoveTargetComponent(TargetComponent * tc)
 {
 	auto iter = std::find(mTargetComps.begin(), mTargetComps.end(), tc);
 	mTargetComps.erase(iter);
 }
-void HUD::UpdateCrosshair(float deltaTime)
+void HUD::UpdateCrosshair()
 {
 	// Reset to regular cursor
 	mTargetEnemy = false;
@@ -89,7 +85,7 @@ void HUD::UpdateCrosshair(float deltaTime)
 		}
 	}
 }
-void HUD::UpdateRadar(float deltaTime)
+void HUD::UpdateRadar()
 {
 	// Clear blip positions from last frame
 	mBlips.clear();

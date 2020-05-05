@@ -13,7 +13,6 @@
 const char* Component::TypeNames[NUM_COMPONENT_TYPES] = {
 	"Component",
 	"AudioComponent",
-	"BallMove",
 	"BoxComponent",
 	"CameraComponent",
 	"FollowCamera",

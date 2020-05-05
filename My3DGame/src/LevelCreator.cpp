@@ -1,10 +1,3 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
 #include "LevelCreator.h"
 #include <fstream>
 #include "JsonHelper.h"
@@ -96,7 +89,7 @@ void LevelCreator::UnloadLevel(class Game* game)
 void LevelCreator::NewGlobalProperties(rapidjson::Document::AllocatorType& alloc, Game* game, rapidjson::Value& inObject)
 {
 	// Ambient light
-	vector3 ambientLight = vector3(0.3, 0.3, 0.3);
+	vector3 ambientLight = vector3(0.3f, 0.3f, 0.3f);
 	game->GetRenderer()->SetAmbientLight(ambientLight);
 	JsonHelper::AddVector3(alloc, inObject, "ambientLight", ambientLight);
 	// Directional light

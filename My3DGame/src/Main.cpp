@@ -6,6 +6,8 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
+#define ILUT_USE_OPENGL
+
 #include "Game.h"
 
 int main(int argc, char** argv)

@@ -53,7 +53,7 @@ namespace Math
 	}
 	inline float Abs(float value)
 	{
-		return fabs(value);
+		return (float)fabs(value);
 	}
 	inline float Cos(float angle)
 	{
@@ -89,7 +89,7 @@ namespace Math
 	}
 	inline float Fmod(float numer, float denom)
 	{
-		return fmod(numer, denom);
+		return (float)fmod(numer, denom);
 	}
 }
 // 2D Vector

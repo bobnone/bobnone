@@ -67,7 +67,7 @@ void MeshComponent::Draw(Shader* shader)
 }
 void MeshComponent::SetShader(Shader* shader)
 {
-	mOwner->GetGame()->GetRenderer()->UnlinkMesh(this);// unlink currtent shader if one is linked
+	mOwner->GetGame()->GetRenderer()->UnlinkMesh(this);// unlink current shader if one is linked
 	mShader = shader;
 	mOwner->GetGame()->GetRenderer()->LinkMeshToShader(this, mShader);
 }

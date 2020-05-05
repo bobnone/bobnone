@@ -22,12 +22,6 @@
     <ClCompile Include="src\AudioSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BallActor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BallMove.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\BoneTransform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,9 +35,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DialogBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\FollowActor.cpp">
@@ -79,12 +70,6 @@
     <ClCompile Include="src\MirrorCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MoveComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PauseMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\PhysWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,25 +100,10 @@
     <ClCompile Include="src\TargetComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\UIScreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\LevelCreator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\JsonHelper.cpp">
@@ -142,20 +112,44 @@
     <ClCompile Include="src\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\LevelCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mouse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MoveComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PauseMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UIScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DialogBoxMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextureHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Actor.h" />
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\AudioComponent.h" />
     <ClInclude Include="src\AudioSystem.h" />
-    <ClInclude Include="src\BallActor.h" />
-    <ClInclude Include="src\BallMove.h" />
     <ClInclude Include="src\BoneTransform.h" />
     <ClInclude Include="src\BoxComponent.h" />
     <ClInclude Include="src\CameraComponent.h" />
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Component.h" />
-    <ClInclude Include="src\DialogBox.h" />
     <ClInclude Include="src\FollowActor.h" />
     <ClInclude Include="src\FollowCamera.h" />
     <ClInclude Include="src\Font.h" />
@@ -167,8 +161,6 @@
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshComponent.h" />
     <ClInclude Include="src\MirrorCamera.h" />
-    <ClInclude Include="src\MoveComponent.h" />
-    <ClInclude Include="src\PauseMenu.h" />
     <ClInclude Include="src\PhysWorld.h" />
     <ClInclude Include="src\PlaneActor.h" />
     <ClInclude Include="src\PointLightComponent.h" />
@@ -179,16 +171,20 @@
     <ClInclude Include="src\SpriteComponent.h" />
     <ClInclude Include="src\TargetActor.h" />
     <ClInclude Include="src\TargetComponent.h" />
-    <ClInclude Include="src\Texture.h" />
-    <ClInclude Include="src\UIScreen.h" />
     <ClInclude Include="src\VertexArray.h" />
-    <ClInclude Include="src\LevelCreator.h" />
-    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Math.h" />
-    <ClInclude Include="src\Mouse.h" />
     <ClInclude Include="src\JsonHelper.h" />
-    <ClInclude Include="src\Color.h" />
+    <ClInclude Include="src\UIScreen.h" />
     <ClInclude Include="src\Button.h" />
+    <ClInclude Include="src\Color.h" />
+    <ClInclude Include="src\LevelCreator.h" />
+    <ClInclude Include="src\Mouse.h" />
+    <ClInclude Include="src\MoveComponent.h" />
+    <ClInclude Include="src\PauseMenu.h" />
+    <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\DialogBoxMenu.h" />
+    <ClInclude Include="src\TextureHandler.h" />
+    <ClInclude Include="src\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Sprite.frag">

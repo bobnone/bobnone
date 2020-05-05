@@ -9,18 +9,11 @@
 #include "Game.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
-#include "AudioSystem.h"
-#include "PhysWorld.h"
-#include "Actor.h"
-#include "HUD.h"
 #include "PauseMenu.h"
-#include "Font.h"
-#include "Skeleton.h"
-#include "Animation.h"
 #include "LevelLoader.h"
 #include "LevelCreator.h"
 
-Game::Game() :mRenderer(nullptr), mAudioSystem(nullptr), mPhysWorld(nullptr), mGameState(EGameplay), mUpdatingActors(false)
+Game::Game():mRenderer(nullptr), mAudioSystem(nullptr), mPhysWorld(nullptr), mHUD(nullptr), mMouse(nullptr), mTicksCount(0), mGameState(GAME_PLAY), mUpdatingActors(false), mFollowActor(nullptr), mCrosshair(nullptr)
 {
 	//
 }
@@ -64,7 +57,7 @@ bool Game::Initialize()
 }
 void Game::RunLoop()
 {
-	while (mGameState != EQuit)
+	while (mGameState != GAME_QUIT)
 	{
 		ProcessInput();
 		UpdateGame();
@@ -79,13 +72,13 @@ void Game::ProcessInput()
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			mGameState = EQuit;
+			mGameState = GAME_QUIT;
 			break;
 			// This fires when a key's initially pressed
 		case SDL_KEYDOWN:
 			if (!event.key.repeat)
 			{
-				if (mGameState == EGameplay)
+				if (mGameState == GAME_PLAY)
 				{
 					HandleKeyPress(event.key.keysym.sym);
 				}
@@ -96,8 +89,11 @@ void Game::ProcessInput()
 				}
 			}
 			break;
+		case SDL_KEYUP:
+			//
+			break;
 		case SDL_MOUSEBUTTONDOWN:
-			if (mGameState == EGameplay)
+			if (mGameState == GAME_PLAY)
 			{
 				HandleKeyPress(event.button.button);
 			}
@@ -112,11 +108,11 @@ void Game::ProcessInput()
 		}
 	}
 	const Uint8* state = SDL_GetKeyboardState(NULL);
-	if (mGameState == EGameplay)
+	if (mGameState == GAME_PLAY)
 	{
 		for (auto actor : mActors)
 		{
-			if (actor->GetState() == Actor::EActive)
+			if (actor->GetState() == Actor::ACTOR_ACTIVE)
 			{
 				actor->ProcessInput(state);
 			}
@@ -199,7 +195,7 @@ void Game::UpdateGame()
 		deltaTime = 0.05f;
 	}
 	mTicksCount = SDL_GetTicks();
-	if (mGameState == EGameplay)
+	if (mGameState == GAME_PLAY)
 	{
 		// Update all actors
 		mUpdatingActors = true;
@@ -219,7 +215,7 @@ void Game::UpdateGame()
 		std::vector<Actor*> deadActors;
 		for (auto actor : mActors)
 		{
-			if (actor->GetState() == Actor::EDead)
+			if (actor->GetState() == Actor::ACTOR_DEAD)
 			{
 				deadActors.emplace_back(actor);
 			}
@@ -235,7 +231,7 @@ void Game::UpdateGame()
 	// Update UI screens
 	for (auto ui : mUIStack)
 	{
-		if (ui->GetState() == UIScreen::EActive)
+		if (ui->GetState() == UIScreen::UI_ACTIVE)
 		{
 			ui->Update(deltaTime);
 		}
@@ -244,7 +240,7 @@ void Game::UpdateGame()
 	auto iter = mUIStack.begin();
 	while (iter != mUIStack.end())
 	{
-		if ((*iter)->GetState() == UIScreen::EClosing)
+		if ((*iter)->GetState() == UIScreen::UI_CLOSING)
 		{
 			delete *iter;
 			iter = mUIStack.erase(iter);
@@ -263,17 +259,17 @@ void Game::LoadData()
 {
 	// Load English text
 	LoadText("Assets/English.gptext");
+	// Create Mouse
+	//mMouse = new Mouse(this);
 	// Create HUD
 	mHUD = new HUD(this);
 	// Load the level from file
-	//LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
-	LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
+	LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
+	//LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
 	// Start music
 	mMusicEvent = mAudioSystem->PlayEvent("event:/Music");
 	// Enable relative mouse mode for camera look
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-	// Make an initial call to get relative to clear out
-	SDL_GetRelativeMouseState(nullptr, nullptr);
+	mMouse->SetRelative(true);
 }
 void Game::UnloadData()
 {

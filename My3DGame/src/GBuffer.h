@@ -15,10 +15,10 @@ public:
 	// Different types of data stored in the G-buffer
 	enum Type
 	{
-		EDiffuse = 0,
-		ESpecular,
-		ENormal,
-		EWorldPos,
+		GBUFFER_DIFFUSE = 0,
+		GBUFFER_SPECULAR,
+		GBUFFER_NORMAL,
+		GBUFFER_WORLDPOSITION,
 		NUM_GBUFFER_TEXTURES
 	};
 	GBuffer();

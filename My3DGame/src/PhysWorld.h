@@ -23,9 +23,9 @@ public:
 		// Normal at collision
 		vector3 mNormal;
 		// Component collided with
-		class BoxComponent* mBox;
+		class BoxComponent* mBox = nullptr;
 		// Owning actor of component
-		class Actor* mActor;
+		class Actor* mActor = nullptr;
 	};
 	// Test a line segment against boxes
 	// Returns true if it collides against a box

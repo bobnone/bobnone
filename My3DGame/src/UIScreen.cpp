@@ -1,17 +1,8 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
+#include "Game.h"
 #include "UIScreen.h"
-#include "Texture.h"
 #include "Renderer.h"
-#include "Font.h"
 
-UIScreen::UIScreen(Game* game):mGame(game), mTitle(nullptr), mBackground(nullptr), mTitlePos(0.0f, 300.0f), mNextButtonPos(0.0f, 200.0f), mBGPos(0.0f, 250.0f), mState(EActive)
+UIScreen::UIScreen(Game* game):mGame(game), mTitle(nullptr), mBackground(nullptr), mTitlePos(0.0f, 300.0f), mNextButtonPos(0.0f, 200.0f), mBGPos(0.0f, 250.0f), mState(UI_ACTIVE)
 {
 	// Add to UI Stack
 	mGame->PushUI(this);
@@ -98,7 +89,7 @@ void UIScreen::HandleKeyPress(int key)
 }
 void UIScreen::Close()
 {
-	mState = EClosing;
+	mState = UI_CLOSING;
 }
 void UIScreen::SetTitle(const std::string& text, const vector3& color, int pointSize)
 {
@@ -119,7 +110,7 @@ void UIScreen::AddButton(const std::string& name, std::function<void()> onClick)
 	// Move down by height of button plus padding
 	mNextButtonPos.y -= b->GetDimensions().y + 20.0f;
 }
-void UIScreen::DrawTexture(class Shader* shader, class Texture* texture, const vector2& offset, float scale, bool flipY)
+void UIScreen::DrawTexture(Shader* shader, Texture* texture, const vector2& offset, float scale, bool flipY)
 {
 	// Scale the quad by the width/height of texture
 	// and flip the y if we need to
@@ -138,17 +129,4 @@ void UIScreen::DrawTexture(class Shader* shader, class Texture* texture, const v
 	texture->SetActive();
 	// Draw quad
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-}
-void UIScreen::SetRelativeMouseMode(bool relative)
-{
-	if (relative)
-	{
-		SDL_SetRelativeMouseMode(SDL_TRUE);
-		// Make an initial call to get relative to clear out
-		SDL_GetRelativeMouseState(nullptr, nullptr);
-	}
-	else
-	{
-		SDL_SetRelativeMouseMode(SDL_FALSE);
-	}
 }

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #include "SpriteComponent.h"
+#include "Math.h"
 #include "Texture.h"
 #include "Shader.h"
 #include "Actor.h"
@@ -52,7 +53,7 @@ void SpriteComponent::LoadProperties(const rapidjson::Value& inObj)
 	std::string texFile;
 	if (JsonHelper::GetString(inObj, "textureFile", texFile))
 	{
-		SetTexture(mOwner->GetGame()->GetTexture(texFile));
+		SetTexture(mOwner->GetGame()->GetRenderer()->GetTexture(texFile));
 	}
 	JsonHelper::GetInt(inObj, "drawOrder", mDrawOrder);
 	JsonHelper::GetBool(inObj, "visible", mVisible);

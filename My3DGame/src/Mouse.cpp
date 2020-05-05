@@ -1,11 +1,3 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "Mouse.h"
 #include "Game.h"
 #include "Renderer.h"
@@ -34,9 +26,13 @@ void Mouse::ProcessInput(const uint8_t* keys)
 }
 void Mouse::HandleKeyPress(int key)
 {
+	//if(SDL_MOUSEBUTTONUP)
 	switch (key)
 	{
 	case SDL_BUTTON_LEFT:
+		//
+		break;
+	case SDL_BUTTON_MIDDLE:
 		//
 		break;
 	case SDL_BUTTON_RIGHT:
@@ -46,9 +42,9 @@ void Mouse::HandleKeyPress(int key)
 		break;
 	}
 }
-void Mouse::SetRelativeMouseMode(bool relative)
+void Mouse::SetRelative(bool relative)
 {
-	if (relative)
+	if(relative)
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
 		// Make an initial call to get relative to clear out

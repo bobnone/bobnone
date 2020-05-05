@@ -7,16 +7,12 @@
 // ----------------------------------------------------------------
 
 #include "SkeletalMeshComponent.h"
-#include "Shader.h"
 #include "Mesh.h"
-#include "Actor.h"
 #include "Game.h"
 #include "Texture.h"
-#include "Animation.h"
-#include "Skeleton.h"
 #include "JsonHelper.h"
 
-SkeletalMeshComponent::SkeletalMeshComponent(Actor* owner) :MeshComponent(owner, true), mSkeleton(nullptr)
+SkeletalMeshComponent::SkeletalMeshComponent(Actor* owner):MeshComponent(owner, true), mSkeleton(nullptr), mAnimation(nullptr), mAnimPlayRate(0.0f), mAnimTime(0.0f)
 {
 	//
 }

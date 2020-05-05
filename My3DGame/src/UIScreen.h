@@ -7,7 +7,14 @@
 // ----------------------------------------------------------------
 
 #pragma once
+#include <string>
+#include <functional>
 #include <vector>
+#include "Game.h"
+#include "Texture.h"
+#include "Shader.h"
+#include "Font.h"
+#include "Math.h"
 #include "Color.h"
 #include "Button.h"
 
@@ -24,8 +31,8 @@ public:
 	// Tracks if the UI is active or closing
 	enum UIState
 	{
-		EActive,
-		EClosing
+		UI_ACTIVE,
+		UI_CLOSING
 	};
 	// Set state to closing
 	void Close();
@@ -41,8 +48,6 @@ public:
 protected:
 	// Helper to draw a texture
 	void DrawTexture(class Shader* shader, class Texture* texture, const vector2& offset = vector2::Zero, float scale = 1.0f, bool flipY = false);
-	// Sets the mouse mode to relative or not
-	void SetRelativeMouseMode(bool relative);
 	class Game* mGame;
 	class Font* mFont;
 	class Texture* mTitle;
@@ -54,5 +59,5 @@ protected:
 	// State
 	UIState mState;
 	// List of buttons
-	std::vector<Button*> mButtons;
+	std::vector<class Button*> mButtons;
 };

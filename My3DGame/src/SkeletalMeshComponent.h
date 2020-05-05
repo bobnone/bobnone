@@ -9,6 +9,10 @@
 #pragma once
 #include "MeshComponent.h"
 #include "MatrixPalette.h"
+#include "Shader.h"
+#include "Actor.h"
+#include "Animation.h"
+#include "Skeleton.h"
 
 class SkeletalMeshComponent : public MeshComponent
 {
@@ -33,7 +37,7 @@ public:
 protected:
 	void ComputeMatrixPalette();
 
-	MatrixPalette mPalette;
+	class MatrixPalette mPalette;
 	class Skeleton* mSkeleton;
 	class Animation* mAnimation;
 	float mAnimPlayRate;

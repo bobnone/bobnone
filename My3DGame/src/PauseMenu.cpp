@@ -1,34 +1,25 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "PauseMenu.h"
-#include "Game.h"
-#include "DialogBox.h"
 #include <SDL/SDL.h>
+#include "DialogBoxMenu.h"
 
-PauseMenu::PauseMenu(Game* game) :UIScreen(game)
+PauseMenu::PauseMenu(Game* game):UIScreen(game)
 {
-	mGame->SetState(Game::EPaused);
-	SetRelativeMouseMode(false);
+	mGame->SetState(Game::GAME_PAUSED);
+	//mMouse->SetRelative(false);
 	SetTitle("PauseTitle");
-	AddButton("ResumeButton", [this]() {
+	AddButton("ResumeButton", [this](){
 		Close();
 	});
 	AddButton("QuitButton", [this]() {
-		new DialogBox(mGame, "QuitText", [this]() {
-			mGame->SetState(Game::EQuit);
+		new DialogBoxMenu(mGame, "QuitText", [this](){
+			mGame->SetState(Game::GAME_QUIT);
 		});
 	});
 }
 PauseMenu::~PauseMenu()
 {
-	SetRelativeMouseMode(true);
-	mGame->SetState(Game::EGameplay);
+	//mMouse->SetRelative(true);
+	mGame->SetState(Game::GAME_PLAY);
 }
 void PauseMenu::HandleKeyPress(int key)
 {

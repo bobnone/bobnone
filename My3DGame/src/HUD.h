@@ -7,7 +7,11 @@
 // ----------------------------------------------------------------
 
 #pragma once
+#include <vector>
 #include "UIScreen.h"
+#include "Game.h"
+#include "TargetComponent.h"
+
 
 class HUD : public UIScreen
 {
@@ -20,8 +24,8 @@ public:
 	void AddTargetComponent(class TargetComponent* tc);
 	void RemoveTargetComponent(class TargetComponent* tc);
 protected:
-	void UpdateCrosshair(float deltaTime);
-	void UpdateRadar(float deltaTime);
+	void UpdateCrosshair();
+	void UpdateRadar();
 	class Texture* mHealthBar;
 	class Texture* mRadar;
 	class Texture* mCrosshair;

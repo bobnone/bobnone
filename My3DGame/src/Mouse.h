@@ -1,25 +1,28 @@
 // ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #pragma once
 #include <cstdint>
+#include "Math.h"
+#include "Game.h"
+#include "Shader.h"
 
 class Mouse
 {
 public:
 	Mouse(class Game* game);
-	virtual ~Mouse();
-	// Mouse subclasses can override these
-	virtual void Update(float deltaTime);
-	virtual void ProcessInput(const uint8_t* keys);
-	virtual void HandleKeyPress(int key);
-protected:
+	~Mouse();
+	void Update(float deltaTime);
+	void ProcessInput(const uint8_t* keys);
+	void HandleKeyPress(int key);
+	// Shows/hides the mouse pointer
+	void SetVisable(bool visable)
+	{
+		mVisable = visable;
+	}
 	// Sets the mouse mode to relative or not
-	void SetRelativeMouseMode(bool relative);
+	void SetRelative(bool relative);
+private:
 	class Game* mGame;
+	vector2 mPosition;
+	bool mVisable;
+	bool mRelative;
 };

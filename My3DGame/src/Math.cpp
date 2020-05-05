@@ -67,7 +67,7 @@ vector3 vector3::Transform(const vector3& v, const quaternion& q)
 void matrix4::Invert()
 {
 	// Thanks slow math
-	// This is a really janky way to unroll everything...
+	// This is a really unstable way to unroll everything...
 	float tmp[12];
 	float src[16];
 	float dst[16];

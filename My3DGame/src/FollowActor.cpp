@@ -66,7 +66,7 @@ void FollowActor::ActorInput(const uint8_t* keys)
 	{
 		jumpSpeed += 400;
 	}
-	else if (keys[SDL_SCANCODE_Z])//idk why it dosent like ctrl; modifier key?
+	else if (keys[SDL_SCANCODE_Z])//idk why it doesn't like ctrl; modifier key?
 	{
 		jumpSpeed -= 400;
 	}

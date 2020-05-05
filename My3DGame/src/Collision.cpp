@@ -113,7 +113,7 @@ float LineSegment::MinDistSq(const LineSegment & s1, const LineSegment & s2)
 	{
 		tN = tD;
 		// recompute sc for this edge
-		if ((-d + b) < 0.0)
+		if ((-d + b) < 0.0f)
 		{
 			sN = 0;
 		}

@@ -1,21 +1,13 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "Button.h"
 #include "Texture.h"
 #include "Font.h"
 
-Button::Button(const std::string& name, Game* game, Font* font, std::function<void()> onClick, const vector2& pos) :mOnClick(onClick), mTexture(nullptr), mFont(font), mPosition(pos), mState(NORMAL)
+Button::Button(const std::string& name, Game* game, Font* font, std::function<void()> onClick, const vector2& pos) :mOnClick(onClick), mTexture(nullptr), mFont(font), mPosition(pos), mState(BUTTON_NORMAL)
 {
 	SetName(name);
-	mButtonNormal = game->GetTexture("Assets/ButtonNormal.png");
-	mButtonHover = game->GetTexture("Assets/ButtonHover.png");
-	mButtonClicked = game->GetTexture("Assets/ButtonClicked.png");
+	mButtonNormal = game->GetRenderer()->GetTexture("Assets/ButtonNormal.png");
+	mButtonHover = game->GetRenderer()->GetTexture("Assets/ButtonHover.png");
+	mButtonClicked = game->GetRenderer()->GetTexture("Assets/ButtonClicked.png");
 	mDimensions = vector2(static_cast<float>(mButtonNormal->GetWidth()), static_cast<float>(mButtonNormal->GetHeight()));
 }
 Button::~Button()
@@ -32,14 +24,14 @@ void Button::ProcessInput(const vector2& mousePos)
 	
 	if (ContainsPoint(mousePos))
 	{
-		if (mState != CLICKED)
+		if (mState != BUTTON_CLICKED)
 		{
-			mState = HOVER;
+			mState = BUTTON_HOVER;
 		}
 	}
 	else
 	{
-		mState = NORMAL;
+		mState = BUTTON_NORMAL;
 	}
 }
 bool Button::ContainsPoint(const vector2& pt) const
@@ -51,9 +43,9 @@ Texture* Button::GetButtonTexure()
 {
 	switch (mState)
 	{
-	case HOVER:
+	case BUTTON_HOVER:
 		return mButtonHover;
-	case CLICKED:
+	case BUTTON_CLICKED:
 		return mButtonClicked;
 	default:
 		return mButtonNormal;
@@ -86,7 +78,7 @@ void Button::OnClick()
 	// Call attached handler, if it exists
 	if (mOnClick)
 	{
-		mState = CLICKED;
+		mState = BUTTON_CLICKED;
 		mOnClick();
 	}
 }

@@ -14,7 +14,7 @@
 #include "Actor.h"
 #include "JsonHelper.h"
 
-PointLightComponent::PointLightComponent(Actor* owner) :Component(owner)
+PointLightComponent::PointLightComponent(Actor* owner) :Component(owner), mInnerRadius(100.0f), mOuterRadius(200.0f)
 {
 	owner->GetGame()->GetRenderer()->AddPointLight(this);
 }

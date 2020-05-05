@@ -19,6 +19,8 @@ public:
 	void Draw(class Shader* shader, class Mesh* mesh);
 	// Diffuse color
 	Vector3 mDiffuseColor;
+	// Specular color
+	Vector3 mSpecularColor;
 	// Radius of light
 	float mInnerRadius;
 	float mOuterRadius;

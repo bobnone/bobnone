@@ -89,12 +89,9 @@ public:
 		return mGBuffer;
 	}
 private:
-	// Chapter 14 additions
 	void Draw3DScene(unsigned int framebuffer, const Matrix4& view, const Matrix4& proj, bool lit = true);
 	bool CreateMirrorTarget();
 	void DrawFromGBuffer();
-	//void DrawFromGBuffer();
-	// End chapter 14 additions
 	bool LoadShaders();
 	void CreateSpriteVerts();
 	void SetLightUniforms(class Shader* shader, const Matrix4& view);

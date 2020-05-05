@@ -29,6 +29,7 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GBuffer.cpp" />
     <ClCompile Include="src\HUD.cpp" />
+    <ClCompile Include="src\LevelCreator.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Math.cpp" />
@@ -71,6 +72,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GBuffer.h" />
     <ClInclude Include="src\HUD.h" />
+    <ClInclude Include="src\LevelCreator.h" />
     <ClInclude Include="src\LevelLoader.h" />
     <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\MatrixPalette.h" />

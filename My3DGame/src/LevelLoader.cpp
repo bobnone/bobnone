@@ -157,7 +157,8 @@ void LevelLoader::LoadGlobalProperties(Game* game, const rapidjson::Value& inObj
 		DirectionalLight& light = game->GetRenderer()->GetDirectionalLight();
 		// Set direction/color, if they exist
 		JsonHelper::GetVector3(dirObj, "direction", light.mDirection);
-		JsonHelper::GetVector3(dirObj, "color", light.mDiffuseColor);
+		JsonHelper::GetVector3(dirObj, "diffuseColor", light.mDiffuseColor);
+		JsonHelper::GetVector3(dirObj, "specularColor", light.mSpecularColor);
 	}
 }
 void LevelLoader::LoadActors(Game* game, const rapidjson::Value& inArray)
@@ -234,8 +235,7 @@ void LevelLoader::LoadComponents(Actor* actor, const rapidjson::Value& inArray)
 		}
 	}
 }
-void LevelLoader::SaveGlobalProperties(rapidjson::Document::AllocatorType& alloc,
-	Game* game, rapidjson::Value& inObject)
+void LevelLoader::SaveGlobalProperties(rapidjson::Document::AllocatorType& alloc, Game* game, rapidjson::Value& inObject)
 {
 	// Ambient light
 	JsonHelper::AddVector3(alloc, inObject, "ambientLight", game->GetRenderer()->GetAmbientLight());
@@ -243,7 +243,8 @@ void LevelLoader::SaveGlobalProperties(rapidjson::Document::AllocatorType& alloc
 	DirectionalLight& dirLight = game->GetRenderer()->GetDirectionalLight();
 	rapidjson::Value dirObj(rapidjson::kObjectType);
 	JsonHelper::AddVector3(alloc, dirObj, "direction", dirLight.mDirection);
-	JsonHelper::AddVector3(alloc, dirObj, "color", dirLight.mDiffuseColor);
+	JsonHelper::AddVector3(alloc, dirObj, "diffuseColor", dirLight.mDiffuseColor);
+	JsonHelper::AddVector3(alloc, dirObj, "specularColor", dirLight.mSpecularColor);
 	inObject.AddMember("directionalLight", dirObj, alloc);
 }
 void LevelLoader::SaveActors(rapidjson::Document::AllocatorType& alloc, Game* game, rapidjson::Value& inArray)

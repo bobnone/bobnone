@@ -54,6 +54,21 @@ VertexArray::VertexArray(const void* verts, unsigned int numVerts, Layout layout
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, vertexSize, reinterpret_cast<void*>(sizeof(float) * 6 + sizeof(char) * 8));
 	}
+	else if (layout == PosNormTexRGB)
+	{
+		// Position is 3 floats
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, 0);
+		// Normal is 3 floats
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, reinterpret_cast<void*>(sizeof(float) * 3));
+		// Texture coordinates is 2 floats
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexSize, reinterpret_cast<void*>(sizeof(float) * 6));
+		// Vertex color (RGB) is 3 floats
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, vertexSize, reinterpret_cast<void*>(sizeof(float) * 8));
+	}
 }
 VertexArray::~VertexArray()
 {
@@ -71,6 +86,10 @@ unsigned int VertexArray::GetVertexSize(VertexArray::Layout layout)
 	if (layout == PosNormSkinTex)
 	{
 		vertexSize = 8 * sizeof(float) + 8 * sizeof(char);
+	}
+	else if (layout == PosNormTexRGB)
+	{
+		vertexSize = 11 * sizeof(float);
 	}
 	return vertexSize;
 }

@@ -16,6 +16,7 @@ public:
 	enum Type
 	{
 		EDiffuse = 0,
+		ESpecular,
 		ENormal,
 		EWorldPos,
 		NUM_GBUFFER_TEXTURES

@@ -35,10 +35,8 @@ void main()
 	fragWorldPos = pos.xyz;
 	// Transform to clip space
 	gl_Position = pos * uViewProj;
-
 	// Transform normal into world space (w = 0)
 	fragNormal = (vec4(inNormal, 0.0f) * uWorldTransform).xyz;
-
 	// Pass along the texture coordinate to frag shader
 	fragTexCoord = inTexCoord;
 }

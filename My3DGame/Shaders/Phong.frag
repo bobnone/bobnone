@@ -31,7 +31,7 @@ struct DirectionalLight
 	// Diffuse color
 	vec3 mDiffuseColor;
 	// Specular color
-	vec3 mSpecColor;
+	vec3 mSpecularColor;
 };
 
 // Uniforms for lighting
@@ -41,7 +41,6 @@ uniform vec3 uCameraPos;
 uniform float uSpecularPower;
 // Ambient light level
 uniform vec3 uAmbientLight;
-
 // Directional Light
 uniform DirectionalLight uDirLight;
 
@@ -62,7 +61,7 @@ void main()
 	if (NdotL > 0)
 	{
 		vec3 Diffuse = uDirLight.mDiffuseColor * NdotL;
-		vec3 Specular = uDirLight.mSpecColor * pow(max(0.0, dot(R, V)), uSpecularPower);
+		vec3 Specular = uDirLight.mSpecularColor * pow(max(0.0, dot(R, V)), uSpecularPower);
 		Phong += Diffuse + Specular;
 	}
 

@@ -130,6 +130,9 @@
     <ClCompile Include="src\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\LevelCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Actor.h" />
@@ -172,6 +175,7 @@
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\UIScreen.h" />
     <ClInclude Include="src\VertexArray.h" />
+    <ClInclude Include="src\LevelCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Sprite.frag">

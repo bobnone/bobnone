@@ -35,7 +35,7 @@ void main()
 {
 	// Convert position to homogeneous coordinates
 	vec4 pos = vec4(inPosition, 1.0);
-	
+
 	// Skin the position
 	vec4 skinnedPos = (pos * uMatrixPalette[inSkinBones.x]) * inSkinWeights.x;
 	skinnedPos += (pos * uMatrixPalette[inSkinBones.y]) * inSkinWeights.y;
@@ -61,4 +61,3 @@ void main()
 	// Pass along the texture coordinate to frag shader
 	fragTexCoord = inTexCoord;
 }
-

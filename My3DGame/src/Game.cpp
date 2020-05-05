@@ -28,6 +28,7 @@
 #include "Animation.h"
 #include "PointLightComponent.h"
 #include "LevelLoader.h"
+#include "LevelCreator.h"
 
 Game::Game() :mRenderer(nullptr), mAudioSystem(nullptr), mPhysWorld(nullptr), mGameState(EGameplay), mUpdatingActors(false)
 {
@@ -172,6 +173,14 @@ void Game::HandleKeyPress(int key)
 		LoadText("Assets/Russian.gptext");
 		break;
 	}
+	case 'f':
+	{
+		// Load level
+		LevelCreator::UnloadLevel(this);
+		//LevelLoader::LoadLevel(this, "Assets/Saved.gplevel");
+		LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
+		break;
+	}
 	case 'r':
 	{
 		// Save level
@@ -267,7 +276,8 @@ void Game::LoadData()
 	// Create HUD
 	mHUD = new HUD(this);
 	// Load the level from file
-	LevelLoader::LoadLevel(this, "Assets/Level3.gplevel");
+	//LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
+	LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
 	// Start music
 	mMusicEvent = mAudioSystem->PlayEvent("event:/Music");
 	// Enable relative mouse mode for camera look

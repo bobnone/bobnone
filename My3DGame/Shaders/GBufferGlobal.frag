@@ -17,7 +17,7 @@ in vec2 fragTexCoord;
 layout(location = 0) out vec4 outColor;
 
 // Different textures from G-buffer
-uniform sampler2D uGDiffuse;
+uniform sampler2D uGTexColor;
 uniform sampler2D uGNormal;
 uniform sampler2D uGWorldPos;
 
@@ -29,12 +29,14 @@ struct DirectionalLight
 	// Diffuse color
 	vec3 mDiffuseColor;
 	// Specular color
-	vec3 mSpecColor;
+	vec3 mSpecularColor;
 };
 
 // Uniforms for lighting
 // Camera position (in world space)
 uniform vec3 uCameraPos;
+// Specular power for this surface
+uniform float uSpecularPower;
 // Ambient light level
 uniform vec3 uAmbientLight;
 // Directional Light
@@ -42,7 +44,7 @@ uniform DirectionalLight uDirLight;
 
 void main()
 {
-	vec3 gbufferDiffuse = texture(uGDiffuse, fragTexCoord).xyz;
+	vec3 gbufferTexColor = texture(uGTexColor, fragTexCoord).xyz;
 	vec3 gbufferNorm = texture(uGNormal, fragTexCoord).xyz;
 	vec3 gbufferWorldPos = texture(uGWorldPos, fragTexCoord).xyz;
 	// Surface normal
@@ -59,11 +61,13 @@ void main()
 	float NdotL = dot(N, L);
 	if (NdotL > 0)
 	{
-		vec3 Diffuse = uDirLight.mDiffuseColor * dot(N, L);
+		vec3 Diffuse = uDirLight.mDiffuseColor * NdotL;
+		vec3 Specular = uDirLight.mSpecularColor * pow(max(0.0, dot(R, V)), uSpecularPower);
+		//Phong += Diffuse + Specular;
 	}
 	// Clamp light between 0-1 RGB values
 	Phong = clamp(Phong, 0.0, 1.0);
 
 	// Final color is texture color times phong light (alpha = 1)
-	outColor = vec4(gbufferDiffuse * Phong, 1.0);
+	outColor = vec4(gbufferTexColor * Phong, 1.0);
 }

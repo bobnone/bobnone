@@ -135,7 +135,7 @@ bool Mesh::Load(const std::string& fileName, Renderer* renderer)
 				vertices.emplace_back(v);
 			}
 		}
-		else
+		else if (layout == VertexArray::PosNormSkinTex)
 		{
 			Vertex v;
 			// Add pos/normal
@@ -159,6 +159,10 @@ bool Mesh::Load(const std::string& fileName, Renderer* renderer)
 				v.f = vert[j].GetDouble();
 				vertices.emplace_back(v);
 			}
+		}
+		else
+		{
+			return false;
 		}
 	}
 	// We were computing length squared earlier

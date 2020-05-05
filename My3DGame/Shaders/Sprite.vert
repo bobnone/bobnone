@@ -17,9 +17,11 @@ uniform mat4 uViewProj;
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;
 layout(location = 2) in vec2 inTexCoord;
+layout(location = 3) in vec3 inVertexColor;
 
 // Any vertex outputs (other than position)
 out vec2 fragTexCoord;
+out vec3 fragVertexColor;
 
 void main()
 {
@@ -27,7 +29,8 @@ void main()
 	vec4 pos = vec4(inPosition, 1.0);
 	// Transform to position world space, then clip space
 	gl_Position = pos * uWorldTransform * uViewProj;
-
 	// Pass along the texture coordinate to frag shader
 	fragTexCoord = inTexCoord;
+	// Pass along the vertex color to frag shader
+	fragVertexColor = inVertexColor;
 }

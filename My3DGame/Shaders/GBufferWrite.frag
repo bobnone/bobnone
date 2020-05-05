@@ -17,7 +17,7 @@ in vec3 fragNormal;
 in vec3 fragWorldPos;
 
 // This corresponds to the outputs to the G-buffer
-layout(location = 0) out vec3 outDiffuse;
+layout(location = 0) out vec3 outTexColor;
 layout(location = 1) out vec3 outNormal;
 layout(location = 2) out vec3 outWorldPos;
 
@@ -26,8 +26,8 @@ uniform sampler2D uTexture;
 
 void main()
 {
-	// Diffuse color is sampled from texture
-	outDiffuse = texture(uTexture, fragTexCoord).xyz;
+	// Color is sampled from texture
+	outTexColor = texture(uTexture, fragTexCoord).xyz;
 	// Normal/world pos are passed directly along
 	outNormal = fragNormal;
 	outWorldPos = fragWorldPos;

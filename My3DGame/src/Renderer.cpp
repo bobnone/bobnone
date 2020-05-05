@@ -49,7 +49,7 @@ bool Renderer::Initialize(float screenWidth, float screenHeight)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	// Force OpenGL to use hardware acceleration
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-	mWindow = SDL_CreateWindow("Game Programming in C++ (Chapter 14)", 100, 100, static_cast<int>(mScreenWidth), static_cast<int>(mScreenHeight), SDL_WINDOW_OPENGL);
+	mWindow = SDL_CreateWindow("<Window Title>", 100, 100, static_cast<int>(mScreenWidth), static_cast<int>(mScreenHeight), SDL_WINDOW_OPENGL);
 	if (!mWindow)
 	{
 		SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -435,7 +435,7 @@ bool Renderer::LoadShaders()
 	}
 	// For the GBuffer, we need to associate each sampler with an index
 	mGGlobalShader->SetActive();
-	mGGlobalShader->SetIntUniform("uGDiffuse", 0);
+	mGGlobalShader->SetIntUniform("uGTexColor", 0);
 	mGGlobalShader->SetIntUniform("uGNormal", 1);
 	mGGlobalShader->SetIntUniform("uGWorldPos", 2);
 	// The view projection is just the sprite one
@@ -451,7 +451,7 @@ bool Renderer::LoadShaders()
 	}
 	// Set sampler indices
 	mGPointLightShader->SetActive();
-	mGPointLightShader->SetIntUniform("uGDiffuse", 0);
+	mGPointLightShader->SetIntUniform("uGTexColor", 0);
 	mGPointLightShader->SetIntUniform("uGNormal", 1);
 	mGPointLightShader->SetIntUniform("uGWorldPos", 2);
 	mGPointLightShader->SetVector2Uniform("uScreenDimensions", Vector2(mScreenWidth, mScreenHeight));
@@ -460,16 +460,16 @@ bool Renderer::LoadShaders()
 void Renderer::CreateSpriteVerts()
 {
 	float vertices[] = {
-		-0.5f, 0.5f, 0.f, 0.f, 0.f, 0.0f, 0.f, 0.f, // top left
-		0.5f, 0.5f, 0.f, 0.f, 0.f, 0.0f, 1.f, 0.f, // top right
-		0.5f,-0.5f, 0.f, 0.f, 0.f, 0.0f, 1.f, 1.f, // bottom right
-		-0.5f,-0.5f, 0.f, 0.f, 0.f, 0.0f, 0.f, 1.f  // bottom left
+		-0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // top left
+		0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // top right
+		0.5f,-0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // bottom right
+		-0.5f,-0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f // bottom left
 	};
 	unsigned int indices[] = {
 		0, 1, 2,
 		2, 3, 0
 	};
-	mSpriteVerts = new VertexArray(vertices, 4, VertexArray::PosNormTex, indices, 6);
+	mSpriteVerts = new VertexArray(vertices, 4, VertexArray::PosNormTexRGB, indices, 6);
 }
 void Renderer::SetLightUniforms(Shader* shader, const Matrix4& view)
 {

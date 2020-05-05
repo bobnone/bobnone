@@ -14,6 +14,7 @@
 #include "VertexArray.h"
 #include "Actor.h"
 #include "LevelLoader.h"
+#include <iostream>
 
 PointLightComponent::PointLightComponent(Actor* owner) :Component(owner)
 {
@@ -36,6 +37,7 @@ void PointLightComponent::Draw(Shader* shader, Mesh* mesh)
 	// Set point light shader constants
 	shader->SetVectorUniform("uPointLight.mWorldPos", mOwner->GetPosition());
 	shader->SetVectorUniform("uPointLight.mDiffuseColor", mDiffuseColor);
+	shader->SetVectorUniform("uPointLight.mSpecularColor", mSpecularColor);
 	shader->SetFloatUniform("uPointLight.mInnerRadius", mInnerRadius);
 	shader->SetFloatUniform("uPointLight.mOuterRadius", mOuterRadius);
 	// Draw the sphere
@@ -45,12 +47,15 @@ void PointLightComponent::LoadProperties(const rapidjson::Value& inObj)
 {
 	Component::LoadProperties(inObj);
 	JsonHelper::GetVector3(inObj, "color", mDiffuseColor);
+	JsonHelper::GetVector3(inObj, "diffuseColor", mDiffuseColor);
+	JsonHelper::GetVector3(inObj, "specularColor", mSpecularColor);
 	JsonHelper::GetFloat(inObj, "innerRadius", mInnerRadius);
 	JsonHelper::GetFloat(inObj, "outerRadius", mOuterRadius);
 }
 void PointLightComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	JsonHelper::AddVector3(alloc, inObj, "color", mDiffuseColor);
+	JsonHelper::AddVector3(alloc, inObj, "diffuseColor", mDiffuseColor);
+	JsonHelper::AddVector3(alloc, inObj, "specularColor", mSpecularColor);
 	JsonHelper::AddFloat(alloc, inObj, "innerRadius", mInnerRadius);
 	JsonHelper::AddFloat(alloc, inObj, "outerRadius", mOuterRadius);
 }

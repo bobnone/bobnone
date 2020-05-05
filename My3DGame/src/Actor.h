@@ -52,6 +52,18 @@ public:
 		mPosition = pos;
 		mRecomputeTransform = true;
 	}
+	const vector3& GetVelocity() const
+	{
+		return mVelocity;
+	}
+	const vector3& GetAcceleration() const
+	{
+		return mAcceleration;
+	}
+	const bool IsMoving() const
+	{
+		return mMoving;
+	}
 	float GetScale() const
 	{
 		return mScale;
@@ -138,15 +150,20 @@ public:
 	{
 		return mComponents;
 	}
-private:
+protected:
 	// Actor's state
 	ActorState mState;
 	// Transform
 	matrix4 mWorldTransform;
 	vector3 mPosition;
+	vector3 mOldPosition;
+	vector3 mVelocity;
+	vector3 mOldVelocity;
+	vector3 mAcceleration;
 	quaternion mRotation;
 	float mScale;
 	bool mRecomputeTransform;
+	bool mMoving;
 	std::vector<Component*> mComponents;
 	class Game* mGame;
 };

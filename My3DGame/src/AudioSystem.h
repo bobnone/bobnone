@@ -39,7 +39,10 @@ public:
 	SoundEvent PlayEvent(const std::string& name);
 	void Update(float deltaTime);
 	// For positional audio
-	void SetListener(const matrix4& viewMatrix);
+	void SetListener(class Actor* mOwner, const matrix4& viewMatrix);
+	/* Used to manually set the position
+	Note: Can be used to set virtual positions*/
+	void AudioSystem::SetListener(class Actor* mOwner, const matrix4& viewMatrix, const vector3 position);
 	// Control buses
 	float GetBusVolume(const std::string& name) const;
 	bool GetBusPaused(const std::string& name) const;

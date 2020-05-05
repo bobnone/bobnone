@@ -149,6 +149,32 @@ public:
 		y *= scalar;
 		return *this;
 	}
+	// Vector ==
+	bool operator==(const vector2& right)
+	{
+		if (x == right.x)
+		{
+			if (y == right.y)
+			{
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+	// Vector !=
+	bool operator!=(const vector2& right)
+	{
+		if (x != right.x)
+		{
+			if (y != right.y)
+			{
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
 	// Vector +=
 	vector2& operator+=(const vector2& right)
 	{
@@ -256,6 +282,11 @@ public:
 	{
 		return vector3(left.x * right.x, left.y * right.y, left.z * right.z);
 	}
+	// Component-wise division
+	friend vector3 operator/(const vector3& left, const vector3& right)
+	{
+		return vector3(left.x / right.x, left.y / right.y, left.z / right.z);
+	}
 	// Scalar multiplication
 	friend vector3 operator*(const vector3& vec, float scalar)
 	{
@@ -273,6 +304,40 @@ public:
 		y *= scalar;
 		z *= scalar;
 		return *this;
+	}
+	// Vector ==
+	bool operator==(const vector3& right)
+	{
+		if (x == right.x)
+		{
+			if (y == right.y)
+			{
+				if (z == right.z)
+				{
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+		return false;
+	}
+	// Vector !=
+	bool operator!=(const vector3& right)
+	{
+		if (x != right.x)
+		{
+			if (y != right.y)
+			{
+				if (z != right.z)
+				{
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+		return false;
 	}
 	// Vector +=
 	vector3& operator+=(const vector3& right)

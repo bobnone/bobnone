@@ -8,6 +8,7 @@
 
 #pragma once
 #include "CameraComponent.h"
+#include "Actor.h"
 
 class FollowCamera : public CameraComponent
 {
@@ -38,6 +39,8 @@ public:
 	void LoadProperties(const rapidjson::Value& inObj) override;
 	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 private:
+	void SetViewMatrix(const matrix4& view) override;
+	vector3 GetVirtualPosition();
 	vector3 ComputeCameraPos() const;
 	// Actual position of camera
 	vector3 mActualPos;

@@ -7,8 +7,10 @@
 // ----------------------------------------------------------------
 
 #include "FollowCamera.h"
-#include "Actor.h"
 #include "JsonHelper.h"
+#include "AudioSystem.h"
+#include "Renderer.h"
+#include "Game.h"
 
 FollowCamera::FollowCamera(Actor* owner) :CameraComponent(owner), mHorzDist(350.0f), mVertDist(250.0f), mTargetDist(100.0f), mSpringConstant(128.0f)
 {
@@ -66,6 +68,19 @@ void FollowCamera::SaveProperties(rapidjson::Document::AllocatorType& alloc, rap
 	JsonHelper::AddFloat(alloc, inObj, "vertDist", mVertDist);
 	JsonHelper::AddFloat(alloc, inObj, "targetDist", mTargetDist);
 	JsonHelper::AddFloat(alloc, inObj, "springConstant", mSpringConstant);
+}
+void FollowCamera::SetViewMatrix(const matrix4& view)
+{
+	// Pass view matrix to renderer and audio system
+	mOwner->GetGame()->GetRenderer()->SetViewMatrix(view);
+	mOwner->GetGame()->GetAudioSystem()->SetListener(mOwner, view, GetVirtualPosition());
+}
+vector3 FollowCamera::GetVirtualPosition()
+{
+	vector3 playerPos = vector3::Normalize(mOwner->GetPosition());
+	vector3 cameraPos = vector3::Normalize(mActualPos);
+	vector3 virtualPos = playerPos * (mActualPos / cameraPos);
+	return virtualPos;
 }
 vector3 FollowCamera::ComputeCameraPos() const
 {

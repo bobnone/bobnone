@@ -37,9 +37,6 @@
     <ClCompile Include="src\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FollowActor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\FollowCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +136,9 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FollowActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Actor.h" />
@@ -150,7 +150,6 @@
     <ClInclude Include="src\CameraComponent.h" />
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\Component.h" />
-    <ClInclude Include="src\FollowActor.h" />
     <ClInclude Include="src\FollowCamera.h" />
     <ClInclude Include="src\Font.h" />
     <ClInclude Include="src\Game.h" />
@@ -185,6 +184,7 @@
     <ClInclude Include="src\DialogBoxMenu.h" />
     <ClInclude Include="src\TextureHandler.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\FollowActor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Sprite.frag">

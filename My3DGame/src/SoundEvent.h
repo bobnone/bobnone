@@ -9,6 +9,7 @@
 #pragma once
 #include <string>
 #include "Math.h"
+#include "Actor.h"
 
 class SoundEvent
 {
@@ -32,7 +33,7 @@ public:
 	float GetParameter(const std::string& name);
 	// Positional
 	bool Is3D() const;
-	void Set3DAttributes(const matrix4& worldTrans);
+	void Set3DAttributes(class Actor* mOwner);
 protected:
 	// Make this constructor protected and AudioSystem a friend
 	// so that only AudioSystem can access this constructor.

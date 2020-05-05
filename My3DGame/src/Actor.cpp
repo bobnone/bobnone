@@ -1,11 +1,3 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "Actor.h"
 #include "Game.h"
 #include "Component.h"
@@ -18,7 +10,7 @@ const char* Actor::TypeNames[NUM_ACTOR_TYPES] = {
 	"TargetActor",
 };
 
-Actor::Actor(Game* game) :mState(ACTOR_ACTIVE), mPosition(vector3::Zero), mRotation(quaternion()), mScale(1.0f), mGame(game), mRecomputeTransform(true)
+Actor::Actor(Game* game) :mState(ACTOR_ACTIVE), mPosition(vector3::Zero), mOldPosition(vector3::Zero), mVelocity(vector3::Zero), mOldVelocity(vector3::Zero), mAcceleration(vector3::Zero), mRotation(quaternion()), mScale(1.0f), mGame(game), mRecomputeTransform(true), mMoving(false)
 {
 	mGame->AddActor(this);
 }
@@ -38,6 +30,29 @@ void Actor::Update(float deltaTime)
 	{
 		if (mRecomputeTransform)
 		{
+			// Calculate the change in velocity and Acceleration
+			if (mOldPosition != mPosition)
+			{
+				// Calculate velocity
+				// Note: velocity = (change in position)/time
+				vector3 positionChange(mOldPosition.x - mPosition.x, mOldPosition.y - mPosition.y, mOldPosition.z - mPosition.z);
+				mVelocity.x = positionChange.x / deltaTime;
+				mVelocity.y = positionChange.y / deltaTime;
+				mVelocity.z = positionChange.z / deltaTime;
+				mOldPosition = mPosition;
+				// Calculate acceleration
+				// Note: acceleration = (change in velocity)/time
+				vector3 velocityChange(mOldVelocity.x - mVelocity.x, mOldVelocity.y - mVelocity.y, mOldVelocity.z - mVelocity.z);
+				mAcceleration.x = velocityChange.x / deltaTime;
+				mAcceleration.y = velocityChange.y / deltaTime;
+				mAcceleration.z = velocityChange.z / deltaTime;
+				mOldVelocity = mVelocity;
+				mMoving = true;
+			}
+			else
+			{
+				mMoving = false;
+			}
 			ComputeWorldTransform();
 		}
 		UpdateComponents(deltaTime);
@@ -153,8 +168,14 @@ void Actor::LoadProperties(const rapidjson::Value& inObj)
 	}
 	// Load position, rotation, and scale, and compute transform
 	JsonHelper::GetVector3(inObj, "position", mPosition);
+	JsonHelper::GetVector3(inObj, "velocity", mVelocity);
+	JsonHelper::GetVector3(inObj, "acceleration", mAcceleration);
 	JsonHelper::GetQuaternion(inObj, "rotation", mRotation);
 	JsonHelper::GetFloat(inObj, "scale", mScale);
+	JsonHelper::GetBool(inObj, "moving", mMoving);
+	// Set the Old/last position and velocity to the current position and velocity to avoid strange position jumps when loading
+	mOldPosition = mPosition;
+	mOldVelocity = mVelocity;	
 	ComputeWorldTransform();
 }
 void Actor::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
@@ -170,6 +191,9 @@ void Actor::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson:
 	}
 	JsonHelper::AddString(alloc, inObj, "state", state);
 	JsonHelper::AddVector3(alloc, inObj, "position", mPosition);
+	JsonHelper::AddVector3(alloc, inObj, "velocity", mVelocity);
+	JsonHelper::AddVector3(alloc, inObj, "acceleration", mAcceleration);
 	JsonHelper::AddQuaternion(alloc, inObj, "rotation", mRotation);
 	JsonHelper::AddFloat(alloc, inObj, "scale", mScale);
+	JsonHelper::AddBool(alloc, inObj, "moving", mMoving);
 }

@@ -2,7 +2,7 @@
 #include "Game.h"
 #include "Renderer.h"
 
-Mouse::Mouse(Game* game):mGame(game)
+Mouse::Mouse(Game* game):mGame(game), mPosition(0.0f,0.0f), mOld(0.0f, 0.0f), mChange(0.0f, 0.0f), mRelative(false), mClicked(false)
 {
 	//
 }
@@ -12,31 +12,56 @@ Mouse::~Mouse()
 }
 void Mouse::Update(float deltaTime)
 {
-	//
-}
-void Mouse::ProcessInput(const uint8_t* keys)
-{
 	// Get position of mouse
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 	// Convert to (0,0) center coordinates
-	vector2 mousePos(static_cast<float>(x), static_cast<float>(y));
-	mousePos.x -= mGame->GetRenderer()->GetScreenWidth() * 0.5f;
-	mousePos.y = mGame->GetRenderer()->GetScreenHeight() * 0.5f - mousePos.y;
-}
-void Mouse::HandleKeyPress(int key)
-{
-	//if(SDL_MOUSEBUTTONUP)
-	switch (key)
+	mPosition = vector2(static_cast<float>(x), static_cast<float>(y));
+	mPosition.x -= mGame->GetRenderer()->GetScreenWidth() * 0.5f;
+	mPosition.y = mGame->GetRenderer()->GetScreenHeight() * 0.5f - mPosition.y;
+	// Calculate the change in position
+	if (mOld != mPosition)
 	{
-	case SDL_BUTTON_LEFT:
-		//
+		mChange.x = mOld.x - mPosition.x;
+		mChange.y = mOld.y - mPosition.y;
+		mOld = mPosition;
+	}
+}
+void Mouse::ProcessInput(SDL_Event* event)
+{
+	switch (event->type)
+	{
+	case SDL_MOUSEBUTTONDOWN:
+		switch (event->button.button)
+		{
+		case SDL_BUTTON_LEFT:
+			mClicked = true;
+			break;
+		case SDL_BUTTON_MIDDLE:
+			//
+			break;
+		case SDL_BUTTON_RIGHT:
+			//
+			break;
+		default:
+			break;
+		}
 		break;
-	case SDL_BUTTON_MIDDLE:
-		//
-		break;
-	case SDL_BUTTON_RIGHT:
-		//
+	case SDL_MOUSEBUTTONUP:
+		switch (event->button.button)
+		{
+		case SDL_BUTTON_LEFT:
+			mClicked = false;
+			break;
+		case SDL_BUTTON_MIDDLE:
+			//
+			break;
+		case SDL_BUTTON_RIGHT:
+			//
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;

@@ -242,7 +242,7 @@ namespace
 		return v;
 	}
 }
-void AudioSystem::SetListener(const matrix4& viewMatrix)
+void AudioSystem::SetListener(class Actor* mOwner, const matrix4& viewMatrix)
 {
 	// Invert the view matrix to get the correct vectors
 	matrix4 invView = viewMatrix;
@@ -254,8 +254,25 @@ void AudioSystem::SetListener(const matrix4& viewMatrix)
 	listener.forward = VecToFMOD(invView.GetZAxis());
 	// In the inverted view, second row is up
 	listener.up = VecToFMOD(invView.GetYAxis());
-	// Set velocity to zero (fix if using Doppler effect)
-	listener.velocity = { 0.0f, 0.0f, 0.0f };
+	// Set velocity
+	listener.velocity = VecToFMOD(mOwner->GetVelocity());
+	// Send to FMOD
+	mSystem->setListenerAttributes(0, &listener);
+}
+void AudioSystem::SetListener(class Actor* mOwner, const matrix4& viewMatrix, const vector3 position)
+{
+	// Invert the view matrix to get the correct vectors
+	matrix4 invView = viewMatrix;
+	invView.Invert();
+	FMOD_3D_ATTRIBUTES listener;
+	// Set position, forward, up
+	listener.position = VecToFMOD(position);
+	// In the inverted view, third row is forward
+	listener.forward = VecToFMOD(invView.GetZAxis());
+	// In the inverted view, second row is up
+	listener.up = VecToFMOD(invView.GetYAxis());
+	// Set velocity
+	listener.velocity = VecToFMOD(mOwner->GetVelocity());
 	// Send to FMOD
 	mSystem->setListenerAttributes(0, &listener);
 }

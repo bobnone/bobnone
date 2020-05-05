@@ -52,40 +52,20 @@ void UIScreen::ProcessInput(const uint8_t* keys)
 	// Do we have buttons?
 	if (!mButtons.empty())
 	{
-		// Get position of mouse
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		// Convert to (0,0) center coordinates
-		vector2 mousePos(static_cast<float>(x), static_cast<float>(y));
-		mousePos.x -= mGame->GetRenderer()->GetScreenWidth() * 0.5f;
-		mousePos.y = mGame->GetRenderer()->GetScreenHeight() * 0.5f - mousePos.y;
 		// Highlight any buttons
 		for (auto b : mButtons)
 		{
-			b->ProcessInput(mousePos);
+			b->ProcessInput(mGame->GetMouse()->GetPosition());
+			if (mGame->GetMouse()->Clicked() && b->IsHighlighted())
+			{
+				b->OnClick();
+			}
 		}
 	}
 }
 void UIScreen::HandleKeyPress(int key)
 {
-	switch (key)
-	{
-	case SDL_BUTTON_LEFT:
-		if (!mButtons.empty())
-		{
-			for (auto b : mButtons)
-			{
-				if(b->IsHighlighted())
-				{
-					b->OnClick();
-					break;
-				}
-			}
-		}
-		break;
-	default:
-		break;
-	}
+	//
 }
 void UIScreen::Close()
 {

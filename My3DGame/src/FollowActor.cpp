@@ -1,41 +1,46 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "FollowActor.h"
-#include "SkeletalMeshComponent.h"
+#include<GLM/glm.hpp>
 #include "Mesh.h"
 #include "Shader.h"
-#include "Game.h"
 #include "Renderer.h"
 #include "Skeleton.h"
 #include "Animation.h"
-#include "FollowCamera.h"
-#include "MoveComponent.h"
-#include "MirrorCamera.h"
+#include "AudioSystem.h"
 #include "JsonHelper.h"
 
-FollowActor::FollowActor(Game* game) :Actor(game), mMoving(false)
+FollowActor::FollowActor(Game* game):Actor(game), mAnimated(false)
 {
 	mMeshComp = new SkeletalMeshComponent(this);
-	Renderer* renderer = GetGame()->GetRenderer();
+	Renderer* renderer = mGame->GetRenderer();
 	Mesh* mesh = renderer->GetMesh("Assets/CatWarrior.gpmesh");
 	mMeshComp->SetMesh(mesh);
 	mMeshComp->SetShader(renderer->GetShader("Skinned"));
-	mMeshComp->SetSkeleton(GetGame()->GetSkeleton("Assets/CatWarrior.gpskel"));
-	mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatActionIdle.gpanim"));
+	mMeshComp->SetSkeleton(mGame->GetSkeleton("Assets/CatWarrior.gpskel"));
+	mMeshComp->PlayAnimation(mGame->GetAnimation("Assets/CatActionIdle.gpanim"));
 	SetPosition(vector3(0.0f, -100.0f, 0.0f));
-	mMoveComp = new MoveComponent(this);
+	mMoveComp = new MoveComponent(this);	
 	mCameraComp = new FollowCamera(this);
 	mCameraComp->SnapToIdeal();
+	mAudioComp = new AudioComponent(this);
+	mLastFootstep = 0.0f;
+	mFootstep = mAudioComp->PlayEvent("event:/Footstep");
+	mFootstep.SetPaused(true);
 	// Add a component for the mirror camera
 	MirrorCamera* mirror = new MirrorCamera(this);
 	mirror->SnapToIdeal();
-	game->SetFollowActor(this);
+	mGame->SetFollowActor(this);
+}
+void FollowActor::UpdateActor(float deltaTime)
+{
+	Actor::UpdateActor(deltaTime);
+	// Play the footstep if we're moving and haven't recently
+	mLastFootstep -= deltaTime;
+	if (!Math::NearZero(mMoveComp->GetForwardSpeed()) && mLastFootstep <= 0.0f)
+	{
+		mFootstep.SetPaused(false);
+		mFootstep.Restart();
+		mLastFootstep = 0.5f;
+	}
 }
 void FollowActor::ActorInput(const uint8_t* keys)
 {
@@ -95,15 +100,15 @@ void FollowActor::ActorInput(const uint8_t* keys)
 		angularZSpeed += Math::Pi;
 	}
 	// Did we just start moving forward?
-	if (!mMoving && !Math::NearZero(forwardSpeed))
+	if (!mAnimated && !Math::NearZero(forwardSpeed))
 	{
-		mMoving = true;
+		mAnimated = true;
 		mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatRunSprint.gpanim"), 1.25f);
 	}
 	// Or did we just stop moving forward?
-	else if (mMoving && Math::NearZero(forwardSpeed))
+	else if (mAnimated && Math::NearZero(forwardSpeed))
 	{
-		mMoving = false;
+		mAnimated = false;
 		mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatActionIdle.gpanim"));
 	}
 	mMoveComp->SetSpeed(angularXSpeed, angularYSpeed, angularZSpeed, forwardSpeed, strafeSpeed, jumpSpeed);
@@ -112,13 +117,10 @@ void FollowActor::SetVisible(bool visible)
 {
 	mMeshComp->SetVisible(visible);
 }
-void FollowActor::LoadProperties(const rapidjson::Value& inObj)
+void FollowActor::SetFootstepSurface(float value)
 {
-	Actor::LoadProperties(inObj);
-	JsonHelper::GetBool(inObj, "moving", mMoving);
-}
-void FollowActor::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
-{
-	Actor::SaveProperties(alloc, inObj);
-	JsonHelper::AddBool(alloc, inObj, "moving", mMoving);
+	// Pause here because the way I setup the parameter in FMOD
+	// changing it will play a footstep
+	mFootstep.SetPaused(true);
+	mFootstep.SetParameter("Surface", value);
 }

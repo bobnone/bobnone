@@ -139,20 +139,21 @@ namespace
 		return v;
 	}
 }
-void SoundEvent::Set3DAttributes(const matrix4& worldTrans)
+void SoundEvent::Set3DAttributes(Actor* mOwner)
 {
 	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
 	if (event)
 	{
 		FMOD_3D_ATTRIBUTES attr;
+		const matrix4 worldTrans = mOwner->GetWorldTransform();
 		// Set position, forward, up
 		attr.position = VecToFMOD(worldTrans.GetTranslation());
 		// In world transform, first row is forward
 		attr.forward = VecToFMOD(worldTrans.GetXAxis());
 		// Third row is up
 		attr.up = VecToFMOD(worldTrans.GetZAxis());
-		// Set velocity to zero (fix if using Doppler effect)
-		attr.velocity = { 0.0f, 0.0f, 0.0f };
+		// Set velocity
+		attr.velocity = VecToFMOD(mOwner->GetVelocity());
 		event->set3DAttributes(&attr);
 	}
 }

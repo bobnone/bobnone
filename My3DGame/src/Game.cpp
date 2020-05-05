@@ -69,6 +69,7 @@ void Game::ProcessInput()
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
+		mMouse->ProcessInput(&event);
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -91,17 +92,6 @@ void Game::ProcessInput()
 			break;
 		case SDL_KEYUP:
 			//
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			if (mGameState == GAME_PLAY)
-			{
-				HandleKeyPress(event.button.button);
-			}
-			else if (!mUIStack.empty())
-			{
-				mUIStack.back()->
-					HandleKeyPress(event.button.button);
-			}
 			break;
 		default:
 			break;
@@ -173,10 +163,6 @@ void Game::HandleKeyPress(int key)
 		LevelLoader::SaveLevel(this, "Assets/Saved.gplevel");
 		break;
 	}
-	case SDL_BUTTON_LEFT:
-	{
-		break;
-	}
 	default:
 		break;
 	}
@@ -184,8 +170,9 @@ void Game::HandleKeyPress(int key)
 void Game::UpdateGame()
 {
 	// Compute delta time
+	const int delay = 16;
 	// Wait until 16ms has elapsed since last frame
-	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16))
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + delay))
 	{
 		//
 	}
@@ -195,6 +182,8 @@ void Game::UpdateGame()
 		deltaTime = 0.05f;
 	}
 	mTicksCount = SDL_GetTicks();
+	// Update the mouse
+	mMouse->Update(deltaTime);
 	if (mGameState == GAME_PLAY)
 	{
 		// Update all actors
@@ -260,7 +249,7 @@ void Game::LoadData()
 	// Load English text
 	LoadText("Assets/English.gptext");
 	// Create Mouse
-	//mMouse = new Mouse(this);
+	mMouse = new Mouse(this);
 	// Create HUD
 	mHUD = new HUD(this);
 	// Load the level from file

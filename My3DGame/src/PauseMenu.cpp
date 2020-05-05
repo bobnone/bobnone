@@ -5,7 +5,7 @@
 PauseMenu::PauseMenu(Game* game):UIScreen(game)
 {
 	mGame->SetState(Game::GAME_PAUSED);
-	//mMouse->SetRelative(false);
+	mGame->GetMouse()->SetRelative(false);
 	SetTitle("PauseTitle");
 	AddButton("ResumeButton", [this](){
 		Close();
@@ -18,7 +18,7 @@ PauseMenu::PauseMenu(Game* game):UIScreen(game)
 }
 PauseMenu::~PauseMenu()
 {
-	//mMouse->SetRelative(true);
+	mGame->GetMouse()->SetRelative(true);
 	mGame->SetState(Game::GAME_PLAY);
 }
 void PauseMenu::HandleKeyPress(int key)

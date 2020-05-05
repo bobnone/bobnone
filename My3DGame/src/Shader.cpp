@@ -12,21 +12,23 @@
 #include <fstream>
 #include <sstream>
 
-Shader::Shader() :mShaderProgram(0), mVertexShader(0), mFragmentShader(0)
+Shader::Shader(std::string name) :mShaderProgram(0), mVertexShader(0), mFragmentShader(0)
 {
-	//
+	mName = name;
 }
 Shader::~Shader()
 {
 	//
 }
-bool Shader::Load(const std::string& vertName, const std::string& fragName)
+bool Shader::Load(const std::string& vertFile, const std::string& fragFile)
 {
 	// Compile vertex and pixel shaders
-	if (!CompileShader(vertName, GL_VERTEX_SHADER, mVertexShader) || !CompileShader(fragName, GL_FRAGMENT_SHADER, mFragmentShader))
+	if (!CompileShader(vertFile, GL_VERTEX_SHADER, mVertexShader) || !CompileShader(fragFile, GL_FRAGMENT_SHADER, mFragmentShader))
 	{
 		return false;
 	}
+	mVertexFile = vertFile;
+	mFragmentFile = fragFile;
 	// Now create a shader program that
 	// links together the vertex/fragment shaders
 	mShaderProgram = glCreateProgram();

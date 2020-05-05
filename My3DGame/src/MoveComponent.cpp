@@ -10,7 +10,7 @@
 #include "Actor.h"
 #include "LevelLoader.h"
 
-MoveComponent::MoveComponent(class Actor* owner, int updateOrder) :Component(owner, updateOrder), mAngularSpeed(0.0f), mForwardSpeed(0.0f)
+MoveComponent::MoveComponent(class Actor* owner, int updateOrder) :Component(owner, updateOrder), mAngularSpeed(0.0f), mForwardSpeed(0.0f), mStrafeSpeed(0.0f), mJumpSpeed(0.0f)
 {
 	//
 }
@@ -27,11 +27,12 @@ void MoveComponent::Update(float deltaTime)
 		rot = Quaternion::Concatenate(rot, inc);
 		mOwner->SetRotation(rot);
 	}
-	if (!Math::NearZero(mForwardSpeed) || !Math::NearZero(mStrafeSpeed))
+	if (!Math::NearZero(mForwardSpeed) || !Math::NearZero(mStrafeSpeed) || !Math::NearZero(mJumpSpeed))
 	{
 		Vector3 pos = mOwner->GetPosition();
 		pos += mOwner->GetForward() * mForwardSpeed * deltaTime;
 		pos += mOwner->GetRight() * mStrafeSpeed * deltaTime;
+		pos += mOwner->GetUp() * mJumpSpeed * deltaTime;
 		mOwner->SetPosition(pos);
 	}
 }
@@ -41,6 +42,7 @@ void MoveComponent::LoadProperties(const rapidjson::Value& inObj)
 	JsonHelper::GetFloat(inObj, "angularSpeed", mAngularSpeed);
 	JsonHelper::GetFloat(inObj, "forwardSpeed", mForwardSpeed);
 	JsonHelper::GetFloat(inObj, "strafeSpeed", mStrafeSpeed);
+	JsonHelper::GetFloat(inObj, "jumpSpeed", mJumpSpeed);
 }
 void MoveComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
@@ -48,4 +50,5 @@ void MoveComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, ra
 	JsonHelper::AddFloat(alloc, inObj, "angularSpeed", mAngularSpeed);
 	JsonHelper::AddFloat(alloc, inObj, "forwardSpeed", mForwardSpeed);
 	JsonHelper::AddFloat(alloc, inObj, "strafeSpeed", mStrafeSpeed);
+	JsonHelper::AddFloat(alloc, inObj, "jumpSpeed", mJumpSpeed);
 }

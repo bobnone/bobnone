@@ -14,7 +14,7 @@
 class Shader
 {
 public:
-	Shader();
+	Shader(std::string name);
 	~Shader();
 	bool Load(const std::string& vertName, const std::string& fragName);
 	void Unload();
@@ -31,6 +31,14 @@ public:
 	void SetFloatUniform(const char* name, float value);
 	// Sets an integer uniform
 	void SetIntUniform(const char* name, int value);
+	std::string GetVertexFile()
+	{
+		return mVertexFile;
+	}
+	std::string GetFragmentFile()
+	{
+		return mFragmentFile;
+	}
 	GLuint GetVertexID()
 	{
 		return mVertexShader;
@@ -43,6 +51,10 @@ public:
 	{
 		return mShaderProgram;
 	}
+	std::string GetName()
+	{
+		return mName;
+	}
 private:
 	// Tries to compile the specified shader
 	bool CompileShader(const std::string& fileName, GLenum shaderType, GLuint& outShader);
@@ -51,8 +63,13 @@ private:
 	// Tests whether vertex/fragment programs link
 	bool IsValidProgram();
 private:
+	// Store the shader file paths
+	std::string mVertexFile;
+	std::string mFragmentFile;
 	// Store the shader object IDs
 	GLuint mVertexShader;
 	GLuint mFragmentShader;
 	GLuint mShaderProgram;
+	// Human readable name
+	std::string mName;
 };

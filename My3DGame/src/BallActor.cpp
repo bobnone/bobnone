@@ -19,8 +19,10 @@ BallActor::BallActor(Game* game) :Actor(game), mLifeSpan(2.0f)
 {
 	//SetScale(10.0f);
 	MeshComponent* mc = new MeshComponent(this);
-	Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Sphere.gpmesh");
+	Renderer* renderer = GetGame()->GetRenderer();
+	Mesh* mesh = renderer->GetMesh("Assets/Sphere.gpmesh");
 	mc->SetMesh(mesh);
+	mc->SetShader(renderer->GetShader("Mesh"));
 	BallMove* move = new BallMove(this);
 	move->SetForwardSpeed(1500.0f);
 	mAudioComp = new AudioComponent(this);

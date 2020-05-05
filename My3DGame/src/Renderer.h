@@ -14,6 +14,8 @@
 #include <SDL/SDL.h>
 #include "Math.h"
 
+using namespace std;
+
 struct DirectionalLight
 {
 	// Direction of light
@@ -38,38 +40,33 @@ public:
 	void RemoveMeshComp(class MeshComponent* mesh);
 	void AddPointLight(class PointLightComponent* light);
 	void RemovePointLight(class PointLightComponent* light);
-	class Texture* GetTexture(const std::string& fileName);
-	class Mesh* GetMesh(const std::string& fileName);
+	class Texture* GetTexture(const string& fileName);
+	void RemoveTexture(const string& name);
+	void RemoveTexture(class Texture* tex);
+	class Mesh* GetMesh(const string& fileName);
+	void RemoveMesh(const string& name);
+	void RemoveMesh(class Mesh* mesh);
 	/*
-		If a shader with "name" exist, return it
-		else, create and load a new shader using "fileName" for all shader files
-		Note: File Names are without extensions
+		create and load a new shader using "fileName" for all shader files
+		Note: sets the new shader as the active shader
 	*/
-	class Shader* NewShader(const std::string& name, const std::string& fileName);
+	class Shader* CreateShader(const string& name, const string& fileName);
 	/*
-		If a shader with "name" exist, return it
-		else, create and load a new shader using the respective file names for the shader files
-		Note: File Names are without extensions
+		create and load a new shader using the respective file names for the shader files
+		Note: sets the new shader as the active shader
 	*/
-	class Shader* SetNewShader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile);
-	/*
-		If a shader with "name" exist, return it
-		else, create and load a new shader using "fileName" for all shader files
-		then, set it as the active shader
-		Note: File Names are without extensions
-	*/
-	class Shader* SetNewShader(const std::string& name, const std::string& fileName);
-	/*
-		If a shader with "name" exist, return it
-		else, create and load a new shader using the respective file names for the shader files
-		then, set it as the active shader
-		Note: File Names are without extensions
-	*/
-	class Shader* NewShader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile);
-	// Returns the requested shader if it exist and sets it as the active shader
-	class Shader* SetShader(const std::string& name);
+	class Shader* CreateShader(const string& name, const string& vertexFile, const string& fragmentFile);
 	// Returns the requested shader if it exist
-	class Shader* GetShader(const std::string& name);
+	class Shader* GetShader(const string& name);
+	void RemoveShader(const string& name);
+	void RemoveShader(class Shader* mesh);
+	vector<class MeshComponent*>* LinkMeshToShader(class MeshComponent* mesh, class Shader* shader);
+	bool LinkMeshesToShader(class Shader* shader, vector<class MeshComponent*>* meshVector);
+	vector<class MeshComponent*>* GetMeshShader(class Shader* shader);
+	class Shader* GetShaderFromMesh(class MeshComponent* mesh);
+	void UnlinkShader(class Shader* shader);
+	void UnlinkMesh(class MeshComponent* mesh);
+	void UnlinkMeshes(vector<class MeshComponent*>* meshVector);
 	void SetViewMatrix(const Matrix4& view)
 	{
 		mView = view;
@@ -86,7 +83,7 @@ public:
 	{
 		return mDirLight;
 	}
-	const std::vector<class PointLightComponent*>& GetPointLights() const
+	const vector<class PointLightComponent*>& GetPointLights() const
 	{
 		return mPointLights;
 	}
@@ -126,19 +123,21 @@ private:
 	bool LoadShaders();
 	void CreateSpriteVerts();
 	void SetLightUniforms(class Shader* shader, const Matrix4& view);
+	// Gets the requested shader and sets it as the active shader
+	void SetShader(const string& name);
 	// Map of textures loaded
-	std::unordered_map<std::string, class Texture*> mTextures;
+	unordered_map<string, class Texture*> mTextures;
 	// Map of meshes loaded
-	std::unordered_map<std::string, class Mesh*> mMeshes;
-	// Map of shaders to meshes
-	//std::unordered_map<std::string, std::string> mMeshShaders;
+	unordered_map<string, class Mesh*> mMeshes;
+	// Map of shaders to mesh components
+	unordered_map<class Shader*, vector<class MeshComponent*>*> mMeshShaders;
 	// Map of loaded shaders
-	std::unordered_map<std::string, class Shader*> mShaders;
+	unordered_map<string, class Shader*> mShaders;
 	// All the sprite components drawn
-	std::vector<class SpriteComponent*> mSprites;
+	vector<class SpriteComponent*> mSprites;
 	// All (non-skeletal) mesh components drawn
-	std::vector<class MeshComponent*> mMeshComps;
-	std::vector<class SkeletalMeshComponent*> mSkeletalMeshes;
+	vector<class MeshComponent*> mMeshComps;
+	vector<class SkeletalMeshComponent*> mSkeletalMeshComps;
 	// Game
 	class Game* mGame;
 	// The currently active shader
@@ -162,6 +161,6 @@ private:
 	class Texture* mMirrorTexture;
 	Matrix4 mMirrorView;
 	class GBuffer* mGBuffer;
-	std::vector<class PointLightComponent*> mPointLights;
+	vector<class PointLightComponent*> mPointLights;
 	class Mesh* mPointLightMesh;
 };

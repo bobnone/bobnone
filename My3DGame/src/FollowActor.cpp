@@ -8,6 +8,7 @@
 
 #include "FollowActor.h"
 #include "SkeletalMeshComponent.h"
+#include "Mesh.h"
 #include "Game.h"
 #include "Renderer.h"
 #include "FollowCamera.h"
@@ -18,9 +19,12 @@
 FollowActor::FollowActor(Game* game) :Actor(game), mMoving(false)
 {
 	mMeshComp = new SkeletalMeshComponent(this);
-	mMeshComp->SetMesh(game->GetRenderer()->GetMesh("Assets/CatWarrior.gpmesh"));
-	mMeshComp->SetSkeleton(game->GetSkeleton("Assets/CatWarrior.gpskel"));
-	mMeshComp->PlayAnimation(game->GetAnimation("Assets/CatActionIdle.gpanim"));
+	Renderer* renderer = GetGame()->GetRenderer();
+	Mesh* mesh = renderer->GetMesh("Assets/CatWarrior.gpmesh");
+	mMeshComp->SetMesh(mesh);
+	mMeshComp->SetShader(renderer->GetShader("Skinned"));
+	mMeshComp->SetSkeleton(GetGame()->GetSkeleton("Assets/CatWarrior.gpskel"));
+	mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatActionIdle.gpanim"));
 	SetPosition(Vector3(0.0f, 0.0f, -100.0f));
 	mMoveComp = new MoveComponent(this);
 	mCameraComp = new FollowCamera(this);
@@ -32,39 +36,56 @@ FollowActor::FollowActor(Game* game) :Actor(game), mMoving(false)
 }
 void FollowActor::ActorInput(const uint8_t* keys)
 {
-	float forwardSpeed = 0.0f;
 	float angularSpeed = 0.0f;
+	float forwardSpeed = 0.0f;
+	float strafeSpeed = 0.0f;
+	float jumpSpeed = 0.0f;
 	// wasd movement
 	if (keys[SDL_SCANCODE_W])
 	{
 		forwardSpeed += 400.0f;
 	}
-	if (keys[SDL_SCANCODE_S])
+	else if (keys[SDL_SCANCODE_S])
 	{
 		forwardSpeed -= 400.0f;
 	}
 	if (keys[SDL_SCANCODE_A])
 	{
+		strafeSpeed -= 400;
+	}
+	else if (keys[SDL_SCANCODE_D])
+	{
+		strafeSpeed += 400;
+	}
+	if (keys[SDL_SCANCODE_Q])
+	{
 		angularSpeed -= Math::Pi;
 	}
-	if (keys[SDL_SCANCODE_D])
+	else if (keys[SDL_SCANCODE_E])
 	{
 		angularSpeed += Math::Pi;
 	}
-	// Did we just start moving?
+	if (keys[SDL_SCANCODE_SPACE])
+	{
+		jumpSpeed += 400;
+	}
+	else if (keys[SDL_SCANCODE_Z])//idk why it dosent like ctrl; modifier key?
+	{
+		jumpSpeed -= 400;
+	}
+	// Did we just start moving forward?
 	if (!mMoving && !Math::NearZero(forwardSpeed))
 	{
 		mMoving = true;
 		mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatRunSprint.gpanim"), 1.25f);
 	}
-	// Or did we just stop moving?
+	// Or did we just stop moving forward?
 	else if (mMoving && Math::NearZero(forwardSpeed))
 	{
 		mMoving = false;
 		mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatActionIdle.gpanim"));
 	}
-	mMoveComp->SetForwardSpeed(forwardSpeed);
-	mMoveComp->SetAngularSpeed(angularSpeed);
+	mMoveComp->SetSpeed(angularSpeed, forwardSpeed, strafeSpeed, jumpSpeed);
 }
 void FollowActor::SetVisible(bool visible)
 {

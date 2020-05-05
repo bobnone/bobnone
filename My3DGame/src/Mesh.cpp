@@ -38,6 +38,7 @@ namespace
 		uint32_t mNumIndices = 0;
 		// Box/radius of mesh, used for collision
 		AABB mBox{ Vector3::Zero, Vector3::Zero };
+		//std::string mShaderName = "Mesh";
 		float mRadius = 0.0f;
 		float mSpecularPower = 100.0f;
 	};
@@ -70,7 +71,6 @@ bool Mesh::Load(const std::string& fileName, Renderer* renderer)
 		SDL_Log("Mesh %s not version 1", fileName.c_str());
 		return false;
 	}
-	mShaderName = doc["shader"].GetString();
 	// Set the vertex layout/size based on the format in the file
 	VertexArray::Layout layout = VertexArray::PosNormTex;
 	size_t vertSize = 8;
@@ -220,6 +220,7 @@ void Mesh::SaveBinary(const std::string& fileName, const void* verts, uint32_t n
 	header.mNumVerts = numVerts;
 	header.mNumIndices = numIndices;
 	header.mBox = box;
+	//header.mShaderName = shaderName;
 	header.mRadius = radius;
 	// Open binary file for writing
 	std::ofstream outFile(fileName, std::ios::out | std::ios::binary);
@@ -291,8 +292,9 @@ bool Mesh::LoadBinary(const std::string& fileName, Renderer* renderer)
 		// Cleanup memory
 		delete[] verts;
 		delete[] indices;
-		// Set mBox/mRadius/specular from header
+		// Set mBox/shader/mRadius/specular from header
 		mBox = header.mBox;
+		//mShaderName = header.mShaderName;
 		mRadius = header.mRadius;
 		mSpecularPower = header.mSpecularPower;
 		return true;

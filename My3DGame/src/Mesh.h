@@ -27,11 +27,6 @@ public:
 	}
 	// Get a texture from specified index
 	class Texture* GetTexture(size_t index);
-	// Get name of shader
-	const std::string& GetShaderName() const
-	{
-		return mShaderName;
-	}
 	// Get file name
 	const std::string& GetFileName() const
 	{
@@ -63,8 +58,6 @@ private:
 	std::vector<class Texture*> mTextures;
 	// Vertex array associated with this mesh
 	VertexArray* mVertexArray;
-	// Name of shader specified by mesh
-	std::string mShaderName;
 	// Name of mesh file
 	std::string mFileName;
 	// Stores object space bounding sphere radius

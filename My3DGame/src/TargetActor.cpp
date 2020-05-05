@@ -19,8 +19,10 @@ TargetActor::TargetActor(Game* game) :Actor(game)
 	//SetScale(10.0f);
 	SetRotation(Quaternion(Vector3::UnitZ, Math::Pi));
 	MeshComponent* mc = new MeshComponent(this);
-	Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Target.gpmesh");
+	Renderer* renderer = GetGame()->GetRenderer();
+	Mesh* mesh = renderer->GetMesh("Assets/Target.gpmesh");
 	mc->SetMesh(mesh);
+	mc->SetShader(renderer->GetShader("Mesh"));
 	// Add collision box
 	BoxComponent* bc = new BoxComponent(this);
 	bc->SetObjectBox(mesh->GetBox());

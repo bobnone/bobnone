@@ -32,7 +32,6 @@
 #include "TargetComponent.h"
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
-#include <iostream>
 
 const int LevelVersion = 1;
 

@@ -19,6 +19,9 @@
 #include "SkeletalMeshComponent.h"
 #include "GBuffer.h"
 #include "PointLightComponent.h"
+#include <iostream>
+
+using namespace std;
 
 Renderer::Renderer(Game* game) :mGame(game), mCurrentShader(nullptr), mMirrorBuffer(0), mMirrorTexture(nullptr), mGBuffer(nullptr)
 {
@@ -122,6 +125,9 @@ void Renderer::Shutdown()
 }
 void Renderer::UnloadData()
 {
+	// Destroy meshShaders
+	// Note: shaders and MeshComponents get deleted somewhere else
+	mMeshShaders.clear();
 	// Destroy textures
 	for (auto i : mTextures)
 	{
@@ -136,13 +142,14 @@ void Renderer::UnloadData()
 		delete i.second;
 	}
 	mMeshes.clear();
-	// Destroy meshShaders
+	// Destroy shaders
 	for (auto i : mShaders)
 	{
 		i.second->Unload();
 		delete i.second;
 	}
 	mShaders.clear();
+	
 }
 void Renderer::Draw()
 {
@@ -162,7 +169,7 @@ void Renderer::Draw()
 	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 	// Set shader/VAO as active
-	mCurrentShader = SetShader("Sprite");
+	SetShader("Sprite");
 	mSpriteVerts->SetActive();
 	for (auto sprite : mSprites)
 	{
@@ -197,7 +204,7 @@ void Renderer::AddSprite(SpriteComponent* sprite)
 }
 void Renderer::RemoveSprite(SpriteComponent* sprite)
 {
-	auto i = std::find(mSprites.begin(), mSprites.end(), sprite);
+	auto i = find(mSprites.begin(), mSprites.end(), sprite);
 	mSprites.erase(i);
 }
 void Renderer::AddMeshComp(MeshComponent* mesh)
@@ -205,7 +212,7 @@ void Renderer::AddMeshComp(MeshComponent* mesh)
 	if (mesh->GetIsSkeletal())
 	{
 		SkeletalMeshComponent* sk = static_cast<SkeletalMeshComponent*>(mesh);
-		mSkeletalMeshes.emplace_back(sk);
+		mSkeletalMeshComps.emplace_back(sk);
 	}
 	else
 	{
@@ -217,14 +224,15 @@ void Renderer::RemoveMeshComp(MeshComponent* mesh)
 	if (mesh->GetIsSkeletal())
 	{
 		SkeletalMeshComponent* sk = static_cast<SkeletalMeshComponent*>(mesh);
-		auto i = std::find(mSkeletalMeshes.begin(), mSkeletalMeshes.end(), sk);
-		mSkeletalMeshes.erase(i);
+		auto i = find(mSkeletalMeshComps.begin(), mSkeletalMeshComps.end(), sk);
+		mSkeletalMeshComps.erase(i);
 	}
 	else
 	{
-		auto i = std::find(mMeshComps.begin(), mMeshComps.end(), mesh);
+		auto i = find(mMeshComps.begin(), mMeshComps.end(), mesh);
 		mMeshComps.erase(i);
 	}
+	UnlinkMesh(mesh);
 }
 void Renderer::AddPointLight(PointLightComponent* light)
 {
@@ -232,10 +240,10 @@ void Renderer::AddPointLight(PointLightComponent* light)
 }
 void Renderer::RemovePointLight(PointLightComponent* light)
 {
-	auto i = std::find(mPointLights.begin(), mPointLights.end(), light);
+	auto i = find(mPointLights.begin(), mPointLights.end(), light);
 	mPointLights.erase(i);
 }
-Texture* Renderer::GetTexture(const std::string& fileName)
+Texture* Renderer::GetTexture(const string& fileName)
 {
 	Texture* tex = nullptr;
 	auto i = mTextures.find(fileName);
@@ -258,7 +266,31 @@ Texture* Renderer::GetTexture(const std::string& fileName)
 	}
 	return tex;
 }
-Mesh* Renderer::GetMesh(const std::string & fileName)
+void Renderer::RemoveTexture(const string& name)
+{
+	auto it = mTextures.find(name);
+	if (it != mTextures.end())
+	{
+		mTextures.erase(it);
+	}
+}
+void Renderer::RemoveTexture(Texture* tex)
+{
+	auto it = mTextures.begin();
+	while (it != mTextures.end())
+	{
+		if (it->second == tex)
+		{
+			break;
+		}
+		it++;
+	}
+	if (it != mTextures.end())
+	{
+		mTextures.erase(it);
+	}
+}
+Mesh* Renderer::GetMesh(const string & fileName)
 {
 	Mesh* m = nullptr;
 	auto i = mMeshes.find(fileName);
@@ -281,64 +313,179 @@ Mesh* Renderer::GetMesh(const std::string & fileName)
 	}
 	return m;
 }
-Shader* Renderer::NewShader(const std::string& name, const std::string& fileName)
+void Renderer::RemoveMesh(const string& name)
 {
-	return NewShader(name, fileName, fileName);
-}
-Shader* Renderer::NewShader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile)
-{
-	Shader* s = GetShader(name);
-	if (s == nullptr)
+	auto it = mMeshes.find(name);
+	if (it != mMeshes.end())
 	{
-		s = new Shader();
-		if (s->Load(vertexFile + ".vert", fragmentFile + ".frag"))
+		mMeshes.erase(it);
+	}
+}
+void Renderer::RemoveMesh(Mesh* mesh)
+{
+	auto it = mMeshes.begin();
+	while (it != mMeshes.end())
+	{
+		if (it->second == mesh)
 		{
-			mShaders.emplace(name, s);
+			break;
 		}
-		else
-		{
-			delete s;
-			s = nullptr;
-		}
+		it++;
 	}
-	return s;
-}
-Shader* Renderer::SetNewShader(const std::string& name, const std::string& fileName)
-{
-	Shader* s = NewShader(name, fileName);
-	if (s != nullptr)
+	if (it != mMeshes.end())
 	{
+		mMeshes.erase(it);
+	}
+}
+Shader* Renderer::CreateShader(const string& name, const string& fileName)
+{
+	return CreateShader(name, fileName+".vert", fileName+".frag");
+}
+Shader* Renderer::CreateShader(const string& name, const string & vertexFile, const string & fragmentFile)
+{
+	Shader* s = new Shader(name);
+	if (s->Load(vertexFile, fragmentFile))
+	{
+		mShaders.emplace(s->GetName(), s);
 		s->SetActive();
 	}
-	return s;
-}
-Shader* Renderer::SetNewShader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile)
-{
-	Shader* s = NewShader(name, vertexFile, fragmentFile);
-	if (s != nullptr)
+	else
 	{
-		s->SetActive();
+		delete s;
+		s = nullptr;
 	}
 	return s;
 }
-Shader* Renderer::SetShader(const std::string& name)
+Shader* Renderer::GetShader(const string& name)
 {
-	Shader* s = GetShader(name);
-	if (s != nullptr)
-	{
-		s->SetActive();
-	}
-	return s;
-}
-Shader* Renderer::GetShader(const std::string& name)
-{
-	Shader* s = nullptr;
 	auto i = mShaders.find(name);
 	if (i != mShaders.end())
 	{
-		s = i->second;
+		return i->second;
 	}
-	return s;
+	else
+	{
+		cerr << "Failed to get shader \"" << name << "\"" << endl;
+		return nullptr;
+	}
+}
+void Renderer::SetShader(const string& name)
+{
+	Shader* s = GetShader(name);
+	mCurrentShader = s;
+	s->SetActive();	
+}
+void Renderer::RemoveShader(const string& name)
+{
+	auto it = mShaders.find(name);
+	if (it != mShaders.end())
+	{
+		mShaders.erase(it);
+	}
+}
+void Renderer::RemoveShader(Shader* shader)
+{
+	auto it = mShaders.begin();
+	while (it != mShaders.end())
+	{
+		if (it->second == shader)
+		{
+			break;
+		}
+		it++;
+	}
+	if (it != mShaders.end())
+	{
+		mShaders.erase(it);
+	}
+}
+vector<MeshComponent*>* Renderer::LinkMeshToShader(MeshComponent* mesh, Shader* shader)
+{
+	vector<MeshComponent*>* meshVector = GetMeshShader(shader);
+	if (meshVector == nullptr)
+	{
+		meshVector = new vector<MeshComponent*>();
+		meshVector->emplace_back(mesh);
+		mMeshShaders.emplace(shader, meshVector);
+	}
+	else
+	{
+		meshVector->emplace_back(mesh);
+	}
+	return meshVector;
+}
+bool Renderer::LinkMeshesToShader(Shader* shader, vector<MeshComponent*>* meshVector)
+{
+	if (GetMeshShader(shader) != nullptr)
+	{
+		return false;
+	}
+	mMeshShaders.emplace(shader, meshVector);
+	return true;
+}
+vector<MeshComponent*>* Renderer::GetMeshShader(Shader* shader)
+{
+	vector<MeshComponent*>* meshVector = nullptr;
+	auto it = mMeshShaders.find(shader);
+	if (it != mMeshShaders.end())
+	{
+		meshVector = it->second;
+	}
+	return meshVector;
+}
+Shader* Renderer::GetShaderFromMesh(MeshComponent* mesh)
+{
+	auto it = mMeshShaders.begin();
+	while (it != mMeshShaders.end())
+	{
+		vector<MeshComponent*>* meshVector = it->second;
+		auto i = find(meshVector->begin(), meshVector->end(), mesh);
+		if (i != meshVector->end())
+		{
+			return it->first;
+		}
+		it++;
+	}
+	return nullptr;
+}
+void Renderer::UnlinkShader(Shader* shader)
+{
+	auto it = mMeshShaders.find(shader);
+	if (it != mMeshShaders.end())
+	{
+		mMeshShaders.erase(it);
+	}
+}
+void Renderer::UnlinkMesh(MeshComponent* mesh)
+{
+	auto it = mMeshShaders.begin();
+	while (it != mMeshShaders.end())
+	{
+		vector<MeshComponent*>* meshVector = it->second;
+		auto i = find(meshVector->begin(), meshVector->end(), mesh);
+		if (i != meshVector->end())
+		{
+			meshVector->erase(i);
+			break;
+		}
+		it++;
+	}
+}
+void Renderer::UnlinkMeshes(vector<MeshComponent*>* meshVector)
+{
+	auto it = mMeshShaders.begin();
+	while (it != mMeshShaders.end())
+	{
+		if (it->second == meshVector)
+		{
+			break;
+		}
+		it++;
+	}
+	if (it != mMeshShaders.end())
+	{
+		mMeshShaders.erase(it);
+	}
 }
 void Renderer::Draw3DScene(unsigned int framebuffer, const Matrix4& view, const Matrix4& proj, bool lit)
 {
@@ -352,36 +499,26 @@ void Renderer::Draw3DScene(unsigned int framebuffer, const Matrix4& view, const 
 	// Enable depth buffering/disable alpha blend
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	// Set the mesh shader active
-	mCurrentShader = SetShader("Mesh");
-	// Update view-projection matrix
-	mCurrentShader->SetMatrixUniform("uViewProj", view * proj);
-	// Update lighting uniforms
-	if (lit)
+	for (auto it = mMeshShaders.begin(); it != mMeshShaders.end(); it++)
 	{
-		SetLightUniforms(mCurrentShader, view);
-	}
-	for (auto mc : mMeshComps)
-	{
-		if (mc->GetVisible())
+		// Set the specific mesh shader as active
+		mCurrentShader = it->first;
+		mCurrentShader->SetActive(); 
+		// Update view-projection matrix
+		mCurrentShader->SetMatrixUniform("uViewProj", view * proj);
+		// Update lighting uniforms
+		if (lit)
 		{
-			mc->Draw(mCurrentShader);
+			SetLightUniforms(mCurrentShader, view);
 		}
-	}
-	// Draw any skinned meshes now
-	mCurrentShader = SetShader("Skinned");
-	// Update view-projection matrix
-	mCurrentShader->SetMatrixUniform("uViewProj", view * proj);
-	// Update lighting uniforms
-	if (lit)
-	{
-		SetLightUniforms(mCurrentShader, view);
-	}
-	for (auto sk : mSkeletalMeshes)
-	{
-		if (sk->GetVisible())
+		vector<MeshComponent*>* meshVector = it->second;
+		for (auto  i = meshVector->begin(); i != meshVector->end(); ++i)// Note: mesh could also be a skeletal mesh coponent
 		{
-			sk->Draw(mCurrentShader);
+			MeshComponent* mesh = *i;
+			if (mesh->GetVisible())
+			{
+				mesh->Draw(mCurrentShader);
+			}
 		}
 	}
 }
@@ -427,7 +564,7 @@ void Renderer::DrawFromGBuffer()
 	// Disable depth testing for the global lighting pass
 	glDisable(GL_DEPTH_TEST);
 	// Activate global G-buffer shader
-	mCurrentShader = SetShader("Global");
+	SetShader("Global");
 	// Activate sprite vertices quad
 	mSpriteVerts->SetActive();
 	// Set the G-buffer textures to sample
@@ -445,7 +582,7 @@ void Renderer::DrawFromGBuffer()
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	// Set the point light shader and mesh as active
-	mCurrentShader = SetShader("PointLight");
+	SetShader("PointLight");
 	mPointLightMesh->GetVertexArray()->SetActive();
 	// Set the view-projection matrix
 	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
@@ -463,7 +600,7 @@ void Renderer::DrawFromGBuffer()
 bool Renderer::LoadShaders()
 {
 	// Create sprite shader
-	mCurrentShader = SetNewShader("Sprite", "Shaders/Sprite");
+	mCurrentShader = CreateShader("Sprite", "Shaders/Sprite");
 	if (mCurrentShader == nullptr)
 	{
 		return false;
@@ -472,7 +609,7 @@ bool Renderer::LoadShaders()
 	Matrix4 spriteViewProj = Matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
 	mCurrentShader->SetMatrixUniform("uViewProj", spriteViewProj);
 	// Create basic mesh shader
-	mCurrentShader = SetNewShader("Mesh", "Shaders/Phong", "Shaders/GBufferWrite");
+	mCurrentShader = CreateShader("Mesh", "Shaders/Phong.vert", "Shaders/GBufferWrite.frag");
 	if (mCurrentShader == nullptr)
 	{
 		return false;
@@ -482,14 +619,14 @@ bool Renderer::LoadShaders()
 	mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), mScreenWidth, mScreenHeight, 10.0f, 10000.0f);
 	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
 	// Create skinned shader
-	mCurrentShader = SetNewShader("Skinned", "Shaders/Skinned", "Shaders/GBufferWrite");
+	mCurrentShader = CreateShader("Skinned", "Shaders/Skinned.vert", "Shaders/GBufferWrite.frag");
 	if (mCurrentShader == nullptr)
 	{
 		return false;
 	}
 	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
 	// Create shader for drawing from GBuffer (global lighting)
-	mCurrentShader = SetNewShader("Global", "Shaders/GBufferGlobal");
+	mCurrentShader = CreateShader("Global", "Shaders/GBufferGlobal");
 	if (mCurrentShader == nullptr)
 	{
 		return false;
@@ -504,7 +641,7 @@ bool Renderer::LoadShaders()
 	Matrix4 gbufferWorld = Matrix4::CreateScale(mScreenWidth, -mScreenHeight, 1.0f);
 	mCurrentShader->SetMatrixUniform("uWorldTransform", gbufferWorld);
 	// Create a shader for point lights from GBuffer
-	mCurrentShader = SetNewShader("PointLight", "Shaders/BasicMesh", "Shaders/GBufferPointLight");
+	mCurrentShader = CreateShader("PointLight","Shaders/BasicMesh.vert", "Shaders/GBufferPointLight.frag");
 	if (mCurrentShader == nullptr)
 	{
 		return false;

@@ -27,6 +27,17 @@ public:
 	{
 		return mStrafeSpeed;
 	}
+	float GetJumpSpeed() const
+	{
+		return mJumpSpeed;
+	}
+	void SetSpeed(float angularSpeed, float forwardSpeed, float strafeSpeed, float jumpSpeed)
+	{
+		mAngularSpeed = angularSpeed;
+		mForwardSpeed = forwardSpeed;
+		mStrafeSpeed = strafeSpeed;
+		mJumpSpeed = jumpSpeed;
+	}
 	void SetAngularSpeed(float speed)
 	{
 		mAngularSpeed = speed;
@@ -36,6 +47,10 @@ public:
 		mForwardSpeed = speed;
 	}
 	void SetStrafeSpeed(float speed)
+	{
+		mStrafeSpeed = speed;
+	}
+	void SetJumpSpeed(float speed)
 	{
 		mStrafeSpeed = speed;
 	}
@@ -49,4 +64,5 @@ protected:
 	float mAngularSpeed;
 	float mForwardSpeed;
 	float mStrafeSpeed;
+	float mJumpSpeed;
 };

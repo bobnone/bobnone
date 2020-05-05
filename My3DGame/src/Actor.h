@@ -85,6 +85,10 @@ public:
 	{
 		return Vector3::Transform(Vector3::UnitY, mRotation);
 	}
+	Vector3 GetUp() const
+	{
+		return Vector3::Transform(Vector3::UnitZ, mRotation);
+	}
 	void RotateToNewForward(const Vector3& forward);
 	State GetState() const
 	{

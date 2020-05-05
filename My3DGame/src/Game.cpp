@@ -276,8 +276,8 @@ void Game::LoadData()
 	// Create HUD
 	mHUD = new HUD(this);
 	// Load the level from file
-	//LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
-	LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
+	LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
+	//LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
 	// Start music
 	mMusicEvent = mAudioSystem->PlayEvent("event:/Music");
 	// Enable relative mouse mode for camera look

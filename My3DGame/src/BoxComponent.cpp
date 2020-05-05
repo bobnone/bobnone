@@ -10,9 +10,9 @@
 #include "Actor.h"
 #include "Game.h"
 #include "PhysWorld.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
-BoxComponent::BoxComponent(Actor* owner, int updateOrder) :Component(owner, updateOrder), mObjectBox(Vector3::Zero, Vector3::Zero), mWorldBox(Vector3::Zero, Vector3::Zero), mShouldRotate(true)
+BoxComponent::BoxComponent(Actor* owner, int updateOrder) :Component(owner, updateOrder), mObjectBox(vector3::Zero, vector3::Zero), mWorldBox(vector3::Zero, vector3::Zero), mShouldRotate(true)
 {
 	mOwner->GetGame()->GetPhysWorld()->AddBox(this);
 }

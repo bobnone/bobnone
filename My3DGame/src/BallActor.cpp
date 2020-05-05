@@ -9,11 +9,12 @@
 #include "BallActor.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "Shader.h"
 #include "MeshComponent.h"
 #include "Mesh.h"
 #include "BallMove.h"
 #include "AudioComponent.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 BallActor::BallActor(Game* game) :Actor(game), mLifeSpan(2.0f)
 {

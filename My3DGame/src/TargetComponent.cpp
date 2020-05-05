@@ -6,12 +6,8 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
-#include "BoxComponent.h"
-#include "Actor.h"
-#include "Game.h"
-#include "PhysWorld.h"
 #include "TargetComponent.h"
-#include "Math.h"
+#include "Actor.h"
 #include "Game.h"
 #include "HUD.h"
 

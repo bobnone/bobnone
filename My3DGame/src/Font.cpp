@@ -8,7 +8,6 @@
 
 #include "Font.h"
 #include "Texture.h"
-#include <vector>
 #include "Game.h"
 
 Font::Font(class Game* game) :mGame(game)
@@ -51,7 +50,7 @@ void Font::Unload()
 		TTF_CloseFont(font.second);
 	}
 }
-Texture* Font::RenderText(const std::string& textKey, const Vector3& color /*= Color::White*/, int pointSize /*= 24*/)
+Texture* Font::RenderText(const std::string& textKey, const vector3& color, int pointSize)
 {
 	Texture* texture = nullptr;
 	// Convert to SDL_Color

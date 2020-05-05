@@ -13,8 +13,7 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Texture.h"
-#include "VertexArray.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 MeshComponent::MeshComponent(Actor* owner, bool isSkeletal):Component(owner), mMesh(nullptr), mShader(nullptr), mTextureIndex(0), mVisible(true), mIsSkeletal(isSkeletal)
 {

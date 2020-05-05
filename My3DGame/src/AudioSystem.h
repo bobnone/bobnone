@@ -9,8 +9,8 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "SoundEvent.h"
 #include "Math.h"
+#include "SoundEvent.h"
 
 // Forward declarations to avoid including FMOD header
 namespace FMOD
@@ -39,7 +39,7 @@ public:
 	SoundEvent PlayEvent(const std::string& name);
 	void Update(float deltaTime);
 	// For positional audio
-	void SetListener(const Matrix4& viewMatrix);
+	void SetListener(const matrix4& viewMatrix);
 	// Control buses
 	float GetBusVolume(const std::string& name) const;
 	bool GetBusPaused(const std::string& name) const;

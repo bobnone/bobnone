@@ -8,7 +8,7 @@
 
 #include "Component.h"
 #include "Actor.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 const char* Component::TypeNames[NUM_COMPONENT_TYPES] = {
 	"Component",

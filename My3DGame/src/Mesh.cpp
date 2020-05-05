@@ -8,11 +8,6 @@
 
 #include "Mesh.h"
 #include "Renderer.h"
-#include "Texture.h"
-#include "VertexArray.h"
-#include <rapidjson/document.h>
-#include <SDL/SDL_log.h>
-#include "Math.h"
 #include "LevelLoader.h"
 #include <fstream>
 
@@ -37,13 +32,13 @@ namespace
 		uint32_t mNumVerts = 0;
 		uint32_t mNumIndices = 0;
 		// Box/radius of mesh, used for collision
-		AABB mBox{ Vector3::Zero, Vector3::Zero };
+		AABB mBox{vector3::Zero, vector3::Zero};
 		//std::string mShaderName = "Mesh";
 		float mRadius = 0.0f;
 		float mSpecularPower = 100.0f;
 	};
 }
-Mesh::Mesh() :mBox(Vector3::Infinity, Vector3::NegInfinity), mVertexArray(nullptr), mRadius(0.0f), mSpecularPower(100.0f)
+Mesh::Mesh() :mBox(vector3::Infinity, vector3::NegInfinity), mVertexArray(nullptr), mRadius(0.0f), mSpecularPower(100.0f)
 {
 	//
 }
@@ -122,8 +117,8 @@ bool Mesh::Load(const std::string& fileName, Renderer* renderer)
 			SDL_Log("Unexpected vertex format for %s", fileName.c_str());
 			return false;
 		}
-		Vector3 pos(vert[0].GetDouble(), vert[1].GetDouble(), vert[2].GetDouble());
-		mRadius = Math::Max(mRadius, pos.LengthSq());
+		vector3 pos(vert[0].GetDouble(), vert[1].GetDouble(), vert[2].GetDouble());
+		mRadius = Math::Max(mRadius, pos.Length2());
 		mBox.UpdateMinMax(pos);
 		if (layout == VertexArray::PosNormTex)
 		{

@@ -10,7 +10,6 @@
 #include <SDL/SDL_log.h>
 #include <fmod_studio.hpp>
 #include <fmod_errors.h>
-#include <vector>
 
 unsigned int AudioSystem::sNextID = 0;
 
@@ -233,21 +232,20 @@ void AudioSystem::Update(float deltaTime)
 }
 namespace
 {
-	FMOD_VECTOR VecToFMOD(const Vector3& in)
+	FMOD_VECTOR VecToFMOD(const vector3& in)
 	{
-		// Convert from our coordinates (+x forward, +y right, +z up)
-		// to FMOD (+z forward, +x right, +y up)
+		// FMOD_VECTOR (+x right, +y up, +z forward)
 		FMOD_VECTOR v;
-		v.x = in.y;
-		v.y = in.z;
-		v.z = in.x;
+		v.x = in.x;
+		v.y = in.y;
+		v.z = in.z;
 		return v;
 	}
 }
-void AudioSystem::SetListener(const Matrix4& viewMatrix)
+void AudioSystem::SetListener(const matrix4& viewMatrix)
 {
 	// Invert the view matrix to get the correct vectors
-	Matrix4 invView = viewMatrix;
+	matrix4 invView = viewMatrix;
 	invView.Invert();
 	FMOD_3D_ATTRIBUTES listener;
 	// Set position, forward, up

@@ -9,12 +9,15 @@
 #include "FollowActor.h"
 #include "SkeletalMeshComponent.h"
 #include "Mesh.h"
+#include "Shader.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "Skeleton.h"
+#include "Animation.h"
 #include "FollowCamera.h"
 #include "MoveComponent.h"
 #include "MirrorCamera.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 FollowActor::FollowActor(Game* game) :Actor(game), mMoving(false)
 {
@@ -25,7 +28,7 @@ FollowActor::FollowActor(Game* game) :Actor(game), mMoving(false)
 	mMeshComp->SetShader(renderer->GetShader("Skinned"));
 	mMeshComp->SetSkeleton(GetGame()->GetSkeleton("Assets/CatWarrior.gpskel"));
 	mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatActionIdle.gpanim"));
-	SetPosition(Vector3(0.0f, 0.0f, -100.0f));
+	SetPosition(vector3(0.0f, -100.0f, 0.0f));
 	mMoveComp = new MoveComponent(this);
 	mCameraComp = new FollowCamera(this);
 	mCameraComp->SnapToIdeal();
@@ -36,7 +39,9 @@ FollowActor::FollowActor(Game* game) :Actor(game), mMoving(false)
 }
 void FollowActor::ActorInput(const uint8_t* keys)
 {
-	float angularSpeed = 0.0f;
+	float angularXSpeed = 0.0f;
+	float angularYSpeed = 0.0f;
+	float angularZSpeed = 0.0f;
 	float forwardSpeed = 0.0f;
 	float strafeSpeed = 0.0f;
 	float jumpSpeed = 0.0f;
@@ -57,14 +62,6 @@ void FollowActor::ActorInput(const uint8_t* keys)
 	{
 		strafeSpeed += 400;
 	}
-	if (keys[SDL_SCANCODE_Q])
-	{
-		angularSpeed -= Math::Pi;
-	}
-	else if (keys[SDL_SCANCODE_E])
-	{
-		angularSpeed += Math::Pi;
-	}
 	if (keys[SDL_SCANCODE_SPACE])
 	{
 		jumpSpeed += 400;
@@ -72,6 +69,30 @@ void FollowActor::ActorInput(const uint8_t* keys)
 	else if (keys[SDL_SCANCODE_Z])//idk why it dosent like ctrl; modifier key?
 	{
 		jumpSpeed -= 400;
+	}
+	if (keys[SDL_SCANCODE_INSERT])
+	{
+		angularXSpeed -= Math::Pi;
+	}
+	else if (keys[SDL_SCANCODE_DELETE])
+	{
+		angularXSpeed += Math::Pi;
+	}
+	if (keys[SDL_SCANCODE_HOME])
+	{
+		angularYSpeed -= Math::Pi;
+	}
+	else if (keys[SDL_SCANCODE_END])
+	{
+		angularYSpeed += Math::Pi;
+	}
+	if (keys[SDL_SCANCODE_PAGEUP])
+	{
+		angularZSpeed -= Math::Pi;
+	}
+	else if (keys[SDL_SCANCODE_PAGEDOWN])
+	{
+		angularZSpeed += Math::Pi;
 	}
 	// Did we just start moving forward?
 	if (!mMoving && !Math::NearZero(forwardSpeed))
@@ -85,7 +106,7 @@ void FollowActor::ActorInput(const uint8_t* keys)
 		mMoving = false;
 		mMeshComp->PlayAnimation(GetGame()->GetAnimation("Assets/CatActionIdle.gpanim"));
 	}
-	mMoveComp->SetSpeed(angularSpeed, forwardSpeed, strafeSpeed, jumpSpeed);
+	mMoveComp->SetSpeed(angularXSpeed, angularYSpeed, angularZSpeed, forwardSpeed, strafeSpeed, jumpSpeed);
 }
 void FollowActor::SetVisible(bool visible)
 {

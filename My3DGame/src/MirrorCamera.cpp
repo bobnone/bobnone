@@ -10,7 +10,7 @@
 #include "Actor.h"
 #include "Game.h"
 #include "Renderer.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 MirrorCamera::MirrorCamera(Actor* owner) :CameraComponent(owner), mHorzDist(150.0f), mVertDist(200.0f), mTargetDist(400.0f)
 {
@@ -20,21 +20,21 @@ void MirrorCamera::Update(float deltaTime)
 {
 	CameraComponent::Update(deltaTime);
 	// Compute ideal position
-	Vector3 idealPos = ComputeCameraPos();
+	vector3 idealPos = ComputeCameraPos();
 	// Target is target dist in front of owning actor
-	Vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
+	vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
 	// Use actual position here, not ideal
-	Matrix4 view = Matrix4::CreateLookAt(idealPos, target, Vector3::UnitZ);
+	matrix4 view = matrix4::CreateLookAt(idealPos, target, vector3::UnitZ);
 	Game* game = mOwner->GetGame();
 	game->GetRenderer()->SetMirrorView(view);
 }
 void MirrorCamera::SnapToIdeal()
 {
-	Vector3 idealPos = ComputeCameraPos();
+	vector3 idealPos = ComputeCameraPos();
 	// Compute target and view
-	Vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
+	vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
 	// Use actual position here, not ideal
-	Matrix4 view = Matrix4::CreateLookAt(idealPos, target, Vector3::UnitZ);
+	matrix4 view = matrix4::CreateLookAt(idealPos, target, vector3::UnitZ);
 	Game* game = mOwner->GetGame();
 	game->GetRenderer()->SetMirrorView(view);
 }
@@ -52,11 +52,11 @@ void MirrorCamera::SaveProperties(rapidjson::Document::AllocatorType& alloc, rap
 	JsonHelper::AddFloat(alloc, inObj, "vertDist", mVertDist);
 	JsonHelper::AddFloat(alloc, inObj, "targetDist", mTargetDist);
 }
-Vector3 MirrorCamera::ComputeCameraPos() const
+vector3 MirrorCamera::ComputeCameraPos() const
 {
 	// Set camera position in front of
-	Vector3 cameraPos = mOwner->GetPosition();
+	vector3 cameraPos = mOwner->GetPosition();
 	cameraPos += mOwner->GetForward() * mHorzDist;
-	cameraPos += Vector3::UnitZ * mVertDist;
+	cameraPos += vector3::UnitZ * mVertDist;
 	return cameraPos;
 }

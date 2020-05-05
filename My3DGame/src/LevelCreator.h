@@ -9,12 +9,6 @@
 #pragma once
 #include <string>
 #include <rapidjson/document.h>
-#include <functional>
-#include <unordered_map>
-#include "Math.h"
-
-using ActorFunc = std::function<class Actor*(class Game*, const rapidjson::Value&)>;
-using ComponentFunc = std::function<class Component*(class Actor*, const rapidjson::Value&)>;
 
 class LevelCreator
 {

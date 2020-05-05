@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------
 
 #include "Skeleton.h"
-#include <rapidjson/document.h>
 #include <SDL/SDL_log.h>
 #include "MatrixPalette.h"
 #include "LevelLoader.h"
@@ -101,7 +100,7 @@ void Skeleton::ComputeGlobalInvBindPose()
 	// multiplied by the parent's global bind pose
 	for (size_t i = 1; i < mGlobalInvBindPoses.size(); i++)
 	{
-		Matrix4 localMat = mBones[i].mLocalBindPose.ToMatrix();
+		matrix4 localMat = mBones[i].mLocalBindPose.ToMatrix();
 		mGlobalInvBindPoses[i] = localMat * mGlobalInvBindPoses[mBones[i].mParent];
 	}
 	// Step 2: Invert

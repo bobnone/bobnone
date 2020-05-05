@@ -129,18 +129,17 @@ bool SoundEvent::Is3D() const
 }
 namespace
 {
-	FMOD_VECTOR VecToFMOD(const Vector3& in)
+	FMOD_VECTOR VecToFMOD(const vector3& in)
 	{
-		// Convert from our coordinates (+x forward, +y right, +z up)
-		// to FMOD (+z forward, +x right, +y up)
+		//FMOD_VECTOR(+x right, +y up, +z forward)
 		FMOD_VECTOR v;
-		v.x = in.y;
-		v.y = in.z;
-		v.z = in.x;
+		v.x = in.x;
+		v.y = in.y;
+		v.z = in.z;
 		return v;
 	}
 }
-void SoundEvent::Set3DAttributes(const Matrix4& worldTrans)
+void SoundEvent::Set3DAttributes(const matrix4& worldTrans)
 {
 	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
 	if (event)

@@ -7,11 +7,8 @@
 // ----------------------------------------------------------------
 
 #include "Mouse.h"
-#include "Texture.h"
-#include "Shader.h"
 #include "Game.h"
 #include "Renderer.h"
-#include "Font.h"
 
 Mouse::Mouse(Game* game):mGame(game)
 {
@@ -31,7 +28,7 @@ void Mouse::ProcessInput(const uint8_t* keys)
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 	// Convert to (0,0) center coordinates
-	Vector2 mousePos(static_cast<float>(x), static_cast<float>(y));
+	vector2 mousePos(static_cast<float>(x), static_cast<float>(y));
 	mousePos.x -= mGame->GetRenderer()->GetScreenWidth() * 0.5f;
 	mousePos.y = mGame->GetRenderer()->GetScreenHeight() * 0.5f - mousePos.y;
 }

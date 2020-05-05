@@ -9,7 +9,6 @@
 #include "PhysWorld.h"
 #include <algorithm>
 #include "BoxComponent.h"
-#include <SDL/SDL.h>
 
 PhysWorld::PhysWorld(Game* game) :mGame(game)
 {
@@ -22,7 +21,7 @@ bool PhysWorld::SegmentCast(const LineSegment& l, CollisionInfo& outColl)
 	// Initialize closestT to infinity, so first
 	// intersection will always update closestT
 	float closestT = Math::Infinity;
-	Vector3 norm;
+	vector3 norm;
 	// Test against all boxes
 	for (auto box : mBoxes)
 	{

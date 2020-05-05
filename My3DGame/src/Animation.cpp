@@ -8,7 +8,6 @@
 
 #include "Animation.h"
 #include "Skeleton.h"
-#include <rapidjson/document.h>
 #include <SDL/SDL_log.h>
 #include "LevelLoader.h"
 
@@ -94,7 +93,7 @@ bool Animation::Load(const std::string& fileName)
 	}
 	return true;
 }
-void Animation::GetGlobalPoseAtTime(std::vector<Matrix4>& outPoses, const Skeleton* inSkeleton, float inTime) const
+void Animation::GetGlobalPoseAtTime(std::vector<matrix4>& outPoses, const Skeleton* inSkeleton, float inTime) const
 {
 	if (outPoses.size() != mNumBones)
 	{
@@ -116,13 +115,13 @@ void Animation::GetGlobalPoseAtTime(std::vector<Matrix4>& outPoses, const Skelet
 	}
 	else
 	{
-		outPoses[0] = Matrix4::Identity;
+		outPoses[0] = matrix4();
 	}
 	const std::vector<Skeleton::Bone>& bones = inSkeleton->GetBones();
 	// Now setup the poses for the rest
 	for (size_t bone = 1; bone < mNumBones; bone++)
 	{
-		Matrix4 localMat; // (Defaults to identity)
+		matrix4 localMat; // (Defaults to identity)
 		if (mTracks[bone].size() > 0)
 		{
 			BoneTransform interp = BoneTransform::Interpolate(mTracks[bone][frame],

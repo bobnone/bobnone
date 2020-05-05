@@ -52,7 +52,7 @@ void AudioComponent::Update(float deltaTime)
 void AudioComponent::OnUpdateWorldTransform()
 {
 	// Update 3D events' world transforms
-	Matrix4 world = mOwner->GetWorldTransform();
+	matrix4 world = mOwner->GetWorldTransform();
 	for (auto& event : mEvents3D)
 	{
 		if (event.IsValid())

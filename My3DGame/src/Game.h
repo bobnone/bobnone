@@ -8,11 +8,11 @@
 
 #pragma once
 #include <unordered_map>
-#include <string>
 #include <vector>
-#include "Math.h"
-#include "SoundEvent.h"
 #include <SDL/SDL_types.h>
+#include "SoundEvent.h"
+#include "Renderer.h"
+
 
 class Game
 {
@@ -26,6 +26,10 @@ public:
 	class Renderer* GetRenderer()
 	{
 		return mRenderer;
+	}
+	class Texture* GetTexture(const std::string& fileName)
+	{
+		return mRenderer->GetTexture(fileName);
 	}
 	class AudioSystem* GetAudioSystem()
 	{

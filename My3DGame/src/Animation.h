@@ -35,7 +35,7 @@ public:
 	// bone at the specified time in the animation. It is expected that the time
 	const std::string& GetFileName() const { return mFileName; }
 	// is >= 0.0f and <= mDuration
-	void GetGlobalPoseAtTime(std::vector<Matrix4>& outPoses, const class Skeleton* inSkeleton, float inTime) const;
+	void GetGlobalPoseAtTime(std::vector<matrix4>& outPoses, const class Skeleton* inSkeleton, float inTime) const;
 private:
 	// Number of bones for the animation
 	size_t mNumBones;

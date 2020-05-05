@@ -18,51 +18,51 @@
 #include <algorithm>
 #include <array>
 
-LineSegment::LineSegment(const Vector3& start, const Vector3& end) :mStart(start), mEnd(end)
+LineSegment::LineSegment(const vector3& start, const vector3& end) :mStart(start), mEnd(end)
 {
 	//
 }
-Vector3 LineSegment::PointOnSegment(float t) const
+vector3 LineSegment::PointOnSegment(float t) const
 {
 	return mStart + (mEnd - mStart) * t;
 }
-float LineSegment::MinDistSq(const Vector3& point) const
+float LineSegment::MinDistSq(const vector3& point) const
 {
 	// Construct vectors
-	Vector3 ab = mEnd - mStart;
-	Vector3 ba = -1.0f * ab;
-	Vector3 ac = point - mStart;
-	Vector3 bc = point - mEnd;
+	vector3 ab = mEnd - mStart;
+	vector3 ba = -1.0f * ab;
+	vector3 ac = point - mStart;
+	vector3 bc = point - mEnd;
 	// Case 1: C projects prior to A
-	if (Vector3::Dot(ab, ac) < 0.0f)
+	if (vector3::Dot(ab, ac) < 0.0f)
 	{
-		return ac.LengthSq();
+		return ac.Length2();
 	}
 	// Case 2: C projects after B
-	else if (Vector3::Dot(ba, bc) < 0.0f)
+	else if (vector3::Dot(ba, bc) < 0.0f)
 	{
-		return bc.LengthSq();
+		return bc.Length2();
 	}
 	// Case 3: C projects onto line
 	else
 	{
 		// Compute p
-		float scalar = Vector3::Dot(ac, ab) / Vector3::Dot(ab, ab);
-		Vector3 p = scalar * ab;
+		float scalar = vector3::Dot(ac, ab) / vector3::Dot(ab, ab);
+		vector3 p = scalar * ab;
 		// Compute length squared of ac - p
-		return (ac - p).LengthSq();
+		return (ac - p).Length2();
 	}
 }
 float LineSegment::MinDistSq(const LineSegment & s1, const LineSegment & s2)
 {
-	Vector3   u = s1.mEnd - s1.mStart;
-	Vector3   v = s2.mEnd - s2.mStart;
-	Vector3   w = s1.mStart - s2.mStart;
-	float    a = Vector3::Dot(u, u);         // always >= 0
-	float    b = Vector3::Dot(u, v);
-	float    c = Vector3::Dot(v, v);         // always >= 0
-	float    d = Vector3::Dot(u, w);
-	float    e = Vector3::Dot(v, w);
+	vector3   u = s1.mEnd - s1.mStart;
+	vector3   v = s2.mEnd - s2.mStart;
+	vector3   w = s1.mStart - s2.mStart;
+	float    a = vector3::Dot(u, u);         // always >= 0
+	float    b = vector3::Dot(u, v);
+	float    c = vector3::Dot(v, v);         // always >= 0
+	float    d = vector3::Dot(u, w);
+	float    e = vector3::Dot(v, w);
 	float    D = a * c - b * b;        // always >= 0
 	float    sc, sN, sD = D;       // sc = sN / sD, default sD = D >= 0
 	float    tc, tN, tD = D;       // tc = tN / tD, default tD = D >= 0
@@ -131,43 +131,43 @@ float LineSegment::MinDistSq(const LineSegment & s1, const LineSegment & s2)
 	sc = (Math::NearZero(sN) ? 0.0f : sN / sD);
 	tc = (Math::NearZero(tN) ? 0.0f : tN / tD);
 	// get the difference of the two closest points
-	Vector3   dP = w + (sc * u) - (tc * v);  // =  S1(sc) - S2(tc)
-	return dP.LengthSq();   // return the closest distance squared
+	vector3   dP = w + (sc * u) - (tc * v);  // =  S1(sc) - S2(tc)
+	return dP.Length2();   // return the closest distance squared
 }
-Plane::Plane(const Vector3& normal, float d) :mNormal(normal), mD(d)
+Plane::Plane(const vector3& normal, float d) :mNormal(normal), mD(d)
 {
 	//
 }
-Plane::Plane(const Vector3& a, const Vector3& b, const Vector3& c)
+Plane::Plane(const vector3& a, const vector3& b, const vector3& c)
 {
 	// Compute vectors from a to b and a to c
-	Vector3 ab = b - a;
-	Vector3 ac = c - a;
+	vector3 ab = b - a;
+	vector3 ac = c - a;
 	// Cross product and normalize to get normal
-	mNormal = Vector3::Cross(ab, ac);
+	mNormal = vector3::Cross(ab, ac);
 	mNormal.Normalize();
 	// d = -P dot n
-	mD = -Vector3::Dot(a, mNormal);
+	mD = -vector3::Dot(a, mNormal);
 }
-float Plane::SignedDist(const Vector3& point) const
+float Plane::SignedDist(const vector3& point) const
 {
-	return Vector3::Dot(point, mNormal) - mD;
+	return vector3::Dot(point, mNormal) - mD;
 }
-Sphere::Sphere(const Vector3& center, float radius) :mCenter(center), mRadius(radius)
+Sphere::Sphere(const vector3& center, float radius) :mCenter(center), mRadius(radius)
 {
 	//
 }
-bool Sphere::Contains(const Vector3& point) const
+bool Sphere::Contains(const vector3& point) const
 {
 	// Get distance squared between center and point
-	float distSq = (mCenter - point).LengthSq();
+	float distSq = (mCenter - point).Length2();
 	return distSq <= (mRadius * mRadius);
 }
-AABB::AABB(const Vector3& min, const Vector3& max) :mMin(min), mMax(max)
+AABB::AABB(const vector3& min, const vector3& max) :mMin(min), mMax(max)
 {
 	//
 }
-void AABB::UpdateMinMax(const Vector3& point)
+void AABB::UpdateMinMax(const vector3& point)
 {
 	// Update each component separately
 	mMin.x = Math::Min(mMin.x, point.x);
@@ -177,41 +177,41 @@ void AABB::UpdateMinMax(const Vector3& point)
 	mMax.y = Math::Max(mMax.y, point.y);
 	mMax.z = Math::Max(mMax.z, point.z);
 }
-void AABB::Rotate(const Quaternion& q)
+void AABB::Rotate(const quaternion& q)
 {
 	// Construct the 8 points for the corners of the box
-	std::array<Vector3, 8> points;
+	std::array<vector3, 8> points;
 	// Min point is always a corner
 	points[0] = mMin;
 	// Permutations with 2 min and 1 max
-	points[1] = Vector3(mMax.x, mMin.y, mMin.z);
-	points[2] = Vector3(mMin.x, mMax.y, mMin.z);
-	points[3] = Vector3(mMin.x, mMin.y, mMax.z);
+	points[1] = vector3(mMax.x, mMin.y, mMin.z);
+	points[2] = vector3(mMin.x, mMax.y, mMin.z);
+	points[3] = vector3(mMin.x, mMin.y, mMax.z);
 	// Permutations with 2 max and 1 min
-	points[4] = Vector3(mMin.x, mMax.y, mMax.z);
-	points[5] = Vector3(mMax.x, mMin.y, mMax.z);
-	points[6] = Vector3(mMax.x, mMax.y, mMin.z);
+	points[4] = vector3(mMin.x, mMax.y, mMax.z);
+	points[5] = vector3(mMax.x, mMin.y, mMax.z);
+	points[6] = vector3(mMax.x, mMax.y, mMin.z);
 	// Max point corner
-	points[7] = Vector3(mMax);
+	points[7] = vector3(mMax);
 	// Rotate first point
-	Vector3 p = Vector3::Transform(points[0], q);
+	vector3 p = vector3::Transform(points[0], q);
 	// Reset min/max to first point rotated
 	mMin = p;
 	mMax = p;
 	// Update min/max based on remaining points, rotated
 	for (size_t i = 1; i < points.size(); i++)
 	{
-		p = Vector3::Transform(points[i], q);
+		p = vector3::Transform(points[i], q);
 		UpdateMinMax(p);
 	}
 }
-bool AABB::Contains(const Vector3& point) const
+bool AABB::Contains(const vector3& point) const
 {
 	bool outside = point.x < mMin.x || point.y < mMin.y || point.z < mMin.z || point.x > mMax.x || point.y > mMax.y || point.z > mMax.z;
 	// If none of these are true, the point is inside the box
 	return !outside;
 }
-float AABB::MinDistSq(const Vector3& point) const
+float AABB::MinDistSq(const vector3& point) const
 {
 	// Compute differences for each axis
 	float dx = Math::Max(mMin.x - point.x, 0.0f);
@@ -223,24 +223,24 @@ float AABB::MinDistSq(const Vector3& point) const
 	// Distance squared formula
 	return dx * dx + dy * dy + dz * dz;
 }
-Capsule::Capsule(const Vector3& start, const Vector3& end, float radius) :mSegment(start, end), mRadius(radius)
+Capsule::Capsule(const vector3& start, const vector3& end, float radius):mSegment(start, end), mRadius(radius)
 {
 	//
 }
-Vector3 Capsule::PointOnSegment(float t) const
+vector3 Capsule::PointOnSegment(float t) const
 {
 	return mSegment.PointOnSegment(t);
 }
-bool Capsule::Contains(const Vector3& point) const
+bool Capsule::Contains(const vector3& point) const
 {
 	// Get minimal dist. sq. between point and line segment
 	float distSq = mSegment.MinDistSq(point);
 	return distSq <= (mRadius * mRadius);
 }
-bool ConvexPolygon::Contains(const Vector2& point) const
+bool ConvexPolygon::Contains(const vector2& point) const
 {
 	float sum = 0.0f;
-	Vector2 a, b;
+	vector2 a, b;
 	for (size_t i = 0; i < mVertices.size() - 1; i++)
 	{
 		// From point to first vertex
@@ -250,20 +250,20 @@ bool ConvexPolygon::Contains(const Vector2& point) const
 		b = mVertices[i + 1] - point;
 		b.Normalize();
 		// Add angle to sum
-		sum += Math::Acos(Vector2::Dot(a, b));
+		sum += Math::Acos(vector2::Dot(a, b));
 	}
 	// Have to add angle for last vertex and first vertex
 	a = mVertices.back() - point;
 	a.Normalize();
 	b = mVertices.front() - point;
 	b.Normalize();
-	sum += Math::Acos(Vector2::Dot(a, b));
+	sum += Math::Acos(vector2::Dot(a, b));
 	// Return true if approximately 2pi
 	return Math::NearZero(sum - Math::TwoPi);
 }
 bool Intersect(const Sphere& a, const Sphere& b)
 {
-	float distSq = (a.mCenter - b.mCenter).LengthSq();
+	float distSq = (a.mCenter - b.mCenter).Length2();
 	float sumRadii = a.mRadius + b.mRadius;
 	return distSq <= (sumRadii * sumRadii);
 }
@@ -287,11 +287,11 @@ bool Intersect(const Sphere& s, const AABB& box)
 bool Intersect(const LineSegment& l, const Sphere& s, float& outT)
 {
 	// Compute X, Y, a, b, c as per equations
-	Vector3 X = l.mStart - s.mCenter;
-	Vector3 Y = l.mEnd - l.mStart;
-	float a = Vector3::Dot(Y, Y);
-	float b = 2.0f * Vector3::Dot(X, Y);
-	float c = Vector3::Dot(X, X) - s.mRadius * s.mRadius;
+	vector3 X = l.mStart - s.mCenter;
+	vector3 Y = l.mEnd - l.mStart;
+	float a = vector3::Dot(Y, Y);
+	float b = 2.0f * vector3::Dot(X, Y);
+	float c = vector3::Dot(X, X) - s.mRadius * s.mRadius;
 	// Compute discriminant
 	float disc = b * b - 4.0f * a * c;
 	if (disc < 0.0f)
@@ -324,12 +324,12 @@ bool Intersect(const LineSegment& l, const Sphere& s, float& outT)
 bool Intersect(const LineSegment& l, const Plane& p, float& outT)
 {
 	// First test if there's a solution for t
-	float denom = Vector3::Dot(l.mEnd - l.mStart, p.mNormal);
+	float denom = vector3::Dot(l.mEnd - l.mStart, p.mNormal);
 	if (Math::NearZero(denom))
 	{
 		// The only way they intersect is if start
 		// is a point on the plane (P dot N) == d
-		if (Math::NearZero(Vector3::Dot(l.mStart, p.mNormal) - p.mD))
+		if (Math::NearZero(vector3::Dot(l.mStart, p.mNormal) - p.mD))
 		{
 			return true;
 		}
@@ -340,7 +340,7 @@ bool Intersect(const LineSegment& l, const Plane& p, float& outT)
 	}
 	else
 	{
-		float numer = -Vector3::Dot(l.mStart, p.mNormal) - p.mD;
+		float numer = -vector3::Dot(l.mStart, p.mNormal) - p.mD;
 		outT = numer / denom;
 		// Validate t is within bounds of the line segment
 		if (outT >= 0.0f && outT <= 1.0f)
@@ -353,7 +353,7 @@ bool Intersect(const LineSegment& l, const Plane& p, float& outT)
 		}
 	}
 }
-bool TestSidePlane(float start, float end, float negd, const Vector3& norm, std::vector<std::pair<float, Vector3>>& out)
+bool TestSidePlane(float start, float end, float negd, const vector3& norm, std::vector<std::pair<float, vector3>>& out)
 {
 	float denom = end - start;
 	if (Math::NearZero(denom))
@@ -376,25 +376,25 @@ bool TestSidePlane(float start, float end, float negd, const Vector3& norm, std:
 		}
 	}
 }
-bool Intersect(const LineSegment& l, const AABB& b, float& outT, Vector3& outNorm)
+bool Intersect(const LineSegment& l, const AABB& b, float& outT, vector3& outNorm)
 {
 	// Vector to save all possible t values, and normals for those sides
-	std::vector<std::pair<float, Vector3>> tValues;
+	std::vector<std::pair<float, vector3>> tValues;
 	// Test the x planes
-	TestSidePlane(l.mStart.x, l.mEnd.x, b.mMin.x, Vector3::NegUnitX, tValues);
-	TestSidePlane(l.mStart.x, l.mEnd.x, b.mMax.x, Vector3::UnitX, tValues);
+	TestSidePlane(l.mStart.x, l.mEnd.x, b.mMin.x, vector3::NegUnitX, tValues);
+	TestSidePlane(l.mStart.x, l.mEnd.x, b.mMax.x, vector3::UnitX, tValues);
 	// Test the y planes
-	TestSidePlane(l.mStart.y, l.mEnd.y, b.mMin.y, Vector3::NegUnitY, tValues);
-	TestSidePlane(l.mStart.y, l.mEnd.y, b.mMax.y, Vector3::UnitY, tValues);
+	TestSidePlane(l.mStart.y, l.mEnd.y, b.mMin.y, vector3::NegUnitY, tValues);
+	TestSidePlane(l.mStart.y, l.mEnd.y, b.mMax.y, vector3::UnitY, tValues);
 	// Test the z planes
-	TestSidePlane(l.mStart.z, l.mEnd.z, b.mMin.z, Vector3::NegUnitZ, tValues);
-	TestSidePlane(l.mStart.z, l.mEnd.z, b.mMax.z, Vector3::UnitZ, tValues);
+	TestSidePlane(l.mStart.z, l.mEnd.z, b.mMin.z, vector3::NegUnitZ, tValues);
+	TestSidePlane(l.mStart.z, l.mEnd.z, b.mMax.z, vector3::UnitZ, tValues);
 	// Sort the t values in ascending order
-	std::sort(tValues.begin(), tValues.end(), [](const std::pair<float, Vector3>& a, const std::pair<float, Vector3>& b) {
+	std::sort(tValues.begin(), tValues.end(), [](const std::pair<float, vector3>& a, const std::pair<float, vector3>& b) {
 		return a.first < b.first;
 	});
 	// Test if the box contains any of these points of intersection
-	Vector3 point;
+	vector3 point;
 	for (auto& t : tValues)
 	{
 		point = l.PointOnSegment(t.first);
@@ -412,12 +412,12 @@ bool SweptSphere(const Sphere& P0, const Sphere& P1,
 	const Sphere& Q0, const Sphere& Q1, float& outT)
 {
 	// Compute X, Y, a, b, and c
-	Vector3 X = P0.mCenter - Q0.mCenter;
-	Vector3 Y = P1.mCenter - P0.mCenter - (Q1.mCenter - Q0.mCenter);
-	float a = Vector3::Dot(Y, Y);
-	float b = 2.0f * Vector3::Dot(X, Y);
+	vector3 X = P0.mCenter - Q0.mCenter;
+	vector3 Y = P1.mCenter - P0.mCenter - (Q1.mCenter - Q0.mCenter);
+	float a = vector3::Dot(Y, Y);
+	float b = 2.0f * vector3::Dot(X, Y);
 	float sumRadii = P0.mRadius + Q0.mRadius;
-	float c = Vector3::Dot(X, X) - sumRadii * sumRadii;
+	float c = vector3::Dot(X, X) - sumRadii * sumRadii;
 	// Solve discriminant
 	float disc = b * b - 4.0f * a * c;
 	if (disc < 0.0f)

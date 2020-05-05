@@ -9,7 +9,6 @@
 #pragma once
 #include <vector>
 #include "Math.h"
-#include <rapidjson/document.h>
 #include "Component.h"
 
 class Actor
@@ -45,11 +44,11 @@ public:
 	// Any actor-specific input code (overridable)
 	virtual void ActorInput(const uint8_t* keyState);
 	// Getters/setters
-	const Vector3& GetPosition() const
+	const vector3& GetPosition() const
 	{
 		return mPosition;
 	}
-	void SetPosition(const Vector3& pos)
+	void SetPosition(const vector3& pos)
 	{
 		mPosition = pos;
 		mRecomputeTransform = true;
@@ -63,33 +62,33 @@ public:
 		mScale = scale;
 		mRecomputeTransform = true;
 	}
-	const Quaternion& GetRotation() const
+	const quaternion& GetRotation() const
 	{
 		return mRotation;
 	}
-	void SetRotation(const Quaternion& rotation)
+	void SetRotation(const quaternion& rotation)
 	{
 		mRotation = rotation;
 		mRecomputeTransform = true;
 	}
 	void ComputeWorldTransform();
-	const Matrix4& GetWorldTransform() const
+	const matrix4& GetWorldTransform() const
 	{
 		return mWorldTransform;
 	}
-	Vector3 GetForward() const
+	vector3 GetRight() const
 	{
-		return Vector3::Transform(Vector3::UnitX, mRotation);
+		return vector3::Transform(vector3::UnitY, mRotation);
 	}
-	Vector3 GetRight() const
+	vector3 GetUp() const
 	{
-		return Vector3::Transform(Vector3::UnitY, mRotation);
+		return vector3::Transform(vector3::UnitZ, mRotation);
 	}
-	Vector3 GetUp() const
+	vector3 GetForward() const
 	{
-		return Vector3::Transform(Vector3::UnitZ, mRotation);
+		return vector3::Transform(vector3::UnitX, mRotation);
 	}
-	void RotateToNewForward(const Vector3& forward);
+	void RotateToNewForward(const vector3& forward);
 	State GetState() const
 	{
 		return mState;
@@ -144,9 +143,9 @@ private:
 	// Actor's state
 	State mState;
 	// Transform
-	Matrix4 mWorldTransform;
-	Vector3 mPosition;
-	Quaternion mRotation;
+	matrix4 mWorldTransform;
+	vector3 mPosition;
+	quaternion mRotation;
 	float mScale;
 	bool mRecomputeTransform;
 	std::vector<Component*> mComponents;

@@ -12,6 +12,7 @@
 #include "MeshComponent.h"
 #include "BoxComponent.h"
 #include "Mesh.h"
+#include "Shader.h"
 
 PlaneActor::PlaneActor(Game* game) :Actor(game)
 {

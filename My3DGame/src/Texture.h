@@ -6,6 +6,7 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 
+#pragma once
 #include <string>
 
 class Texture

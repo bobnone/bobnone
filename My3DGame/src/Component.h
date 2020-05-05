@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include "Math.h"
 #include <rapidjson/document.h>
 
 class Component

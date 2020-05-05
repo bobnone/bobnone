@@ -7,26 +7,16 @@
 // ----------------------------------------------------------------
 
 #include "Game.h"
-#include <algorithm>
-#include "Renderer.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_ttf.h>
 #include "AudioSystem.h"
 #include "PhysWorld.h"
 #include "Actor.h"
-#include "UIScreen.h"
 #include "HUD.h"
-#include "MeshComponent.h"
-#include "FollowActor.h"
-#include "PlaneActor.h"
-#include "TargetActor.h"
-#include "BallActor.h"
 #include "PauseMenu.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
 #include "Font.h"
-#include <rapidjson/document.h>
 #include "Skeleton.h"
 #include "Animation.h"
-#include "PointLightComponent.h"
 #include "LevelLoader.h"
 #include "LevelCreator.h"
 
@@ -276,8 +266,8 @@ void Game::LoadData()
 	// Create HUD
 	mHUD = new HUD(this);
 	// Load the level from file
-	LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
-	//LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
+	//LevelLoader::LoadLevel(this, "Assets/Level4.gplevel");
+	LevelCreator::NewLevel(this, "Assets/NewLevel.gplevel");
 	// Start music
 	mMusicEvent = mAudioSystem->PlayEvent("event:/Music");
 	// Enable relative mouse mode for camera look

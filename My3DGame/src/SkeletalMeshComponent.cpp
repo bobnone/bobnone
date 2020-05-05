@@ -11,12 +11,10 @@
 #include "Mesh.h"
 #include "Actor.h"
 #include "Game.h"
-#include "Renderer.h"
 #include "Texture.h"
-#include "VertexArray.h"
 #include "Animation.h"
 #include "Skeleton.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 SkeletalMeshComponent::SkeletalMeshComponent(Actor* owner) :MeshComponent(owner, true), mSkeleton(nullptr)
 {
@@ -103,8 +101,8 @@ void SkeletalMeshComponent::SaveProperties(rapidjson::Document::AllocatorType& a
 }
 void SkeletalMeshComponent::ComputeMatrixPalette()
 {
-	const std::vector<Matrix4>& globalInvBindPoses = mSkeleton->GetGlobalInvBindPoses();
-	std::vector<Matrix4> currentPoses;
+	const std::vector<matrix4>& globalInvBindPoses = mSkeleton->GetGlobalInvBindPoses();
+	std::vector<matrix4> currentPoses;
 	mAnimation->GetGlobalPoseAtTime(currentPoses, mSkeleton, mAnimTime);
 	// Setup the palette for each bone
 	for (size_t i = 0; i < mSkeleton->GetNumBones(); i++)

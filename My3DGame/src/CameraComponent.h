@@ -19,5 +19,5 @@ public:
 		return TCameraComponent;
 	}
 protected:
-	void SetViewMatrix(const Matrix4& view);
+	void SetViewMatrix(const matrix4& view);
 };

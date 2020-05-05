@@ -18,9 +18,11 @@ public:
 	// Draw this point light as geometry
 	void Draw(class Shader* shader, class Mesh* mesh);
 	// Diffuse color
-	Vector3 mDiffuseColor;
+	vector3 mDiffuseColor;
 	// Specular color
-	Vector3 mSpecularColor;
+	vector3 mSpecularColor;
+	// Specular power
+	vector3 mSpecularPower;
 	// Radius of light
 	float mInnerRadius;
 	float mOuterRadius;

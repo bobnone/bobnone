@@ -7,11 +7,7 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include "Math.h"
 #include <cstdint>
-#include <string>
-#include <functional>
-#include <vector>
 
 class Mouse
 {

@@ -15,9 +15,17 @@ public:
 	// Lower update order to update first
 	MoveComponent(class Actor* owner, int updateOrder = 10);
 	void Update(float deltaTime) override;
-	float GetAngularSpeed() const
+	float GetAngularXSpeed() const
 	{
-		return mAngularSpeed;
+		return mAngularXSpeed;
+	}
+	float GetAngularYSpeed() const
+	{
+		return mAngularYSpeed;
+	}
+	float GetAngularZSpeed() const
+	{
+		return mAngularZSpeed;
 	}
 	float GetForwardSpeed() const
 	{
@@ -31,16 +39,26 @@ public:
 	{
 		return mJumpSpeed;
 	}
-	void SetSpeed(float angularSpeed, float forwardSpeed, float strafeSpeed, float jumpSpeed)
+	void SetSpeed(float angularXSpeed, float angularYSpeed, float angularZSpeed, float forwardSpeed, float strafeSpeed, float jumpSpeed)
 	{
-		mAngularSpeed = angularSpeed;
+		mAngularXSpeed = angularXSpeed;
+		mAngularYSpeed = angularYSpeed;
+		mAngularZSpeed = angularZSpeed;
 		mForwardSpeed = forwardSpeed;
 		mStrafeSpeed = strafeSpeed;
 		mJumpSpeed = jumpSpeed;
 	}
-	void SetAngularSpeed(float speed)
+	void SetAngularXSpeed(float speed)
 	{
-		mAngularSpeed = speed;
+		mAngularXSpeed = speed;
+	}
+	void SetAngularYSpeed(float speed)
+	{
+		mAngularYSpeed = speed;
+	}
+	void SetAngularZSpeed(float speed)
+	{
+		mAngularZSpeed = speed;
 	}
 	void SetForwardSpeed(float speed)
 	{
@@ -61,7 +79,9 @@ public:
 	void LoadProperties(const rapidjson::Value& inObj) override;
 	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 protected:
-	float mAngularSpeed;
+	float mAngularXSpeed;
+	float mAngularYSpeed;
+	float mAngularZSpeed;
 	float mForwardSpeed;
 	float mStrafeSpeed;
 	float mJumpSpeed;

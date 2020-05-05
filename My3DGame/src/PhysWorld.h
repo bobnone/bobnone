@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include <vector>
 #include <functional>
 #include "Math.h"
 #include "Collision.h"
@@ -20,9 +19,9 @@ public:
 	struct CollisionInfo
 	{
 		// Point of collision
-		Vector3 mPoint;
+		vector3 mPoint;
 		// Normal at collision
-		Vector3 mNormal;
+		vector3 mNormal;
 		// Component collided with
 		class BoxComponent* mBox;
 		// Owning actor of component

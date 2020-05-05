@@ -8,7 +8,7 @@
 
 #include "FollowCamera.h"
 #include "Actor.h"
-#include "LevelLoader.h"
+#include "JsonHelper.h"
 
 FollowCamera::FollowCamera(Actor* owner) :CameraComponent(owner), mHorzDist(350.0f), mVertDist(250.0f), mTargetDist(100.0f), mSpringConstant(128.0f)
 {
@@ -20,19 +20,19 @@ void FollowCamera::Update(float deltaTime)
 	// Compute dampening from spring constant
 	float dampening = 2.0f * Math::Sqrt(mSpringConstant);
 	// Compute ideal position
-	Vector3 idealPos = ComputeCameraPos();
+	vector3 idealPos = ComputeCameraPos();
 	// Compute difference between actual and ideal
-	Vector3 diff = mActualPos - idealPos;
+	vector3 diff = mActualPos - idealPos;
 	// Compute acceleration of spring
-	Vector3 acel = -mSpringConstant * diff - dampening * mVelocity;
+	vector3 acel = -mSpringConstant * diff - dampening * mVelocity;
 	// Update velocity
 	mVelocity += acel * deltaTime;
 	// Update actual camera position
 	mActualPos += mVelocity * deltaTime;
 	// Target is target dist in front of owning actor
-	Vector3 target = mOwner->GetPosition() + mOwner->GetForward() * mTargetDist;
+	vector3 target = mOwner->GetPosition() + mOwner->GetForward() * mTargetDist;
 	// Use actual position here, not ideal
-	Matrix4 view = Matrix4::CreateLookAt(mActualPos, target, Vector3::UnitZ);
+	matrix4 view = matrix4::CreateLookAt(mActualPos, target, vector3::UnitZ);
 	SetViewMatrix(view);
 }
 void FollowCamera::SnapToIdeal()
@@ -40,11 +40,11 @@ void FollowCamera::SnapToIdeal()
 	// Set actual position to ideal
 	mActualPos = ComputeCameraPos();
 	// Zero velocity
-	mVelocity = Vector3::Zero;
+	mVelocity = vector3::Zero;
 	// Compute target and view
-	Vector3 target = mOwner->GetPosition() + mOwner->GetForward() * mTargetDist;
+	vector3 target = mOwner->GetPosition() + mOwner->GetForward() * mTargetDist;
 	// Use actual position here, not ideal
-	Matrix4 view = Matrix4::CreateLookAt(mActualPos, target, Vector3::UnitZ);
+	matrix4 view = matrix4::CreateLookAt(mActualPos, target, vector3::UnitZ);
 	SetViewMatrix(view);
 }
 void FollowCamera::LoadProperties(const rapidjson::Value& inObj)
@@ -67,11 +67,11 @@ void FollowCamera::SaveProperties(rapidjson::Document::AllocatorType& alloc, rap
 	JsonHelper::AddFloat(alloc, inObj, "targetDist", mTargetDist);
 	JsonHelper::AddFloat(alloc, inObj, "springConstant", mSpringConstant);
 }
-Vector3 FollowCamera::ComputeCameraPos() const
+vector3 FollowCamera::ComputeCameraPos() const
 {
 	// Set camera position behind and above owner
-	Vector3 cameraPos = mOwner->GetPosition();
+	vector3 cameraPos = mOwner->GetPosition();
 	cameraPos -= mOwner->GetForward() * mHorzDist;
-	cameraPos += Vector3::UnitZ * mVertDist;
+	cameraPos += vector3::UnitZ * mVertDist;
 	return cameraPos;
 }

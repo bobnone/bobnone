@@ -12,12 +12,12 @@
 #include "MeshComponent.h"
 #include "BoxComponent.h"
 #include "Mesh.h"
+#include "Shader.h"
 #include "TargetComponent.h"
 
-TargetActor::TargetActor(Game* game) :Actor(game)
+TargetActor::TargetActor(Game* game):Actor(game)
 {
-	//SetScale(10.0f);
-	SetRotation(Quaternion(Vector3::UnitZ, Math::Pi));
+	SetRotation(quaternion(vector3::UnitZ, Math::Pi));
 	MeshComponent* mc = new MeshComponent(this);
 	Renderer* renderer = GetGame()->GetRenderer();
 	Mesh* mesh = renderer->GetMesh("Assets/Target.gpmesh");
@@ -27,4 +27,5 @@ TargetActor::TargetActor(Game* game) :Actor(game)
 	BoxComponent* bc = new BoxComponent(this);
 	bc->SetObjectBox(mesh->GetBox());
 	new TargetComponent(this);
+
 }

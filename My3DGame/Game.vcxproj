@@ -19,6 +19,7 @@
     <ClCompile Include="src\BallMove.cpp" />
     <ClCompile Include="src\BoneTransform.cpp" />
     <ClCompile Include="src\BoxComponent.cpp" />
+    <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\CameraComponent.cpp" />
     <ClCompile Include="src\Collision.cpp" />
     <ClCompile Include="src\Component.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GBuffer.cpp" />
     <ClCompile Include="src\HUD.cpp" />
+    <ClCompile Include="src\JsonHelper.cpp" />
     <ClCompile Include="src\LevelCreator.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -63,8 +65,10 @@
     <ClInclude Include="src\BallMove.h" />
     <ClInclude Include="src\BoneTransform.h" />
     <ClInclude Include="src\BoxComponent.h" />
+    <ClInclude Include="src\Button.h" />
     <ClInclude Include="src\CameraComponent.h" />
     <ClInclude Include="src\Collision.h" />
+    <ClInclude Include="src\Color.h" />
     <ClInclude Include="src\Component.h" />
     <ClInclude Include="src\DialogBox.h" />
     <ClInclude Include="src\FollowActor.h" />
@@ -73,6 +77,7 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\GBuffer.h" />
     <ClInclude Include="src\HUD.h" />
+    <ClInclude Include="src\JsonHelper.h" />
     <ClInclude Include="src\LevelCreator.h" />
     <ClInclude Include="src\LevelLoader.h" />
     <ClInclude Include="src\Math.h" />
@@ -159,7 +164,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\external\SDL\include;..\external\GLEW\include;..\external\SOIL\include;..\external\rapidjson\include;C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\studio\inc;C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\lowlevel\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\external\SDL\include;..\external\GLM\include;..\external\GLEW\include;..\external\SOIL\include;..\external\rapidjson\include;C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\studio\inc;C:\Program Files (x86)\FMOD SoundSystem\FMOD Studio API Windows\api\lowlevel\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>

@@ -7,21 +7,18 @@
 // ----------------------------------------------------------------
 
 #include "Renderer.h"
+#include <iostream>
 #include "Texture.h"
 #include "Mesh.h"
-#include <algorithm>
 #include "Shader.h"
 #include "VertexArray.h"
 #include "SpriteComponent.h"
 #include "MeshComponent.h"
+#include "SkeletalMeshComponent.h"
 #include "UIScreen.h"
 #include "Game.h"
-#include "SkeletalMeshComponent.h"
 #include "GBuffer.h"
 #include "PointLightComponent.h"
-#include <iostream>
-
-using namespace std;
 
 Renderer::Renderer(Game* game) :mGame(game), mCurrentShader(nullptr), mMirrorBuffer(0), mMirrorTexture(nullptr), mGBuffer(nullptr)
 {
@@ -78,11 +75,11 @@ bool Renderer::Initialize(float screenWidth, float screenHeight)
 	// Create quad for drawing sprites
 	CreateSpriteVerts();
 	// Create render target for mirror
-	//if (!CreateMirrorTarget())
-	//{
-	//	SDL_Log("Failed to create render target for mirror.");
-	//	return false;
-	//}
+	if (!CreateMirrorTarget())
+	{
+		SDL_Log("Failed to create render target for mirror.");
+		return false;
+	}
 	// Create G-buffer
 	mGBuffer = new GBuffer();
 	int width = static_cast<int>(mScreenWidth);
@@ -154,7 +151,7 @@ void Renderer::UnloadData()
 void Renderer::Draw()
 {
 	// Draw to the mirror texture first
-	//Draw3DScene(mMirrorBuffer, mMirrorView, mProjection);
+	Draw3DScene(mMirrorBuffer, mMirrorView, mProjection);
 	// Draw the 3D scene to the G-buffer
 	Draw3DScene(mGBuffer->GetBufferID(), mView, mProjection, false);
 	// Set the frame buffer back to zero (screen's frame buffer)
@@ -204,7 +201,7 @@ void Renderer::AddSprite(SpriteComponent* sprite)
 }
 void Renderer::RemoveSprite(SpriteComponent* sprite)
 {
-	auto i = find(mSprites.begin(), mSprites.end(), sprite);
+	auto i = std::find(mSprites.begin(), mSprites.end(), sprite);
 	mSprites.erase(i);
 }
 void Renderer::AddMeshComp(MeshComponent* mesh)
@@ -224,12 +221,12 @@ void Renderer::RemoveMeshComp(MeshComponent* mesh)
 	if (mesh->GetIsSkeletal())
 	{
 		SkeletalMeshComponent* sk = static_cast<SkeletalMeshComponent*>(mesh);
-		auto i = find(mSkeletalMeshComps.begin(), mSkeletalMeshComps.end(), sk);
+		auto i = std::find(mSkeletalMeshComps.begin(), mSkeletalMeshComps.end(), sk);
 		mSkeletalMeshComps.erase(i);
 	}
 	else
 	{
-		auto i = find(mMeshComps.begin(), mMeshComps.end(), mesh);
+		auto i = std::find(mMeshComps.begin(), mMeshComps.end(), mesh);
 		mMeshComps.erase(i);
 	}
 	UnlinkMesh(mesh);
@@ -243,7 +240,7 @@ void Renderer::RemovePointLight(PointLightComponent* light)
 	auto i = find(mPointLights.begin(), mPointLights.end(), light);
 	mPointLights.erase(i);
 }
-Texture* Renderer::GetTexture(const string& fileName)
+Texture* Renderer::GetTexture(const std::string& fileName)
 {
 	Texture* tex = nullptr;
 	auto i = mTextures.find(fileName);
@@ -266,7 +263,7 @@ Texture* Renderer::GetTexture(const string& fileName)
 	}
 	return tex;
 }
-void Renderer::RemoveTexture(const string& name)
+void Renderer::RemoveTexture(const std::string& name)
 {
 	auto it = mTextures.find(name);
 	if (it != mTextures.end())
@@ -290,7 +287,7 @@ void Renderer::RemoveTexture(Texture* tex)
 		mTextures.erase(it);
 	}
 }
-Mesh* Renderer::GetMesh(const string & fileName)
+Mesh* Renderer::GetMesh(const std::string & fileName)
 {
 	Mesh* m = nullptr;
 	auto i = mMeshes.find(fileName);
@@ -313,7 +310,7 @@ Mesh* Renderer::GetMesh(const string & fileName)
 	}
 	return m;
 }
-void Renderer::RemoveMesh(const string& name)
+void Renderer::RemoveMesh(const std::string& name)
 {
 	auto it = mMeshes.find(name);
 	if (it != mMeshes.end())
@@ -337,11 +334,11 @@ void Renderer::RemoveMesh(Mesh* mesh)
 		mMeshes.erase(it);
 	}
 }
-Shader* Renderer::CreateShader(const string& name, const string& fileName)
+Shader* Renderer::CreateShader(const std::string& name, const std::string& fileName)
 {
 	return CreateShader(name, fileName+".vert", fileName+".frag");
 }
-Shader* Renderer::CreateShader(const string& name, const string & vertexFile, const string & fragmentFile)
+Shader* Renderer::CreateShader(const std::string& name, const std::string & vertexFile, const std::string & fragmentFile)
 {
 	Shader* s = new Shader(name);
 	if (s->Load(vertexFile, fragmentFile))
@@ -356,7 +353,7 @@ Shader* Renderer::CreateShader(const string& name, const string & vertexFile, co
 	}
 	return s;
 }
-Shader* Renderer::GetShader(const string& name)
+Shader* Renderer::GetShader(const std::string& name)
 {
 	auto i = mShaders.find(name);
 	if (i != mShaders.end())
@@ -365,17 +362,17 @@ Shader* Renderer::GetShader(const string& name)
 	}
 	else
 	{
-		cerr << "Failed to get shader \"" << name << "\"" << endl;
+		std::cerr << "Failed to get shader \"" << name << "\"" << std::endl;
 		return nullptr;
 	}
 }
-void Renderer::SetShader(const string& name)
+void Renderer::SetShader(const std::string& name)
 {
 	Shader* s = GetShader(name);
 	mCurrentShader = s;
 	s->SetActive();	
 }
-void Renderer::RemoveShader(const string& name)
+void Renderer::RemoveShader(const std::string& name)
 {
 	auto it = mShaders.find(name);
 	if (it != mShaders.end())
@@ -399,12 +396,12 @@ void Renderer::RemoveShader(Shader* shader)
 		mShaders.erase(it);
 	}
 }
-vector<MeshComponent*>* Renderer::LinkMeshToShader(MeshComponent* mesh, Shader* shader)
+std::vector<MeshComponent*>* Renderer::LinkMeshToShader(MeshComponent* mesh, Shader* shader)
 {
-	vector<MeshComponent*>* meshVector = GetMeshShader(shader);
+	std::vector<MeshComponent*>* meshVector = GetMeshShader(shader);
 	if (meshVector == nullptr)
 	{
-		meshVector = new vector<MeshComponent*>();
+		meshVector = new std::vector<MeshComponent*>();
 		meshVector->emplace_back(mesh);
 		mMeshShaders.emplace(shader, meshVector);
 	}
@@ -414,7 +411,7 @@ vector<MeshComponent*>* Renderer::LinkMeshToShader(MeshComponent* mesh, Shader* 
 	}
 	return meshVector;
 }
-bool Renderer::LinkMeshesToShader(Shader* shader, vector<MeshComponent*>* meshVector)
+bool Renderer::LinkMeshesToShader(Shader* shader, std::vector<MeshComponent*>* meshVector)
 {
 	if (GetMeshShader(shader) != nullptr)
 	{
@@ -423,9 +420,9 @@ bool Renderer::LinkMeshesToShader(Shader* shader, vector<MeshComponent*>* meshVe
 	mMeshShaders.emplace(shader, meshVector);
 	return true;
 }
-vector<MeshComponent*>* Renderer::GetMeshShader(Shader* shader)
+std::vector<MeshComponent*>* Renderer::GetMeshShader(Shader* shader)
 {
-	vector<MeshComponent*>* meshVector = nullptr;
+	std::vector<MeshComponent*>* meshVector = nullptr;
 	auto it = mMeshShaders.find(shader);
 	if (it != mMeshShaders.end())
 	{
@@ -438,7 +435,7 @@ Shader* Renderer::GetShaderFromMesh(MeshComponent* mesh)
 	auto it = mMeshShaders.begin();
 	while (it != mMeshShaders.end())
 	{
-		vector<MeshComponent*>* meshVector = it->second;
+		std::vector<MeshComponent*>* meshVector = it->second;
 		auto i = find(meshVector->begin(), meshVector->end(), mesh);
 		if (i != meshVector->end())
 		{
@@ -461,7 +458,7 @@ void Renderer::UnlinkMesh(MeshComponent* mesh)
 	auto it = mMeshShaders.begin();
 	while (it != mMeshShaders.end())
 	{
-		vector<MeshComponent*>* meshVector = it->second;
+		std::vector<MeshComponent*>* meshVector = it->second;
 		auto i = find(meshVector->begin(), meshVector->end(), mesh);
 		if (i != meshVector->end())
 		{
@@ -471,7 +468,7 @@ void Renderer::UnlinkMesh(MeshComponent* mesh)
 		it++;
 	}
 }
-void Renderer::UnlinkMeshes(vector<MeshComponent*>* meshVector)
+void Renderer::UnlinkMeshes(std::vector<MeshComponent*>* meshVector)
 {
 	auto it = mMeshShaders.begin();
 	while (it != mMeshShaders.end())
@@ -487,7 +484,7 @@ void Renderer::UnlinkMeshes(vector<MeshComponent*>* meshVector)
 		mMeshShaders.erase(it);
 	}
 }
-void Renderer::Draw3DScene(unsigned int framebuffer, const Matrix4& view, const Matrix4& proj, bool lit)
+void Renderer::Draw3DScene(unsigned int framebuffer, const matrix4& view, const matrix4& proj, bool lit)
 {
 	// Set the current frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -511,7 +508,7 @@ void Renderer::Draw3DScene(unsigned int framebuffer, const Matrix4& view, const 
 		{
 			SetLightUniforms(mCurrentShader, view);
 		}
-		vector<MeshComponent*>* meshVector = it->second;
+		std::vector<MeshComponent*>* meshVector = it->second;
 		for (auto  i = meshVector->begin(); i != meshVector->end(); ++i)// Note: mesh could also be a skeletal mesh coponent
 		{
 			MeshComponent* mesh = *i;
@@ -606,7 +603,7 @@ bool Renderer::LoadShaders()
 		return false;
 	}
 	// Set the view-projection matrix
-	Matrix4 spriteViewProj = Matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
+	matrix4 spriteViewProj = matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
 	mCurrentShader->SetMatrixUniform("uViewProj", spriteViewProj);
 	// Create basic mesh shader
 	mCurrentShader = CreateShader("Mesh", "Shaders/Phong.vert", "Shaders/GBufferWrite.frag");
@@ -615,8 +612,8 @@ bool Renderer::LoadShaders()
 		return false;
 	}
 	// Set the view-projection matrix
-	mView = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitX, Vector3::UnitZ);
-	mProjection = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), mScreenWidth, mScreenHeight, 10.0f, 10000.0f);
+	mView = matrix4::CreateLookAt(vector3::Zero, vector3::UnitZ, vector3::UnitY);
+	mProjection = matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), mScreenWidth, mScreenHeight, 10.0f, 10000.0f);
 	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
 	// Create skinned shader
 	mCurrentShader = CreateShader("Skinned", "Shaders/Skinned.vert", "Shaders/GBufferWrite.frag");
@@ -638,7 +635,7 @@ bool Renderer::LoadShaders()
 	// The view projection is just the sprite one
 	mCurrentShader->SetMatrixUniform("uViewProj", spriteViewProj);
 	// The world transform scales to the screen and flips y
-	Matrix4 gbufferWorld = Matrix4::CreateScale(mScreenWidth, -mScreenHeight, 1.0f);
+	matrix4 gbufferWorld = matrix4::CreateScale(mScreenWidth, -mScreenHeight, 1.0f);
 	mCurrentShader->SetMatrixUniform("uWorldTransform", gbufferWorld);
 	// Create a shader for point lights from GBuffer
 	mCurrentShader = CreateShader("PointLight","Shaders/BasicMesh.vert", "Shaders/GBufferPointLight.frag");
@@ -650,7 +647,7 @@ bool Renderer::LoadShaders()
 	mCurrentShader->SetIntUniform("uGTexColor", 0);
 	mCurrentShader->SetIntUniform("uGNormal", 1);
 	mCurrentShader->SetIntUniform("uGWorldPos", 2);
-	mCurrentShader->SetVector2Uniform("uScreenDimensions", Vector2(mScreenWidth, mScreenHeight));
+	mCurrentShader->SetVector2Uniform("uScreenDimensions", vector2(mScreenWidth, mScreenHeight));
 	return true;
 }
 void Renderer::CreateSpriteVerts()
@@ -667,10 +664,10 @@ void Renderer::CreateSpriteVerts()
 	};
 	mSpriteVerts = new VertexArray(vertices, 4, VertexArray::PosNormTexRGB, indices, 6);
 }
-void Renderer::SetLightUniforms(Shader* shader, const Matrix4& view)
+void Renderer::SetLightUniforms(Shader* shader, const matrix4& view)
 {
 	// Camera position is from inverted view
-	Matrix4 invView = view;
+	matrix4 invView = view;
 	invView.Invert();
 	shader->SetVectorUniform("uCameraPos", invView.GetTranslation());
 	// Ambient light
@@ -680,25 +677,25 @@ void Renderer::SetLightUniforms(Shader* shader, const Matrix4& view)
 	shader->SetVectorUniform("uDirLight.mDiffuseColor", mDirLight.mDiffuseColor);
 	shader->SetVectorUniform("uDirLight.mSpecularColor", mDirLight.mSpecularColor);
 }
-Vector3 Renderer::Unproject(const Vector3& screenPoint) const
+vector3 Renderer::Unproject(const vector3& screenPoint) const
 {
 	// Convert screenPoint to device coordinates (between -1 and +1)
-	Vector3 deviceCoord = screenPoint;
+	vector3 deviceCoord = screenPoint;
 	deviceCoord.x /= (mScreenWidth) * 0.5f;
 	deviceCoord.y /= (mScreenHeight) * 0.5f;
 	// Transform vector by unprojection matrix
-	Matrix4 unprojection = mView * mProjection;
+	matrix4 unprojection = mView * mProjection;
 	unprojection.Invert();
-	return Vector3::TransformWithPerspDiv(deviceCoord, unprojection);
+	return vector3::TransformWithPerspDiv(deviceCoord, unprojection);
 }
-void Renderer::GetScreenDirection(Vector3& outStart, Vector3& outDir) const
+void Renderer::GetScreenDirection(vector3& outStart, vector3& outDir) const
 {
 	// Get start point (in center of screen on near plane)
-	Vector3 screenPoint(0.0f, 0.0f, 0.0f);
+	vector3 screenPoint(0.0f, 0.0f, 0.0f);
 	outStart = Unproject(screenPoint);
 	// Get end point (in center of screen, between near and far)
 	screenPoint.z = 0.9f;
-	Vector3 end = Unproject(screenPoint);
+	vector3 end = Unproject(screenPoint);
 	// Get direction vector
 	outDir = end - outStart;
 	outDir.Normalize();

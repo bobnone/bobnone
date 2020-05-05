@@ -6,30 +6,14 @@
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
 #include "LevelCreator.h"
-#include "LevelLoader.h"
 #include <fstream>
-#include <vector>
-#include <SDL/SDL.h>
+#include "JsonHelper.h"
 #include "Game.h"
 #include "Renderer.h"
-#include "Actor.h"
-#include "BallActor.h"
 #include "FollowActor.h"
 #include "PlaneActor.h"
 #include "TargetActor.h"
-#include "Component.h"
-#include "AudioComponent.h"
-#include "BallMove.h"
-#include "BoxComponent.h"
-#include "CameraComponent.h"
-#include "FollowCamera.h"
-#include "MeshComponent.h"
-#include "MoveComponent.h"
-#include "SkeletalMeshComponent.h"
-#include "SpriteComponent.h"
-#include "MirrorCamera.h"
 #include "PointLightComponent.h"
-#include "TargetComponent.h"
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 
@@ -112,15 +96,15 @@ void LevelCreator::UnloadLevel(class Game* game)
 void LevelCreator::NewGlobalProperties(rapidjson::Document::AllocatorType& alloc, Game* game, rapidjson::Value& inObject)
 {
 	// Ambient light
-	Vector3 ambientLight = Vector3(0.3, 0.3, 0.3);
+	vector3 ambientLight = vector3(0.3, 0.3, 0.3);
 	game->GetRenderer()->SetAmbientLight(ambientLight);
 	JsonHelper::AddVector3(alloc, inObject, "ambientLight", ambientLight);
 	// Directional light
 	rapidjson::Value dirObj(rapidjson::kObjectType);
 	DirectionalLight& light = game->GetRenderer()->GetDirectionalLight();
-	light.mDirection = Vector3(-1.0, -1.0, -10.0);
-	light.mDiffuseColor = Vector3(0.5, 0.5, 0.5);
-	light.mSpecularColor = Vector3(0.5, 0.5, 0.5);
+	light.mDirection = vector3(-1.0, -1.0, -10.0);
+	light.mDiffuseColor = vector3(0.5, 0.5, 0.5);
+	light.mSpecularColor = vector3(0.5, 0.5, 0.5);
 	JsonHelper::AddVector3(alloc, dirObj, "direction", light.mDirection);
 	JsonHelper::AddVector3(alloc, dirObj, "diffuseColor", light.mDiffuseColor);
 	JsonHelper::AddVector3(alloc, dirObj, "specularColor", light.mSpecularColor);
@@ -130,32 +114,32 @@ void LevelCreator::CreateActors(Game* game)
 {
 	FollowActor* player = new FollowActor(game);
 	PlaneActor* levelFloor0 = new PlaneActor(game);
-	levelFloor0->SetPosition(Vector3(0.0, 0.0, -100.0));
+	levelFloor0->SetPosition(vector3(0.0, 0.0, -100.0));
 	PlaneActor* levelFloor1 = new PlaneActor(game);
-	levelFloor1->SetPosition(Vector3(1000.0, 0.0, -100.0));
+	levelFloor1->SetPosition(vector3(1000.0, 0.0, -100.0));
 	PlaneActor* levelFloor2 = new PlaneActor(game);
-	levelFloor2->SetPosition(Vector3(2000.0, 0.0, -100.0));
+	levelFloor2->SetPosition(vector3(2000.0, 0.0, -100.0));
 	TargetActor* target0 = new TargetActor(game);
-	target0->SetPosition(Vector3(1000.0, 0.0, 0.0));
+	target0->SetPosition(vector3(1000.0, 0.0, 0.0));
 	target0->SetScale(10.0);
 	Actor* posLight0 = new Actor(game);
 	PointLightComponent* plc0 = new PointLightComponent(posLight0);
-	plc0->mDiffuseColor = Vector3(1.0, 0.0, 0.0);
-	plc0->mSpecularColor = Vector3(0.5, 0.5, 0.5);
+	plc0->mDiffuseColor = vector3(1.0, 0.0, 0.0);
+	plc0->mSpecularColor = vector3(0.5, 0.5, 0.5);
 	plc0->mInnerRadius = 100;
 	plc0->mOuterRadius = 200;
 	Actor* posLight1 = new Actor(game);
-	posLight1->SetPosition(Vector3(500.0, 500.0, 0.0));
+	posLight1->SetPosition(vector3(500.0, 500.0, 0.0));
 	PointLightComponent* plc1 = new PointLightComponent(posLight1);
-	plc1->mDiffuseColor = Vector3(0.0, 1.0, 0.0);
-	plc1->mSpecularColor = Vector3(0.5, 0.5, 0.5);
+	plc1->mDiffuseColor = vector3(0.0, 1.0, 0.0);
+	plc1->mSpecularColor = vector3(0.5, 0.5, 0.5);
 	plc1->mInnerRadius = 100;
 	plc1->mOuterRadius = 200;
 	Actor* posLight3 = new Actor(game);
-	posLight3->SetPosition(Vector3(500.0, 0.0, 0.0));
+	posLight3->SetPosition(vector3(500.0, 0.0, 0.0));
 	PointLightComponent* plc3 = new PointLightComponent(posLight3);
-	plc3->mDiffuseColor = Vector3(0.5, 0.5, 0.0);
-	plc3->mSpecularColor = Vector3(0.5, 0.5, 0.5);
+	plc3->mDiffuseColor = vector3(0.5, 0.5, 0.0);
+	plc3->mSpecularColor = vector3(0.5, 0.5, 0.5);
 	plc3->mInnerRadius = 100;
 	plc3->mOuterRadius = 200;
 }

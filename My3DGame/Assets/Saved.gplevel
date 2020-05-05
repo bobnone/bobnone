@@ -30,15 +30,15 @@
             "properties": {
                 "state": "active",
                 "position": [
-                    0.0,
-                    0.0,
-                    -100.0
+                    3.8021092414855959,
+                    22.400005340576173,
+                    29.354887008666993
                 ],
                 "rotation": [
                     0.0,
+                    0.0643579438328743,
                     0.0,
-                    0.0,
-                    1.0
+                    0.9979323744773865
                 ],
                 "scale": 1.0,
                 "moving": false
@@ -50,7 +50,8 @@
                         "updateOrder": 10,
                         "angularSpeed": 0.0,
                         "forwardSpeed": 0.0,
-                        "strafeSpeed": 0.0
+                        "strafeSpeed": 0.0,
+                        "jumpSpeed": 0.0
                     }
                 },
                 {
@@ -58,13 +59,15 @@
                     "properties": {
                         "updateOrder": 100,
                         "meshFile": "Assets/CatWarrior.gpmesh",
+                        "vertexShaderFile": "Shaders/Skinned.vert",
+                        "fragmentShaderFile": "Shaders/GBufferWrite.frag",
                         "textureIndex": 0,
                         "visible": true,
                         "isSkeletal": true,
                         "skelFile": "Assets/CatWarrior.gpskel",
                         "animFile": "Assets/CatActionIdle.gpanim",
                         "animPlayRate": 1.0,
-                        "animTime": 1.5439999103546143
+                        "animTime": 1.2539961338043213
                     }
                 },
                 {
@@ -72,14 +75,14 @@
                     "properties": {
                         "updateOrder": 200,
                         "actualPos": [
-                            -350.0,
-                            0.0,
-                            150.0
+                            -41.15529251098633,
+                            272.40008544921877,
+                            -317.7456359863281
                         ],
                         "velocity": [
-                            0.0,
-                            0.0,
-                            0.0
+                            -0.00006473756366176531,
+                            -0.0005832504248246551,
+                            -0.0005179005092941225
                         ],
                         "horzDist": 350.0,
                         "vertDist": 250.0,
@@ -94,6 +97,374 @@
                         "horzDist": 150.0,
                         "vertDist": 200.0,
                         "targetDist": 400.0
+                    }
+                }
+            ]
+        },
+        {
+            "type": "PlaneActor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    0.0,
+                    0.0,
+                    -100.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": 10.0
+            },
+            "components": [
+                {
+                    "type": "MeshComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "meshFile": "Assets/Plane.gpmesh",
+                        "vertexShaderFile": "Shaders/Phong.vert",
+                        "fragmentShaderFile": "Shaders/GBufferWrite.frag",
+                        "textureIndex": 0,
+                        "visible": true,
+                        "isSkeletal": false
+                    }
+                },
+                {
+                    "type": "BoxComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "objectMin": [
+                            -50.0,
+                            -50.0,
+                            0.0
+                        ],
+                        "objectMax": [
+                            50.0,
+                            50.0,
+                            -0.0
+                        ],
+                        "worldMin": [
+                            -500.0,
+                            -500.0,
+                            -100.0
+                        ],
+                        "worldMax": [
+                            500.0,
+                            500.0,
+                            -100.0
+                        ],
+                        "shouldRotate": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "PlaneActor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    1000.0,
+                    0.0,
+                    -100.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": 10.0
+            },
+            "components": [
+                {
+                    "type": "MeshComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "meshFile": "Assets/Plane.gpmesh",
+                        "vertexShaderFile": "Shaders/Phong.vert",
+                        "fragmentShaderFile": "Shaders/GBufferWrite.frag",
+                        "textureIndex": 0,
+                        "visible": true,
+                        "isSkeletal": false
+                    }
+                },
+                {
+                    "type": "BoxComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "objectMin": [
+                            -50.0,
+                            -50.0,
+                            0.0
+                        ],
+                        "objectMax": [
+                            50.0,
+                            50.0,
+                            -0.0
+                        ],
+                        "worldMin": [
+                            500.0,
+                            -500.0,
+                            -100.0
+                        ],
+                        "worldMax": [
+                            1500.0,
+                            500.0,
+                            -100.0
+                        ],
+                        "shouldRotate": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "PlaneActor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    2000.0,
+                    0.0,
+                    -100.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": 10.0
+            },
+            "components": [
+                {
+                    "type": "MeshComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "meshFile": "Assets/Plane.gpmesh",
+                        "vertexShaderFile": "Shaders/Phong.vert",
+                        "fragmentShaderFile": "Shaders/GBufferWrite.frag",
+                        "textureIndex": 0,
+                        "visible": true,
+                        "isSkeletal": false
+                    }
+                },
+                {
+                    "type": "BoxComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "objectMin": [
+                            -50.0,
+                            -50.0,
+                            0.0
+                        ],
+                        "objectMax": [
+                            50.0,
+                            50.0,
+                            -0.0
+                        ],
+                        "worldMin": [
+                            1500.0,
+                            -500.0,
+                            -100.0
+                        ],
+                        "worldMax": [
+                            2500.0,
+                            500.0,
+                            -100.0
+                        ],
+                        "shouldRotate": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "TargetActor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    1000.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    1.0,
+                    0.0,
+                    -4.371138828673793e-8
+                ],
+                "scale": 10.0
+            },
+            "components": [
+                {
+                    "type": "MeshComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "meshFile": "Assets/Target.gpmesh",
+                        "vertexShaderFile": "Shaders/Phong.vert",
+                        "fragmentShaderFile": "Shaders/GBufferWrite.frag",
+                        "textureIndex": 0,
+                        "visible": true,
+                        "isSkeletal": false
+                    }
+                },
+                {
+                    "type": "BoxComponent",
+                    "properties": {
+                        "updateOrder": 100,
+                        "objectMin": [
+                            -25.000003814697267,
+                            -100.0,
+                            -100.0
+                        ],
+                        "objectMax": [
+                            0.000003999999989900971,
+                            100.0,
+                            100.0
+                        ],
+                        "worldMin": [
+                            999.9998779296875,
+                            -1000.0,
+                            -1000.0
+                        ],
+                        "worldMax": [
+                            1250.0001220703126,
+                            1000.0,
+                            1000.0
+                        ],
+                        "shouldRotate": true
+                    }
+                },
+                {
+                    "type": "TargetComponent",
+                    "properties": {
+                        "updateOrder": 100
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Actor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": 1.0
+            },
+            "components": [
+                {
+                    "type": "PointLightComponent",
+                    "properties": {
+                        "diffuseColor": [
+                            1.0,
+                            0.0,
+                            0.0
+                        ],
+                        "specularColor": [
+                            0.5,
+                            0.5,
+                            0.5
+                        ],
+                        "specularPower": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "innerRadius": 100.0,
+                        "outerRadius": 200.0
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Actor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    500.0,
+                    500.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": 1.0
+            },
+            "components": [
+                {
+                    "type": "PointLightComponent",
+                    "properties": {
+                        "diffuseColor": [
+                            0.0,
+                            1.0,
+                            0.0
+                        ],
+                        "specularColor": [
+                            0.5,
+                            0.5,
+                            0.5
+                        ],
+                        "specularPower": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "innerRadius": 100.0,
+                        "outerRadius": 200.0
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Actor",
+            "properties": {
+                "state": "active",
+                "position": [
+                    500.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": 1.0
+            },
+            "components": [
+                {
+                    "type": "PointLightComponent",
+                    "properties": {
+                        "diffuseColor": [
+                            0.5,
+                            0.5,
+                            0.0
+                        ],
+                        "specularColor": [
+                            0.5,
+                            0.5,
+                            0.5
+                        ],
+                        "specularPower": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "innerRadius": 100.0,
+                        "outerRadius": 200.0
                     }
                 }
             ]

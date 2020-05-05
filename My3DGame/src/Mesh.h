@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------
 
 #pragma once
-#include <vector>
 #include <string>
 #include "Collision.h"
 #include "VertexArray.h"

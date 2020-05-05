@@ -8,9 +8,8 @@
 
 #pragma once
 #include "Component.h"
-#include "SoundEvent.h"
 #include <vector>
-#include <string>
+#include "SoundEvent.h"
 
 class AudioComponent : public Component
 {

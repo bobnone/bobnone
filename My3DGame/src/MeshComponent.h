@@ -9,7 +9,7 @@
 #pragma once
 #include "Component.h"
 
-class MeshComponent : public Component
+class MeshComponent: public Component
 {
 public:
 	MeshComponent(class Actor* owner, bool isSkeletal = false);

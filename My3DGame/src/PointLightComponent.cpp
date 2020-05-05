@@ -11,10 +11,8 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Mesh.h"
-#include "VertexArray.h"
 #include "Actor.h"
-#include "LevelLoader.h"
-#include <iostream>
+#include "JsonHelper.h"
 
 PointLightComponent::PointLightComponent(Actor* owner) :Component(owner)
 {
@@ -30,14 +28,15 @@ void PointLightComponent::Draw(Shader* shader, Mesh* mesh)
 	// and the sphere mesh is active
 	// World transform is scaled to the outer radius (divided by the mesh radius)
 	// and positioned to the world position
-	Matrix4 scale = Matrix4::CreateScale(mOwner->GetScale() * mOuterRadius / mesh->GetRadius());
-	Matrix4 trans = Matrix4::CreateTranslation(mOwner->GetPosition());
-	Matrix4 worldTransform = scale * trans;
+	matrix4 scale = matrix4::CreateScale(mOwner->GetScale() * mOuterRadius / mesh->GetRadius());
+	matrix4 trans = matrix4::CreateTranslation(mOwner->GetPosition());
+	matrix4 worldTransform = scale * trans;
 	shader->SetMatrixUniform("uWorldTransform", worldTransform);
 	// Set point light shader constants
 	shader->SetVectorUniform("uPointLight.mWorldPos", mOwner->GetPosition());
 	shader->SetVectorUniform("uPointLight.mDiffuseColor", mDiffuseColor);
 	shader->SetVectorUniform("uPointLight.mSpecularColor", mSpecularColor);
+	shader->SetVectorUniform("uPointLight.mSpecularPower", mSpecularPower);
 	shader->SetFloatUniform("uPointLight.mInnerRadius", mInnerRadius);
 	shader->SetFloatUniform("uPointLight.mOuterRadius", mOuterRadius);
 	// Draw the sphere
@@ -49,6 +48,7 @@ void PointLightComponent::LoadProperties(const rapidjson::Value& inObj)
 	JsonHelper::GetVector3(inObj, "color", mDiffuseColor);
 	JsonHelper::GetVector3(inObj, "diffuseColor", mDiffuseColor);
 	JsonHelper::GetVector3(inObj, "specularColor", mSpecularColor);
+	JsonHelper::GetVector3(inObj, "specularPower", mSpecularPower);
 	JsonHelper::GetFloat(inObj, "innerRadius", mInnerRadius);
 	JsonHelper::GetFloat(inObj, "outerRadius", mOuterRadius);
 }
@@ -56,6 +56,7 @@ void PointLightComponent::SaveProperties(rapidjson::Document::AllocatorType& all
 {
 	JsonHelper::AddVector3(alloc, inObj, "diffuseColor", mDiffuseColor);
 	JsonHelper::AddVector3(alloc, inObj, "specularColor", mSpecularColor);
+	JsonHelper::AddVector3(alloc, inObj, "specularPower", mSpecularPower);
 	JsonHelper::AddFloat(alloc, inObj, "innerRadius", mInnerRadius);
 	JsonHelper::AddFloat(alloc, inObj, "outerRadius", mOuterRadius);
 }

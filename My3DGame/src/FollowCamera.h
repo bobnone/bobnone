@@ -38,11 +38,11 @@ public:
 	void LoadProperties(const rapidjson::Value& inObj) override;
 	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 private:
-	Vector3 ComputeCameraPos() const;
+	vector3 ComputeCameraPos() const;
 	// Actual position of camera
-	Vector3 mActualPos;
+	vector3 mActualPos;
 	// Velocity of actual camera
-	Vector3 mVelocity;
+	vector3 mVelocity;
 	// Horizontal follow distance
 	float mHorzDist;
 	// Vertical follow distance

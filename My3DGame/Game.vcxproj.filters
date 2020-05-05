@@ -136,6 +136,12 @@
     <ClCompile Include="src\Mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\JsonHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Actor.h" />
@@ -180,6 +186,9 @@
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Mouse.h" />
+    <ClInclude Include="src\JsonHelper.h" />
+    <ClInclude Include="src\Color.h" />
+    <ClInclude Include="src\Button.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Sprite.frag">

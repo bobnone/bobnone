@@ -12,7 +12,7 @@
 #include <fstream>
 #include <sstream>
 
-Shader::Shader() :mShaderProgram(0), mVertexShader(0), mFragShader(0)
+Shader::Shader() :mShaderProgram(0), mVertexShader(0), mFragmentShader(0)
 {
 	//
 }
@@ -23,15 +23,15 @@ Shader::~Shader()
 bool Shader::Load(const std::string& vertName, const std::string& fragName)
 {
 	// Compile vertex and pixel shaders
-	if (!CompileShader(vertName, GL_VERTEX_SHADER, mVertexShader) || !CompileShader(fragName, GL_FRAGMENT_SHADER, mFragShader))
+	if (!CompileShader(vertName, GL_VERTEX_SHADER, mVertexShader) || !CompileShader(fragName, GL_FRAGMENT_SHADER, mFragmentShader))
 	{
 		return false;
 	}
 	// Now create a shader program that
-	// links together the vertex/frag shaders
+	// links together the vertex/fragment shaders
 	mShaderProgram = glCreateProgram();
 	glAttachShader(mShaderProgram, mVertexShader);
-	glAttachShader(mShaderProgram, mFragShader);
+	glAttachShader(mShaderProgram, mFragmentShader);
 	glLinkProgram(mShaderProgram);
 	// Verify that the program linked successfully
 	if (!IsValidProgram())
@@ -45,7 +45,7 @@ void Shader::Unload()
 	// Delete the program/shaders
 	glDeleteProgram(mShaderProgram);
 	glDeleteShader(mVertexShader);
-	glDeleteShader(mFragShader);
+	glDeleteShader(mFragmentShader);
 }
 void Shader::SetActive()
 {

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------
 
 #pragma once
+#include <GL/glew.h>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -39,6 +40,36 @@ public:
 	void RemovePointLight(class PointLightComponent* light);
 	class Texture* GetTexture(const std::string& fileName);
 	class Mesh* GetMesh(const std::string& fileName);
+	/*
+		If a shader with "name" exist, return it
+		else, create and load a new shader using "fileName" for all shader files
+		Note: File Names are without extensions
+	*/
+	class Shader* NewShader(const std::string& name, const std::string& fileName);
+	/*
+		If a shader with "name" exist, return it
+		else, create and load a new shader using the respective file names for the shader files
+		Note: File Names are without extensions
+	*/
+	class Shader* SetNewShader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile);
+	/*
+		If a shader with "name" exist, return it
+		else, create and load a new shader using "fileName" for all shader files
+		then, set it as the active shader
+		Note: File Names are without extensions
+	*/
+	class Shader* SetNewShader(const std::string& name, const std::string& fileName);
+	/*
+		If a shader with "name" exist, return it
+		else, create and load a new shader using the respective file names for the shader files
+		then, set it as the active shader
+		Note: File Names are without extensions
+	*/
+	class Shader* NewShader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile);
+	// Returns the requested shader if it exist and sets it as the active shader
+	class Shader* SetShader(const std::string& name);
+	// Returns the requested shader if it exist
+	class Shader* GetShader(const std::string& name);
 	void SetViewMatrix(const Matrix4& view)
 	{
 		mView = view;
@@ -99,6 +130,10 @@ private:
 	std::unordered_map<std::string, class Texture*> mTextures;
 	// Map of meshes loaded
 	std::unordered_map<std::string, class Mesh*> mMeshes;
+	// Map of shaders to meshes
+	//std::unordered_map<std::string, std::string> mMeshShaders;
+	// Map of loaded shaders
+	std::unordered_map<std::string, class Shader*> mShaders;
 	// All the sprite components drawn
 	std::vector<class SpriteComponent*> mSprites;
 	// All (non-skeletal) mesh components drawn
@@ -106,14 +141,10 @@ private:
 	std::vector<class SkeletalMeshComponent*> mSkeletalMeshes;
 	// Game
 	class Game* mGame;
-	// Sprite shader
-	class Shader* mSpriteShader;
+	// The currently active shader
+	class Shader* mCurrentShader;
 	// Sprite vertex array
 	class VertexArray* mSpriteVerts;
-	// Mesh shader
-	class Shader* mMeshShader;
-	// Skinned shader
-	class Shader* mSkinnedShader;
 	// View/projection for 3D shaders
 	Matrix4 mView;
 	Matrix4 mProjection;
@@ -131,9 +162,6 @@ private:
 	class Texture* mMirrorTexture;
 	Matrix4 mMirrorView;
 	class GBuffer* mGBuffer;
-	// GBuffer shader
-	class Shader* mGGlobalShader;
-	class Shader* mGPointLightShader;
 	std::vector<class PointLightComponent*> mPointLights;
 	class Mesh* mPointLightMesh;
 };

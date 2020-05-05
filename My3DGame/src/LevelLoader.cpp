@@ -212,7 +212,7 @@ void LevelLoader::LoadComponents(Actor* actor, const rapidjson::Value& inArray)
 				auto iter = sComponentFactoryMap.find(type);
 				if (iter != sComponentFactoryMap.end())
 				{
-					// Get the typeid of component
+					// Get the type-id of component
 					Component::TypeID tid = static_cast<Component::TypeID>(iter->second.first);
 					// Does the actor already have a component of this type?
 					Component* comp = actor->GetComponentOfType(tid);

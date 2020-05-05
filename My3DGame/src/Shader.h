@@ -31,6 +31,18 @@ public:
 	void SetFloatUniform(const char* name, float value);
 	// Sets an integer uniform
 	void SetIntUniform(const char* name, int value);
+	GLuint GetVertexID()
+	{
+		return mVertexShader;
+	}
+	GLuint GetFragmentID()
+	{
+		return mFragmentShader;
+	}
+	GLuint GetID()
+	{
+		return mShaderProgram;
+	}
 private:
 	// Tries to compile the specified shader
 	bool CompileShader(const std::string& fileName, GLenum shaderType, GLuint& outShader);
@@ -41,6 +53,6 @@ private:
 private:
 	// Store the shader object IDs
 	GLuint mVertexShader;
-	GLuint mFragShader;
+	GLuint mFragmentShader;
 	GLuint mShaderProgram;
 };

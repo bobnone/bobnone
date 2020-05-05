@@ -22,7 +22,7 @@ bool Animation::Load(const std::string& fileName)
 		return false;
 	}
 	int ver = doc["version"].GetInt();
-	// Check the metadata
+	// Check the meta data
 	if (ver != 1)
 	{
 		SDL_Log("Animation %s unknown format", fileName.c_str());

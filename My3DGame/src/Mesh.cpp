@@ -138,7 +138,7 @@ bool Mesh::Load(const std::string& fileName, Renderer* renderer)
 		else if (layout == VertexArray::PosNormSkinTex)
 		{
 			Vertex v;
-			// Add pos/normal
+			// Add position/normal
 			for (rapidjson::SizeType j = 0; j < 6; j++)
 			{
 				v.f = static_cast<float>(vert[j].GetDouble());
@@ -153,7 +153,7 @@ bool Mesh::Load(const std::string& fileName, Renderer* renderer)
 				v.b[3] = vert[j + 3].GetUint();
 				vertices.emplace_back(v);
 			}
-			// Add tex coords
+			// Add texture coordinates
 			for (rapidjson::SizeType j = 14; j < vert.Size(); j++)
 			{
 				v.f = vert[j].GetDouble();

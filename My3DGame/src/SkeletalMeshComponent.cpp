@@ -50,7 +50,7 @@ void SkeletalMeshComponent::Update(float deltaTime)
 	if (mAnimation && mSkeleton)
 	{
 		mAnimTime += deltaTime * mAnimPlayRate;
-		// Wrap around anim time if past duration
+		// Wrap around mAnimTime if past duration
 		while (mAnimTime > mAnimation->GetDuration())
 		{
 			mAnimTime -= mAnimation->GetDuration();

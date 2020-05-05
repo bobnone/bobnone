@@ -28,7 +28,7 @@ public:
 	void Destroy();
 	// Get the texture for a specific type of data
 	class Texture* GetTexture(Type type);
-	// Get the framebuffer object ID
+	// Get the frame-buffer object ID
 	unsigned int GetBufferID() const
 	{
 		return mBufferID;

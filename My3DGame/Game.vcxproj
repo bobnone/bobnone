@@ -41,8 +41,8 @@
     <ClCompile Include="src\PhysWorld.cpp" />
     <ClCompile Include="src\PlaneActor.cpp" />
     <ClCompile Include="src\PointLightComponent.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\SkeletalMeshComponent.cpp" />
     <ClCompile Include="src\Skeleton.cpp" />
     <ClCompile Include="src\SoundEvent.cpp" />
@@ -84,8 +84,8 @@
     <ClInclude Include="src\PhysWorld.h" />
     <ClInclude Include="src\PlaneActor.h" />
     <ClInclude Include="src\PointLightComponent.h" />
-    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\SkeletalMeshComponent.h" />
     <ClInclude Include="src\Skeleton.h" />
     <ClInclude Include="src\SoundEvent.h" />

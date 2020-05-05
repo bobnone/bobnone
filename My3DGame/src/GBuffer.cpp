@@ -20,7 +20,7 @@ GBuffer::~GBuffer()
 }
 bool GBuffer::Create(int width, int height)
 {
-	// Create the framebuffer object
+	// Create the frame-buffer object
 	glGenFramebuffers(1, &mBufferID);
 	glBindFramebuffer(GL_FRAMEBUFFER, mBufferID);
 	// Add a depth buffer to this target

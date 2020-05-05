@@ -426,7 +426,7 @@ public:
 		};
 		return Matrix3(temp);
 	}
-	// Create a translation matrix (on the xy-plane)
+	// Create a translation matrix (on the XY-plane)
 	static Matrix3 CreateTranslation(const Vector2& trans)
 	{
 		float temp[3][3] =

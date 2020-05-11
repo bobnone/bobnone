@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "TargetActor.h"
 #include "Game.h"
@@ -17,14 +16,13 @@
 
 TargetActor::TargetActor(Game* game):Actor(game)
 {
-	SetRotation(quaternion(vector3::UnitZ, Math::Pi));
+	setRotation(quaternion(vector3::UnitZ, Math::Pi));
 	MeshComponent* mc = new MeshComponent(this);
-	Mesh* mesh = GetGame()->GetRenderer()->GetMesh("Assets/Target.gpmesh");
-	mc->SetMesh(mesh);
-	mc->SetShader(GetGame()->GetRenderer()->GetShader("Mesh"));
-	// Add collision box
+	Mesh* mesh = game->renderer()->getMesh("Assets/Target.gpmesh");
+	mc->setMesh(mesh);
+	mc->setShader(game->renderer()->getShader("Mesh"));
+	//Add collision box
 	BoxComponent* bc = new BoxComponent(this);
-	bc->SetObjectBox(mesh->GetBox());
+	bc->setObjectBox(mesh->box());
 	new TargetComponent(this);
-
 }

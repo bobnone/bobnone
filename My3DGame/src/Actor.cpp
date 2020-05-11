@@ -10,190 +10,188 @@ const char* Actor::TypeNames[NUM_ACTOR_TYPES] = {
 	"TargetActor",
 };
 
-Actor::Actor(Game* game) :mState(ACTOR_ACTIVE), mPosition(vector3::Zero), mOldPosition(vector3::Zero), mVelocity(vector3::Zero), mOldVelocity(vector3::Zero), mAcceleration(vector3::Zero), mRotation(quaternion()), mScale(1.0f), mGame(game), mRecomputeTransform(true), mMoving(false)
+Actor::Actor(Game* game):state_(ACTOR_ACTIVE), position_(vector3::Zero), oldPosition_(vector3::Zero), velocity_(vector3::Zero), oldVelocity_(vector3::Zero), acceleration_(vector3::Zero), rotation_(quaternion()), scale_(1.0f), game_(game), recomputeTransform_(true), moving_(false)
 {
-	mGame->AddActor(this);
+	game_->addActor(this);
 }
 Actor::~Actor()
 {
-	mGame->RemoveActor(this);
-	// Need to delete components
-	// Because ~Component calls RemoveComponent, need a different style loop
-	while (!mComponents.empty())
+	game_->removeActor(this);
+	//Need to delete components
+	//Because ~Component calls RemoveComponent, need a different style loop
+	while(!components_.empty())
 	{
-		delete mComponents.back();
+		delete components_.back();
 	}
 }
-void Actor::Update(float deltaTime)
+void Actor::update(float deltaTime)
 {
-	if (mState == ACTOR_ACTIVE)
+	if(state_ == ACTOR_ACTIVE)
 	{
-		if (mRecomputeTransform)
+		if(recomputeTransform_)
 		{
-			// Calculate the change in velocity and Acceleration
-			if (mOldPosition != mPosition)
+			//Calculate the change in velocity and Acceleration
+			if(oldPosition_ != position_)
 			{
-				// Calculate velocity
-				// Note: velocity = (change in position)/time
-				vector3 positionChange(mOldPosition.x - mPosition.x, mOldPosition.y - mPosition.y, mOldPosition.z - mPosition.z);
-				mVelocity.x = positionChange.x / deltaTime;
-				mVelocity.y = positionChange.y / deltaTime;
-				mVelocity.z = positionChange.z / deltaTime;
-				mOldPosition = mPosition;
-				// Calculate acceleration
-				// Note: acceleration = (change in velocity)/time
-				vector3 velocityChange(mOldVelocity.x - mVelocity.x, mOldVelocity.y - mVelocity.y, mOldVelocity.z - mVelocity.z);
-				mAcceleration.x = velocityChange.x / deltaTime;
-				mAcceleration.y = velocityChange.y / deltaTime;
-				mAcceleration.z = velocityChange.z / deltaTime;
-				mOldVelocity = mVelocity;
-				mMoving = true;
+				//Calculate velocity
+				//Note: velocity = (change in position)/time
+				vector3 positionChange(oldPosition_.x - position_.x, oldPosition_.y - position_.y, oldPosition_.z - position_.z);
+				velocity_.x = positionChange.x / deltaTime;
+				velocity_.y = positionChange.y / deltaTime;
+				velocity_.z = positionChange.z / deltaTime;
+				oldPosition_ = position_;
+				//Calculate acceleration
+				//Note: acceleration = (change in velocity)/time
+				vector3 velocityChange(oldVelocity_.x - velocity_.x, oldVelocity_.y - velocity_.y, oldVelocity_.z - velocity_.z);
+				acceleration_.x = velocityChange.x / deltaTime;
+				acceleration_.y = velocityChange.y / deltaTime;
+				acceleration_.z = velocityChange.z / deltaTime;
+				oldVelocity_ = velocity_;
+				moving_ = true;
 			}
 			else
 			{
-				mMoving = false;
+				moving_ = false;
 			}
-			ComputeWorldTransform();
+			computeWorldTransform();
 		}
-		UpdateComponents(deltaTime);
-		UpdateActor(deltaTime);
+		updateComponents(deltaTime);
+		updateActor(deltaTime);
 	}
 }
-void Actor::UpdateComponents(float deltaTime)
+void Actor::updateComponents(float deltaTime)
 {
-	for (auto comp : mComponents)
+	for(auto comp : components_)
 	{
-		comp->Update(deltaTime);
+		comp->update(deltaTime);
 	}
 }
-void Actor::UpdateActor(float deltaTime)
+void Actor::updateActor(float deltaTime)
 {
-	//
+	//EMPTY:
 }
-void Actor::ProcessInput(const uint8_t* keyState)
+void Actor::processInput(const uint8_t* keyState)
 {
-	if (mState == ACTOR_ACTIVE)
+	if(state_ == ACTOR_ACTIVE)
 	{
 		// First process input for components
-		for (auto comp : mComponents)
+		for(auto comp : components_)
 		{
-			comp->ProcessInput(keyState);
+			comp->processInput(keyState);
 		}
-		ActorInput(keyState);
+		actorInput(keyState);
 	}
 }
-void Actor::ActorInput(const uint8_t* keyState)
+void Actor::actorInput(const uint8_t* keyState)
 {
-	//
+	//EMPTY:
 }
-void Actor::ComputeWorldTransform()
+void Actor::computeWorldTransform()
 {
-	mRecomputeTransform = false;
-	// Scale, then rotate, then translate
-	mWorldTransform = matrix4::CreateScale(mScale);
-	mWorldTransform *= matrix4::CreateFromQuaternion(mRotation);
-	mWorldTransform *= matrix4::CreateTranslation(mPosition);
-	// Inform components world transform updated
-	for (auto comp : mComponents)
+	recomputeTransform_ = false;
+	//Scale, then rotate, then translate
+	worldTransform_ = matrix4::CreateScale(scale_);
+	worldTransform_ *= matrix4::CreateFromQuaternion(rotation_);
+	worldTransform_ *= matrix4::CreateTranslation(position_);
+	//Inform components world transform updated
+	for(auto comp : components_)
 	{
-		comp->OnUpdateWorldTransform();
+		comp->onUpdateWorldTransform();
 	}
 }
-void Actor::RotateToNewForward(const vector3& forward)
+void Actor::rotateToNewForward(const vector3& forward)
 {
-	// Figure out difference between original (unit x) and new
+	//Figure out difference between original (unit x) and new
 	float dot = vector3::Dot(vector3::UnitX, forward);
 	float angle = Math::Acos(dot);
-	// Facing down X
-	if (dot > 0.9999f)
+	//Facing down X
+	if(dot > 0.9999f)
 	{
-		SetRotation(quaternion());
+		setRotation(quaternion());
 	}
-	// Facing down -X
+	//Facing down -X
 	else if (dot < -0.9999f)
 	{
-		SetRotation(quaternion(vector3::UnitZ, Math::Pi));
+		setRotation(quaternion(vector3::UnitZ, Math::Pi));
 	}
 	else
 	{
-		// Rotate about axis from cross product
+		//Rotate about axis from cross product
 		vector3 axis = vector3::Cross(vector3::UnitX, forward);
 		axis.Normalize();
-		SetRotation(quaternion(axis, angle));
+		setRotation(quaternion(axis, angle));
 	}
 }
-void Actor::AddComponent(Component* component)
+void Actor::addComponent(Component* component)
 {
-	// Find the insertion point in the sorted vector
-	// (The first element with a order higher than me)
-	int myOrder = component->GetUpdateOrder();
-	auto i = mComponents.begin();
-	for (; i != mComponents.end(); ++i)
+	//Find the insertion point in the sorted vector (The first element with a order higher than me)
+	int myOrder = component->updateOrder();
+	auto i = components_.begin();
+	for(; i != components_.end(); ++i)
 	{
-		if (myOrder < (*i)->GetUpdateOrder())
+		if(myOrder < (*i)->updateOrder())
 		{
 			break;
 		}
 	}
-
-	// Inserts element before position of iterator
-	mComponents.insert(i, component);
+	//Inserts element before position of iterator
+	components_.insert(i, component);
 }
-void Actor::RemoveComponent(Component* component)
+void Actor::removeComponent(Component* component)
 {
-	auto i = std::find(mComponents.begin(), mComponents.end(), component);
-	if (i != mComponents.end())
+	auto i = std::find(components_.begin(), components_.end(), component);
+	if(i != components_.end())
 	{
-		mComponents.erase(i);
+		components_.erase(i);
 	}
 }
-void Actor::LoadProperties(const rapidjson::Value& inObj)
+void Actor::loadProperties(const rapidjson::Value& inObj)
 {
-	// Use strings for different states
+	//Use strings for different states
 	std::string state;
-	if (JsonHelper::GetString(inObj, "state", state))
+	if(JsonHelper::getString(inObj, "state", state))
 	{
 		if (state == "active")
 		{
-			SetState(ACTOR_ACTIVE);
+			setState(ACTOR_ACTIVE);
 		}
-		else if (state == "paused")
+		else if(state == "paused")
 		{
-			SetState(ACTOR_PAUSED);
+			setState(ACTOR_PAUSED);
 		}
-		else if (state == "dead")
+		else if(state == "dead")
 		{
-			SetState(ACTOR_DEAD);
+			setState(ACTOR_DEAD);
 		}
 	}
-	// Load position, rotation, and scale, and compute transform
-	JsonHelper::GetVector3(inObj, "position", mPosition);
-	JsonHelper::GetVector3(inObj, "velocity", mVelocity);
-	JsonHelper::GetVector3(inObj, "acceleration", mAcceleration);
-	JsonHelper::GetQuaternion(inObj, "rotation", mRotation);
-	JsonHelper::GetFloat(inObj, "scale", mScale);
-	JsonHelper::GetBool(inObj, "moving", mMoving);
-	// Set the Old/last position and velocity to the current position and velocity to avoid strange position jumps when loading
-	mOldPosition = mPosition;
-	mOldVelocity = mVelocity;	
-	ComputeWorldTransform();
+	//Load position, rotation, and scale, and compute transform
+	JsonHelper::getVector3(inObj, "position", position_);
+	JsonHelper::getVector3(inObj, "velocity", velocity_);
+	JsonHelper::getVector3(inObj, "acceleration", acceleration_);
+	JsonHelper::getQuaternion(inObj, "rotation", rotation_);
+	JsonHelper::getFloat(inObj, "scale", scale_);
+	JsonHelper::getBool(inObj, "moving", moving_);
+	//Set the Old/last position and velocity to the current position and velocity to avoid strange position jumps when loading
+	oldPosition_ = position_;
+	oldVelocity_ = velocity_;
+	computeWorldTransform();
 }
-void Actor::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void Actor::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
 	std::string state = "active";
-	if (mState == ACTOR_PAUSED)
+	if (state_ == ACTOR_PAUSED)
 	{
 		state = "paused";
 	}
-	else if (mState == ACTOR_DEAD)
+	else if (state_ == ACTOR_DEAD)
 	{
 		state = "dead";
 	}
-	JsonHelper::AddString(alloc, inObj, "state", state);
-	JsonHelper::AddVector3(alloc, inObj, "position", mPosition);
-	JsonHelper::AddVector3(alloc, inObj, "velocity", mVelocity);
-	JsonHelper::AddVector3(alloc, inObj, "acceleration", mAcceleration);
-	JsonHelper::AddQuaternion(alloc, inObj, "rotation", mRotation);
-	JsonHelper::AddFloat(alloc, inObj, "scale", mScale);
-	JsonHelper::AddBool(alloc, inObj, "moving", mMoving);
+	JsonHelper::addString(alloc, inObj, "state", state);
+	JsonHelper::addVector3(alloc, inObj, "position", position_);
+	JsonHelper::addVector3(alloc, inObj, "velocity", velocity_);
+	JsonHelper::addVector3(alloc, inObj, "acceleration", acceleration_);
+	JsonHelper::addQuaternion(alloc, inObj, "rotation", rotation_);
+	JsonHelper::addFloat(alloc, inObj, "scale", scale_);
+	JsonHelper::addBool(alloc, inObj, "moving", moving_);
 }

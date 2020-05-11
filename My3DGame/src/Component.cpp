@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Component.h"
 #include "Actor.h"
@@ -24,28 +23,28 @@ const char* Component::TypeNames[NUM_COMPONENT_TYPES] = {
 	"PointLightComponent",
 	"TargetComponent"
 };
-Component::Component(Actor* owner, int updateOrder) :mOwner(owner), mUpdateOrder(updateOrder)
+Component::Component(Actor* owner, int updateOrder): owner_(owner), updateOrder_(updateOrder)
 {
-	// Add to actor's vector of components
-	mOwner->AddComponent(this);
+	//Add to actor's vector of components
+	owner_->addComponent(this);
 }
 Component::~Component()
 {
-	mOwner->RemoveComponent(this);
+	owner_->removeComponent(this);
 }
-void Component::Update(float deltaTime)
+void Component::update(float deltaTime)
 {
-	//
+	//EMPTY:
 }
-void Component::OnUpdateWorldTransform()
+void Component::onUpdateWorldTransform()
 {
-	//
+	//EMPTY:
 }
-void Component::LoadProperties(const rapidjson::Value& inObj)
+void Component::loadProperties(const rapidjson::Value& inObj)
 {
-	JsonHelper::GetInt(inObj, "updateOrder", mUpdateOrder);
+	JsonHelper::getInt(inObj, "updateOrder", updateOrder_);
 }
-void Component::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void Component::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	JsonHelper::AddInt(alloc, inObj, "updateOrder", mUpdateOrder);
+	JsonHelper::addInt(alloc, inObj, "updateOrder", updateOrder_);
 }

@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "BoneTransform.h"
@@ -14,44 +13,44 @@
 class Skeleton
 {
 public:
-	// Definition for each bone in the skeleton
+	//Definition for each bone in the skeleton
 	struct Bone
 	{
-		BoneTransform mLocalBindPose;
-		std::string mName;
-		int mParent;
+		BoneTransform localBindPose_;
+		std::string name_;
+		int parent_;
 	};
-	// Load from a file
-	bool Load(const std::string& fileName);
-	// Getter functions
-	size_t GetNumBones() const
+	//Load from a file
+	bool load(const std::string& fileName);
+	//Getter functions
+	size_t getNumBones() const
 	{
-		return mBones.size();
+		return bones_.size();
 	}
-	const Bone& GetBone(size_t idx) const
+	const Bone& getBone(size_t idx) const
 	{
-		return mBones[idx];
+		return bones_[idx];
 	}
-	const std::vector<Bone>& GetBones() const
+	const std::vector<Bone>& bones() const
 	{
-		return mBones;
+		return bones_;
 	}
-	const std::vector<matrix4>& GetGlobalInvBindPoses() const
+	const std::vector<matrix4>& globalInvBindPoses() const
 	{
-		return mGlobalInvBindPoses;
+		return globalInvBindPoses_;
 	}
-	const std::string& GetFileName() const
+	const std::string& fileName() const
 	{
-		return mFileName;
+		return fileName_;
 	}
 protected:
-	// Called automatically when the skeleton is loaded
-	// Computes the global inverse bind pose for each bone
-	void ComputeGlobalInvBindPose();
+	//Called automatically when the skeleton is loaded
+	//Computes the global inverse bind pose for each bone
+	void computeGlobalInvBindPose();
 private:
-	// The bones in the skeleton
-	std::vector<Bone> mBones;
-	// The global inverse bind poses for each bone
-	std::vector<matrix4> mGlobalInvBindPoses;
-	std::string mFileName;
+	//The bones in the skeleton
+	std::vector<Bone> bones_;
+	//The global inverse bind poses for each bone
+	std::vector<matrix4> globalInvBindPoses_;
+	std::string fileName_;
 };

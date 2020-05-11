@@ -12,10 +12,10 @@ class TextureHandler
 public:
 	TextureHandler();
 	~TextureHandler();
-	bool Initialize();
-	bool Screenshot();
+	bool initialize();
+	ILboolean screenshot();
 protected:
-	//
+	//EMPTY:
 private:
-	//
+	//EMPTY:
 };

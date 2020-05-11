@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Ship.h"
 #include "SpriteComponent.h"
@@ -12,50 +11,39 @@
 #include "Laser.h"
 #include "InputSystem.h"
 
-Ship::Ship(Game* game)
-	:Actor(game)
-	,mSpeed(400.0f)
-	,mLaserCooldown(0.0f)
+Ship::Ship(Game* game):Actor(game), speed_(400.0f), laserCooldown_(0.0f)
 {
-	// Create a sprite component
+	//Create a sprite component
 	SpriteComponent* sc = new SpriteComponent(this, 150);
-	sc->SetTexture(game->GetTexture("Assets/Ship.png"));
+	sc->setTexture(game->renderer()->getTexture("Assets/Ship.png"));
 }
-
-void Ship::UpdateActor(float deltaTime)
+void Ship::updateActor(float deltaTime)
 {
-	mLaserCooldown -= deltaTime;
-
-	// Update position based on velocity
-	Vector2 pos = GetPosition();
-	pos += mVelocityDir * mSpeed * deltaTime;
-	SetPosition(pos);
-
-	// Update rotation
-	float angle = Math::Atan2(mRotationDir.y, mRotationDir.x);
-	SetRotation(angle);
+	laserCooldown_ -= deltaTime;
+	//Update position based on velocity
+	vector2 pos = position();
+	pos += velocityDir_ * speed_ * deltaTime;
+	setPosition(pos);
+	//Update rotation
+	setRotation(Math::Atan2(rotationDir_.y, rotationDir_.x));
 }
-
-void Ship::ActorInput(const InputState& state)
+void Ship::actorInput(const InputState& state)
 {
-	if (state.Controller.GetRightTrigger() > 0.25f
-		&& mLaserCooldown <= 0.0f)
+	if(state.Controller.rightTrigger() > 0.25f && laserCooldown_ <= 0.0f)
 	{
-		// Create a laser and set its position/rotation to mine
-		Laser* laser = new Laser(GetGame());
-		laser->SetPosition(GetPosition());
-		laser->SetRotation(GetRotation());
-
-		// Reset laser cooldown (quarter second)
-		mLaserCooldown = 0.25f;
+		//Create a laser and set its position/rotation to mine
+		Laser* laser = new Laser(game());
+		laser->setPosition(position());
+		laser->setRotation(rotation());
+		//Reset laser cooldown (quarter second)
+		laserCooldown_ = 0.25f;
 	}
-
-	if (state.Controller.GetIsConnected())
+	if(state.Controller.isConnected())
 	{
-		mVelocityDir = state.Controller.GetLeftStick();
-		if (!Math::NearZero(state.Controller.GetRightStick().Length()))
+		velocityDir_ = state.Controller.leftStick();
+		if(!Math::NearZero(state.Controller.rightStick().Length()))
 		{
-			mRotationDir = state.Controller.GetRightStick();
+			rotationDir_ = state.Controller.rightStick();
 		}
 	}
 }

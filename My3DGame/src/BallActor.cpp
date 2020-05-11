@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "BallActor.h"
 #include "Game.h"
@@ -16,38 +15,38 @@
 #include "AudioComponent.h"
 #include "JsonHelper.h"
 
-BallActor::BallActor(Game* game) :Actor(game), mLifeSpan(2.0f)
+BallActor::BallActor(Game* game): Actor(game), lifeSpan_(2.0f)
 {
-	//SetScale(10.0f);
+	//setScale(10.0f);
 	MeshComponent* mc = new MeshComponent(this);
-	Renderer* renderer = GetGame()->GetRenderer();
-	Mesh* mesh = renderer->GetMesh("Assets/Sphere.gpmesh");
-	mc->SetMesh(mesh);
-	mc->SetShader(renderer->GetShader("Mesh"));
+	Renderer* renderer = game->renderer();
+	Mesh* mesh = renderer->getMesh("Assets/Sphere.gpmesh");
+	mc->setMesh(mesh);
+	mc->setShader(renderer->getShader("Mesh"));
 	BallMove* move = new BallMove(this);
-	move->SetForwardSpeed(1500.0f);
-	mAudioComp = new AudioComponent(this);
+	move->setForwardSpeed(1500.0f);
+	audioComp_ = new AudioComponent(this);
 }
-void BallActor::UpdateActor(float deltaTime)
+void BallActor::updateActor(float deltaTime)
 {
-	Actor::UpdateActor(deltaTime);
-	mLifeSpan -= deltaTime;
-	if (mLifeSpan < 0.0f)
+	Actor::updateActor(deltaTime);
+	lifeSpan_ -= deltaTime;
+	if(lifeSpan_ < 0.0f)
 	{
-		SetState(EDead);
+		setState(ACTOR_DEAD);
 	}
 }
-void BallActor::HitTarget()
+void BallActor::hitTarget()
 {
-	mAudioComp->PlayEvent("event:/Ding");
+	audioComp_->playEvent("event:/Ding");
 }
-void BallActor::LoadProperties(const rapidjson::Value& inObj)
+void BallActor::loadProperties(const rapidjson::Value& inObj)
 {
-	Actor::LoadProperties(inObj);
-	JsonHelper::GetFloat(inObj, "lifespan", mLifeSpan);
+	Actor::loadProperties(inObj);
+	JsonHelper::getFloat(inObj, "lifespan", lifeSpan_);
 }
-void BallActor::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void BallActor::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	Actor::SaveProperties(alloc, inObj);
-	JsonHelper::AddFloat(alloc, inObj, "lifespan", mLifeSpan);
+	Actor::saveProperties(alloc, inObj);
+	JsonHelper::addFloat(alloc, inObj, "lifespan", lifeSpan_);
 }

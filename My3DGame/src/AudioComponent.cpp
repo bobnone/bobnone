@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "AudioComponent.h"
 #include "Actor.h"
@@ -13,35 +12,35 @@
 
 AudioComponent::AudioComponent(Actor* owner, int updateOrder) :Component(owner, updateOrder)
 {
-	//
+	//EMPTY:
 }
 AudioComponent::~AudioComponent()
 {
-	StopAllEvents();
+	stopAllEvents();
 }
-void AudioComponent::Update(float deltaTime)
+void AudioComponent::update(float deltaTime)
 {
-	Component::Update(deltaTime);
-	// Remove invalid 2D events
-	auto iter = mEvents2D.begin();
-	while (iter != mEvents2D.end())
+	Component::update(deltaTime);
+	//Remove invalid 2D events
+	auto iter = events2D_.begin();
+	while(iter != events2D_.end())
 	{
-		if (!iter->IsValid())
+		if (!iter->isValid())
 		{
-			iter = mEvents2D.erase(iter);
+			iter = events2D_.erase(iter);
 		}
 		else
 		{
 			++iter;
 		}
 	}
-	// Remove invalid 3D events
-	iter = mEvents3D.begin();
-	while (iter != mEvents3D.end())
+	//Remove invalid 3D events
+	iter = events3D_.begin();
+	while(iter != events3D_.end())
 	{
-		if (!iter->IsValid())
+		if(!iter->isValid())
 		{
-			iter = mEvents3D.erase(iter);
+			iter = events3D_.erase(iter);
 		}
 		else
 		{
@@ -49,45 +48,45 @@ void AudioComponent::Update(float deltaTime)
 		}
 	}
 }
-void AudioComponent::OnUpdateWorldTransform()
+void AudioComponent::onUpdateWorldTransform()
 {
-	// Update 3D events' world transforms
-	for (auto& event : mEvents3D)
+	//Update 3D events' world transforms
+	for(auto& event : events3D_)
 	{
-		if (event.IsValid())
+		if(event.isValid())
 		{
-			event.Set3DAttributes(mOwner);
+			event.set3DAttributes(owner_);
 		}
 	}
 }
-SoundEvent AudioComponent::PlayEvent(const std::string& name)
+SoundEvent AudioComponent::playEvent(const std::string& name)
 {
-	SoundEvent e = mOwner->GetGame()->GetAudioSystem()->PlayEvent(name);
-	// Is this 2D or 3D?
-	if (e.Is3D())
+	SoundEvent e = owner_->game()->audioSystem()->playEvent(name);
+	//Is this 2D or 3D?
+	if(e.is3D())
 	{
-		mEvents3D.emplace_back(e);
-		// Set initial 3D attributes
-		e.Set3DAttributes(mOwner);
+		events3D_.emplace_back(e);
+		//Set initial 3D attributes
+		e.set3DAttributes(owner_);
 	}
 	else
 	{
-		mEvents2D.emplace_back(e);
+		events2D_.emplace_back(e);
 	}
 	return e;
 }
-void AudioComponent::StopAllEvents()
+void AudioComponent::stopAllEvents()
 {
-	// Stop all sounds
-	for (auto& e : mEvents2D)
+	//Stop all sounds
+	for(auto& e : events2D_)
 	{
-		e.Stop();
+		e.stop();
 	}
-	for (auto& e : mEvents3D)
+	for(auto& e : events3D_)
 	{
-		e.Stop();
+		e.stop();
 	}
-	// Clear events
-	mEvents2D.clear();
-	mEvents3D.clear();
+	//Clear events
+	events2D_.clear();
+	events3D_.clear();
 }

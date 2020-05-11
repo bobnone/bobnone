@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include <vector>
@@ -12,7 +11,7 @@
 class GBuffer
 {
 public:
-	// Different types of data stored in the G-buffer
+	//Different types of data stored in the G-buffer
 	enum Type
 	{
 		GBUFFER_DIFFUSE = 0,
@@ -23,21 +22,21 @@ public:
 	};
 	GBuffer();
 	~GBuffer();
-	// Create/destroy the G-buffer
-	bool Create(int width, int height);
-	void Destroy();
-	// Get the texture for a specific type of data
-	class Texture* GetTexture(Type type);
-	// Get the frame-buffer object ID
-	unsigned int GetBufferID() const
+	//Create/destroy the G-buffer
+	bool create(int width, int height);
+	void destroy();
+	//Get the texture for a specific type of data
+	class Texture* getTexture(Type type);
+	//Get the frame-buffer object ID
+	unsigned int bufferID() const
 	{
-		return mBufferID;
+		return bufferID_;
 	}
-	// Setup all the G-buffer textures for sampling
-	void SetTexturesActive();
+	//Setup all the G-buffer textures for sampling
+	void setTexturesActive();
 private:
-	// Textures associated with G-buffer
-	std::vector<class Texture*> mTextures;
-	// Frame buffer object ID
-	unsigned int mBufferID;
+	//Textures associated with G-buffer
+	std::vector<class Texture*> textures_;
+	//Frame buffer object ID
+	unsigned int bufferID_;
 };

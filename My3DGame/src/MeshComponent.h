@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "Component.h"
@@ -14,54 +13,54 @@ class MeshComponent: public Component
 public:
 	MeshComponent(class Actor* owner, bool isSkeletal = false);
 	~MeshComponent();
-	// Draw this mesh component
-	virtual void Draw();
-	// Draw this mesh component with a custom shader
-	virtual void Draw(class Shader* shader);
-	// Set the mesh/texture index used by mesh component
-	virtual void SetMesh(class Mesh* mesh)
+	//Draw this mesh component
+	virtual void draw();
+	//Draw this mesh component with a custom shader
+	virtual void draw(class Shader* shader);
+	//Set the mesh/texture index used by mesh component
+	virtual void setMesh(class Mesh* mesh)
 	{
-		mMesh = mesh;
+		mesh_ = mesh;
 	}
-	class Mesh* GetMesh()
+	class Mesh* mesh()
 	{
-		return mMesh;
+		return mesh_;
 	}
-	void SetShader(class Shader* shader);
-	class Shader* GetShader()
+	void setShader(class Shader* shader);
+	class Shader* shader()
 	{
-		return mShader;
+		return shader_;
 	}
-	void SetTextureIndex(size_t index)
+	void setTextureIndex(size_t index)
 	{
-		mTextureIndex = index;
+		textureIndex_ = index;
 	}
-	size_t GetTextureIndex()
+	size_t textureIndex()
 	{
-		return mTextureIndex;
+		return textureIndex_;
 	}
-	void SetVisible(bool visible)
+	void setVisible(bool visible)
 	{
-		mVisible = visible;
+		visible_ = visible;
 	}
-	bool GetVisible() const
+	bool visible() const
 	{
-		return mVisible;
+		return visible_;
 	}
-	bool GetIsSkeletal() const
+	bool isSkeletal() const
 	{
-		return mIsSkeletal;
+		return isSkeletal_;
 	}
-	TypeID GetType() const override
+	TypeID getType() const override
 	{
 		return TMeshComponent;
 	}
-	void LoadProperties(const rapidjson::Value& inObj) override;
-	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
+	void loadProperties(const rapidjson::Value& inObj) override;
+	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 protected:
-	class Mesh* mMesh;
-	class Shader* mShader;
-	size_t mTextureIndex;
-	bool mVisible;
-	bool mIsSkeletal;
+	class Mesh* mesh_;
+	class Shader* shader_;
+	size_t textureIndex_;
+	bool visible_;
+	bool isSkeletal_;
 };

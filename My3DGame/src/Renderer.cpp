@@ -7,297 +7,299 @@
 #include "UIScreen.h"
 #include "GBuffer.h"
 
-Renderer::Renderer(Game* game) :mGame(game), mCurrentShader(nullptr), mMirrorBuffer(0), mMirrorTexture(nullptr), mGBuffer(nullptr)
+Renderer::Renderer(Game* game):game_(game), currentShader_(nullptr), mirrorBuffer_(0), mirrorTexture_(nullptr), gBuffer_(nullptr)
 {
-	//
+	//EMPTY:
 }
 Renderer::~Renderer()
 {
-	//
+	//EMPTY:
 }
-bool Renderer::Initialize(float screenWidth, float screenHeight)
+bool Renderer::initialize(float screenWidth, float screenHeight)
 {
-	mScreenWidth = screenWidth;
-	mScreenHeight = screenHeight;
-	// Set OpenGL attributes
-	// Use the core OpenGL profile
+	screenWidth_ = screenWidth;
+	screenHeight_ = screenHeight;
+	//Set OpenGL attributes
+	//Use the core OpenGL profile
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	// Specify version 3.3
+	//Specify version 3.3
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	// Request a color buffer with 8-bits per RGBA channel
+	//Request a color buffer with 8-bits per RGBA channel
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	// Enable double buffering
+	//Enable double buffering
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	// Force OpenGL to use hardware acceleration
+	//Force OpenGL to use hardware acceleration
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-	mWindow = SDL_CreateWindow("<Window Title>", 100, 100, static_cast<int>(mScreenWidth), static_cast<int>(mScreenHeight), SDL_WINDOW_OPENGL);
-	if (!mWindow)
+	window_ = SDL_CreateWindow("<Window Title>", 100, 100, static_cast<int>(screenWidth_), static_cast<int>(screenHeight_), SDL_WINDOW_OPENGL);
+	if(!window_)
 	{
 		SDL_Log("Failed to create window: %s", SDL_GetError());
 		return false;
 	}
-	// Create an OpenGL context
-	mContext = SDL_GL_CreateContext(mWindow);
-	// Initialize GLEW
+	//Create an OpenGL context
+	context_ = SDL_GL_CreateContext(window_);
+	//Initialize GLEW
 	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
+	if(glewInit() != GLEW_OK)
 	{
 		SDL_Log("Failed to initialize GLEW.");
 		return false;
 	}
-	// On some platforms, GLEW will emit a benign error code,
-	// so clear it
+	//On some platforms, GLEW will emit a benign error code,
+	//so clear it
 	glGetError();
-	// Make sure we can create/compile shaders
-	if (!LoadShaders())
+	//Make sure we can create/compile shaders
+	if(!loadShaders())
 	{
 		SDL_Log("Failed to load shaders.");
 		return false;
 	}
-	// Create quad for drawing sprites
-	CreateSpriteVerts();
-	// Create render target for mirror
-	if (!CreateMirrorTarget())
+	//Create quad for drawing sprites
+	createSpriteVerts();
+	//Create render target for mirror
+	if(!createMirrorTarget())
 	{
 		SDL_Log("Failed to create render target for mirror.");
 		return false;
 	}
-	// Create TextureHandler
-	mTextureHandler = new TextureHandler();
-	if(!mTextureHandler->Initialize())
+	//Create TextureHandler
+	textureHandler_ = new TextureHandler();
+	if(!textureHandler_->initialize())
 	{
 		SDL_Log("Failed to create TextureHandler.");
 		return false;
 	}
-	// Create G-buffer
-	mGBuffer = new GBuffer();
-	int width = static_cast<int>(mScreenWidth);
-	int height = static_cast<int>(mScreenHeight);
-	if (!mGBuffer->Create(width, height))
+	//Create G-buffer
+	gBuffer_ = new GBuffer();
+	int width = static_cast<int>(screenWidth_);
+	int height = static_cast<int>(screenHeight_);
+	if (!gBuffer_->create(width, height))
 	{
 		SDL_Log("Failed to create G-buffer.");
 		return false;
 	}
-	// Load point light mesh
-	mPointLightMesh = GetMesh("Assets/PointLight.gpmesh");
+	//Load point light mesh
+	pointLightMesh_ = getMesh("Assets/PointLight.gpmesh");
 	return true;
 }
-void Renderer::Shutdown()
+void Renderer::shutdown()
 {
-	// Get rid of any render target textures, if they exist
-	if (mMirrorTexture != nullptr)
+	//Get rid of any render target textures, if they exist
+	if(mirrorTexture_ != nullptr)
 	{
-		glDeleteFramebuffers(1, &mMirrorBuffer);
-		mMirrorTexture->Unload();
-		delete mMirrorTexture;
+		glDeleteFramebuffers(1, &mirrorBuffer_);
+		mirrorTexture_->~Texture();
+		delete mirrorTexture_;
 	}
-	// Get rid of G-buffer
-	if (mGBuffer != nullptr)
+	//Get rid of G-buffer
+	if(gBuffer_ != nullptr)
 	{
-		mGBuffer->Destroy();
-		delete mGBuffer;
+		gBuffer_->destroy();
+		delete gBuffer_;
 	}
-	// Delete point lights
-	while (!mPointLights.empty())
+	//Delete point lights
+	while(!pointLights_.empty())
 	{
-		delete mPointLights.back();
+		delete pointLights_.back();
 	}
-	delete mSpriteVerts;
-	// Unset mCurrentShader pointer so you don't delete any actual shaders
-	mCurrentShader = nullptr;
-	delete mCurrentShader;
-	delete mTextureHandler;
-	mTextureHandler = nullptr;
-	SDL_GL_DeleteContext(mContext);
-	SDL_DestroyWindow(mWindow);
+	delete spriteVerts_;
+	//Unset mCurrentShader pointer so you don't delete any actual shaders
+	currentShader_ = nullptr;
+	delete currentShader_;
+	delete textureHandler_;
+	textureHandler_ = nullptr;
+	SDL_GL_DeleteContext(context_);
+	SDL_DestroyWindow(window_);
 }
-void Renderer::UnloadData()
+void Renderer::unloadData()
 {
-	// Destroy meshShaders
-	// Note: shaders and MeshComponents get deleted somewhere else
-	mMeshShaders.clear();
-	// Destroy textures
-	for (auto i : mTextures)
+	//Destroy meshShaders
+	//Note: shaders and MeshComponents get deleted somewhere else
+	meshShaders_.clear();
+	//Destroy textures
+	for(auto i : textures_)
 	{
-		i.second->Unload();
+		i.second->~Texture();
 		delete i.second;
 	}
-	mTextures.clear();
-	// Destroy meshes
-	for (auto i : mMeshes)
+	textures_.clear();
+	//Destroy meshes
+	for(auto i: meshes_)
 	{
-		i.second->Unload();
+		i.second->unload();
 		delete i.second;
 	}
-	mMeshes.clear();
-	// Destroy shaders
-	for (auto i : mShaders)
+	meshes_.clear();
+	//Destroy shaders
+	for(auto i: shaders_)
 	{
-		i.second->Unload();
+		i.second->unload();
 		delete i.second;
 	}
-	mShaders.clear();
-	
+	shaders_.clear();
 }
-void Renderer::Draw()
+void Renderer::draw()
 {
-	// Draw to the mirror texture first
-	Draw3DScene(mMirrorBuffer, mMirrorView, mProjection);
-	// Draw the 3D scene to the G-buffer
-	Draw3DScene(mGBuffer->GetBufferID(), mView, mProjection, false);
-	// Set the frame buffer back to zero (screen's frame buffer)
+	//Draw to the mirror texture first
+	draw3DScene(mirrorBuffer_, mirrorView_, projection_);
+	//Draw the 3D scene to the G-buffer
+	draw3DScene(gBuffer_->bufferID(), view_, projection_, false);
+	//Set the frame buffer back to zero (screen's frame buffer)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	// Draw from the GBuffer
-	DrawFromGBuffer();
-	// Draw all sprite components
-	// Disable depth buffering
+	//Draw from the GBuffer
+	drawFromGBuffer();
+	//Draw all sprite components
+	//Disable depth buffering
 	glDisable(GL_DEPTH_TEST);
-	// Enable alpha blending on the color buffer
+	//Enable alpha blending on the color buffer
 	glEnable(GL_BLEND);
 	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	// Set shader/VAO as active
-	SetShader("Sprite");
-	mSpriteVerts->SetActive();
-	for (auto sprite : mSprites)
+	//Set shader/VAO as active
+	setShader("Sprite");
+	spriteVerts_->setActive();
+	for(auto sprite: sprites_)
 	{
-		if (sprite->GetVisible())
+		if(sprite->visible())
 		{
-			sprite->Draw(mCurrentShader);
+			sprite->draw(currentShader_);
 		}
 	}
-	// Draw any UI screens
-	for (auto ui : mGame->GetUIStack())
+	//Draw any UI screens
+	for(auto ui : game_->UIStack())
 	{
-		ui->Draw(mCurrentShader);
+		ui->draw(currentShader_);
 	}
-	// Swap the buffers
-	SDL_GL_SwapWindow(mWindow);
+	//Swap the buffers
+	SDL_GL_SwapWindow(window_);
 }
-void Renderer::AddSprite(SpriteComponent* sprite)
+void Renderer::addSprite(SpriteComponent* sprite)
 {
-	// Find the insertion point in the sorted vector
-	// (The first element with a higher draw order than me)
-	int myDrawOrder = sprite->GetDrawOrder();
-	auto i = mSprites.begin();
-	for (; i != mSprites.end(); ++i)
+	//Find the insertion point in the sorted vector
+	//(The first element with a higher draw order than me)
+	int myDrawOrder = sprite->drawOrder();
+	auto i = sprites_.begin();
+	for(; i != sprites_.end(); ++i)
 	{
-		if (myDrawOrder < (*i)->GetDrawOrder())
+		if(myDrawOrder < (*i)->drawOrder())
 		{
 			break;
 		}
 	}
-	// Inserts element before position of iterator
-	mSprites.insert(i, sprite);
+	//Inserts element before position of iterator
+	sprites_.insert(i, sprite);
 }
-void Renderer::RemoveSprite(SpriteComponent* sprite)
+void Renderer::removeSprite(SpriteComponent* sprite)
 {
-	auto i = std::find(mSprites.begin(), mSprites.end(), sprite);
-	mSprites.erase(i);
+	auto i = std::find(sprites_.begin(), sprites_.end(), sprite);
+	sprites_.erase(i);
 }
-void Renderer::AddMeshComp(MeshComponent* mesh)
+void Renderer::addMeshComp(MeshComponent* mesh)
 {
-	if (mesh->GetIsSkeletal())
+	if (mesh->isSkeletal())
 	{
 		SkeletalMeshComponent* sk = static_cast<SkeletalMeshComponent*>(mesh);
-		mSkeletalMeshComps.emplace_back(sk);
+		skeletalMeshComps_.emplace_back(sk);
 	}
 	else
 	{
-		mMeshComps.emplace_back(mesh);
+		meshComps_.emplace_back(mesh);
 	}
 }
-void Renderer::RemoveMeshComp(MeshComponent* mesh)
+void Renderer::removeMeshComp(MeshComponent* mesh)
 {
-	if (mesh->GetIsSkeletal())
+	if(mesh->isSkeletal())
 	{
 		SkeletalMeshComponent* sk = static_cast<SkeletalMeshComponent*>(mesh);
-		auto i = std::find(mSkeletalMeshComps.begin(), mSkeletalMeshComps.end(), sk);
-		mSkeletalMeshComps.erase(i);
+		auto i = std::find(skeletalMeshComps_.begin(), skeletalMeshComps_.end(), sk);
+		skeletalMeshComps_.erase(i);
 	}
 	else
 	{
-		auto i = std::find(mMeshComps.begin(), mMeshComps.end(), mesh);
-		mMeshComps.erase(i);
+		auto i = std::find(meshComps_.begin(), meshComps_.end(), mesh);
+		meshComps_.erase(i);
 	}
-	UnlinkMesh(mesh);
+	unlinkMesh(mesh);
 }
-void Renderer::AddPointLight(PointLightComponent* light)
+void Renderer::addPointLight(PointLightComponent* light)
 {
-	mPointLights.emplace_back(light);
+	pointLights_.emplace_back(light);
 }
-void Renderer::RemovePointLight(PointLightComponent* light)
+void Renderer::removePointLight(PointLightComponent* light)
 {
-	auto i = find(mPointLights.begin(), mPointLights.end(), light);
-	mPointLights.erase(i);
+	auto i = find(pointLights_.begin(), pointLights_.end(), light);
+	pointLights_.erase(i);
 }
-Texture* Renderer::GetTexture(const std::string& fileName)
+Texture* Renderer::getTexture(const std::string& fileName)
 {
 	Texture* tex = nullptr;
-	auto i = mTextures.find(fileName);
-	if (i != mTextures.end())
+	auto i = textures_.find(fileName);
+	if(i != textures_.end())
 	{
 		tex = i->second;
 	}
 	else
 	{
-		tex = new Texture();
-		if (tex->Load(fileName))
+		tex = new Texture(fileName);
+		if(tex->isLoaded())
 		{
-			mTextures.emplace(fileName, tex);
+			textures_.emplace(fileName, tex);
 		}
 		else
 		{
-			SDL_Log("FAILED TO LOAD TEXTURE: %s", fileName.c_str());
-			delete tex;
-			tex = nullptr;
+			//TODO: find a better way to handle loading the default texture
+			tex = new Texture("Assets/Default.png");
+			if(!tex->isLoaded())
+			{
+				//exit(1);
+			}
 		}
 	}
 	return tex;
 }
-void Renderer::RemoveTexture(const std::string& name)
+void Renderer::removeTexture(const std::string& name)
 {
-	auto it = mTextures.find(name);
-	if (it != mTextures.end())
+	auto it = textures_.find(name);
+	if (it != textures_.end())
 	{
-		mTextures.erase(it);
+		textures_.erase(it);
 	}
 }
-void Renderer::RemoveTexture(Texture* tex)
+void Renderer::removeTexture(Texture* tex)
 {
-	auto it = mTextures.begin();
-	while (it != mTextures.end())
+	auto it = textures_.begin();
+	while(it != textures_.end())
 	{
-		if (it->second == tex)
+		if(it->second == tex)
 		{
 			break;
 		}
 		it++;
 	}
-	if (it != mTextures.end())
+	if(it != textures_.end())
 	{
-		mTextures.erase(it);
+		textures_.erase(it);
 	}
 }
-Mesh* Renderer::GetMesh(const std::string & fileName)
+Mesh* Renderer::getMesh(const std::string & fileName)
 {
 	Mesh* m = nullptr;
-	auto i = mMeshes.find(fileName);
-	if (i != mMeshes.end())
+	auto i = meshes_.find(fileName);
+	if (i != meshes_.end())
 	{
 		m = i->second;
 	}
 	else
 	{
 		m = new Mesh();
-		if (m->Load(fileName, this))
+		if (m->load(fileName, this))
 		{
-			mMeshes.emplace(fileName, m);
+			meshes_.emplace(fileName, m);
 		}
 		else
 		{
@@ -307,41 +309,41 @@ Mesh* Renderer::GetMesh(const std::string & fileName)
 	}
 	return m;
 }
-void Renderer::RemoveMesh(const std::string& name)
+void Renderer::removeMesh(const std::string& name)
 {
-	auto it = mMeshes.find(name);
-	if (it != mMeshes.end())
+	auto it = meshes_.find(name);
+	if (it != meshes_.end())
 	{
-		mMeshes.erase(it);
+		meshes_.erase(it);
 	}
 }
-void Renderer::RemoveMesh(Mesh* mesh)
+void Renderer::removeMesh(Mesh* mesh)
 {
-	auto it = mMeshes.begin();
-	while (it != mMeshes.end())
+	auto it = meshes_.begin();
+	while(it != meshes_.end())
 	{
-		if (it->second == mesh)
+		if(it->second == mesh)
 		{
 			break;
 		}
 		it++;
 	}
-	if (it != mMeshes.end())
+	if(it != meshes_.end())
 	{
-		mMeshes.erase(it);
+		meshes_.erase(it);
 	}
 }
-Shader* Renderer::CreateShader(const std::string& name, const std::string& fileName)
+Shader* Renderer::createShader(const std::string& name, const std::string& fileName)
 {
-	return CreateShader(name, fileName+".vert", fileName+".frag");
+	return createShader(name, fileName+".vert", fileName+".frag");
 }
-Shader* Renderer::CreateShader(const std::string& name, const std::string & vertexFile, const std::string & fragmentFile)
+Shader* Renderer::createShader(const std::string& name, const std::string & vertexFile, const std::string & fragmentFile)
 {
 	Shader* s = new Shader(name);
-	if (s->Load(vertexFile, fragmentFile))
+	if (s->load(vertexFile, fragmentFile))
 	{
-		mShaders.emplace(s->GetName(), s);
-		s->SetActive();
+		shaders_.emplace(s->name(), s);
+		s->setActive();
 	}
 	else
 	{
@@ -350,10 +352,10 @@ Shader* Renderer::CreateShader(const std::string& name, const std::string & vert
 	}
 	return s;
 }
-Shader* Renderer::GetShader(const std::string& name)
+Shader* Renderer::getShader(const std::string& name)
 {
-	auto i = mShaders.find(name);
-	if (i != mShaders.end())
+	auto i = shaders_.find(name);
+	if(i != shaders_.end())
 	{
 		return i->second;
 	}
@@ -363,44 +365,44 @@ Shader* Renderer::GetShader(const std::string& name)
 		return nullptr;
 	}
 }
-void Renderer::SetShader(const std::string& name)
+void Renderer::setShader(const std::string& name)
 {
-	Shader* s = GetShader(name);
-	mCurrentShader = s;
-	s->SetActive();	
+	Shader* s = getShader(name);
+	currentShader_ = s;
+	s->setActive();
 }
-void Renderer::RemoveShader(const std::string& name)
+void Renderer::removeShader(const std::string& name)
 {
-	auto it = mShaders.find(name);
-	if (it != mShaders.end())
+	auto it = shaders_.find(name);
+	if(it != shaders_.end())
 	{
-		mShaders.erase(it);
+		shaders_.erase(it);
 	}
 }
-void Renderer::RemoveShader(Shader* shader)
+void Renderer::removeShader(Shader* shader)
 {
-	auto it = mShaders.begin();
-	while (it != mShaders.end())
+	auto it = shaders_.begin();
+	while(it != shaders_.end())
 	{
-		if (it->second == shader)
+		if(it->second == shader)
 		{
 			break;
 		}
 		it++;
 	}
-	if (it != mShaders.end())
+	if(it != shaders_.end())
 	{
-		mShaders.erase(it);
+		shaders_.erase(it);
 	}
 }
-std::vector<MeshComponent*>* Renderer::LinkMeshToShader(MeshComponent* mesh, Shader* shader)
+std::vector<MeshComponent*>* Renderer::linkMeshToShader(MeshComponent* mesh, Shader* shader)
 {
-	std::vector<MeshComponent*>* meshVector = GetMeshShader(shader);
+	std::vector<MeshComponent*>* meshVector = getMeshShader(shader);
 	if (meshVector == nullptr)
 	{
 		meshVector = new std::vector<MeshComponent*>();
 		meshVector->emplace_back(mesh);
-		mMeshShaders.emplace(shader, meshVector);
+		meshShaders_.emplace(shader, meshVector);
 	}
 	else
 	{
@@ -408,29 +410,29 @@ std::vector<MeshComponent*>* Renderer::LinkMeshToShader(MeshComponent* mesh, Sha
 	}
 	return meshVector;
 }
-bool Renderer::LinkMeshesToShader(Shader* shader, std::vector<MeshComponent*>* meshVector)
+bool Renderer::linkMeshesToShader(Shader* shader, std::vector<MeshComponent*>* meshVector)
 {
-	if (GetMeshShader(shader) != nullptr)
+	if(getMeshShader(shader) != nullptr)
 	{
 		return false;
 	}
-	mMeshShaders.emplace(shader, meshVector);
+	meshShaders_.emplace(shader, meshVector);
 	return true;
 }
-std::vector<MeshComponent*>* Renderer::GetMeshShader(Shader* shader)
+std::vector<MeshComponent*>* Renderer::getMeshShader(Shader* shader)
 {
 	std::vector<MeshComponent*>* meshVector = nullptr;
-	auto it = mMeshShaders.find(shader);
-	if (it != mMeshShaders.end())
+	auto it = meshShaders_.find(shader);
+	if(it != meshShaders_.end())
 	{
 		meshVector = it->second;
 	}
 	return meshVector;
 }
-Shader* Renderer::GetShaderFromMesh(MeshComponent* mesh)
+Shader* Renderer::getShaderFromMesh(MeshComponent* mesh)
 {
-	auto it = mMeshShaders.begin();
-	while (it != mMeshShaders.end())
+	auto it = meshShaders_.begin();
+	while (it != meshShaders_.end())
 	{
 		std::vector<MeshComponent*>* meshVector = it->second;
 		auto i = find(meshVector->begin(), meshVector->end(), mesh);
@@ -442,18 +444,18 @@ Shader* Renderer::GetShaderFromMesh(MeshComponent* mesh)
 	}
 	return nullptr;
 }
-void Renderer::UnlinkShader(Shader* shader)
+void Renderer::unlinkShader(Shader* shader)
 {
-	auto it = mMeshShaders.find(shader);
-	if (it != mMeshShaders.end())
+	auto it = meshShaders_.find(shader);
+	if (it != meshShaders_.end())
 	{
-		mMeshShaders.erase(it);
+		meshShaders_.erase(it);
 	}
 }
-void Renderer::UnlinkMesh(MeshComponent* mesh)
+void Renderer::unlinkMesh(MeshComponent* mesh)
 {
-	auto it = mMeshShaders.begin();
-	while (it != mMeshShaders.end())
+	auto it = meshShaders_.begin();
+	while (it != meshShaders_.end())
 	{
 		std::vector<MeshComponent*>* meshVector = it->second;
 		auto i = find(meshVector->begin(), meshVector->end(), mesh);
@@ -465,189 +467,189 @@ void Renderer::UnlinkMesh(MeshComponent* mesh)
 		it++;
 	}
 }
-void Renderer::UnlinkMeshes(std::vector<MeshComponent*>* meshVector)
+void Renderer::unlinkMeshes(std::vector<MeshComponent*>* meshVector)
 {
-	auto it = mMeshShaders.begin();
-	while (it != mMeshShaders.end())
+	auto it = meshShaders_.begin();
+	while(it != meshShaders_.end())
 	{
-		if (it->second == meshVector)
+		if(it->second == meshVector)
 		{
 			break;
 		}
 		it++;
 	}
-	if (it != mMeshShaders.end())
+	if(it != meshShaders_.end())
 	{
-		mMeshShaders.erase(it);
+		meshShaders_.erase(it);
 	}
 }
-void Renderer::Draw3DScene(unsigned int framebuffer, const matrix4& view, const matrix4& proj, bool lit)
+void Renderer::draw3DScene(unsigned int framebuffer, const matrix4& view, const matrix4& proj, bool lit)
 {
-	// Set the current frame buffer
+	//Set the current frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	// Clear color buffer/depth buffer
+	//Clear color buffer/depth buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glDepthMask(GL_TRUE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Draw mesh components
-	// Enable depth buffering/disable alpha blend
+	//Draw mesh components
+	//Enable depth buffering/disable alpha blend
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	for (auto it = mMeshShaders.begin(); it != mMeshShaders.end(); it++)
+	for (auto it = meshShaders_.begin(); it != meshShaders_.end(); it++)
 	{
-		// Set the specific mesh shader as active
-		mCurrentShader = it->first;
-		mCurrentShader->SetActive(); 
-		// Update view-projection matrix
-		mCurrentShader->SetMatrixUniform("uViewProj", view * proj);
-		// Update lighting uniforms
-		if (lit)
+		//Set the specific mesh shader as active
+		currentShader_ = it->first;
+		currentShader_->setActive();
+		//Update view-projection matrix
+		currentShader_->setMatrixUniform("uViewProj", view * proj);
+		//Update lighting uniforms
+		if(lit)
 		{
-			SetLightUniforms(mCurrentShader, view);
+			setLightUniforms(currentShader_, view);
 		}
 		std::vector<MeshComponent*>* meshVector = it->second;
-		for (auto  i = meshVector->begin(); i != meshVector->end(); ++i)// Note: mesh could also be a skeletal mesh component
+		//Note: mesh could also be a skeletal mesh component
+		for(auto  i = meshVector->begin(); i != meshVector->end(); ++i)
 		{
 			MeshComponent* mesh = *i;
-			if (mesh->GetVisible())
+			if(mesh->visible())
 			{
-				mesh->Draw(mCurrentShader);
+				mesh->draw(currentShader_);
 			}
 		}
 	}
 }
-bool Renderer::CreateMirrorTarget()
+bool Renderer::createMirrorTarget()
 {
-	// Generate a frame buffer for the mirror texture
-	glGenFramebuffers(1, &mMirrorBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, mMirrorBuffer);
-	// Create the texture we'll use for rendering
-	int width = static_cast<int>(mScreenWidth);
-	int height = static_cast<int>(mScreenHeight);
-	mMirrorTexture = new Texture();
-	mMirrorTexture->CreateForRendering(width, height, GL_RGB);
-	// Add a depth buffer to this target
+	//Generate a frame buffer for the mirror texture
+	glGenFramebuffers(1, &mirrorBuffer_);
+	glBindFramebuffer(GL_FRAMEBUFFER, mirrorBuffer_);
+	//Create the texture we'll use for rendering
+	int width = static_cast<int>(screenWidth_);
+	int height = static_cast<int>(screenHeight_);
+	mirrorTexture_ = new Texture(width, height, GL_RGB);
+	//Add a depth buffer to this target
 	GLuint depthBuffer;
 	glGenRenderbuffers(1, &depthBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
-	// Attach mirror texture as the output target for the frame buffer
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mMirrorTexture->GetTextureID(), 0);
-	// Set the list of buffers to draw to for this frame buffer
+	//Attach mirror texture as the output target for the frame buffer
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, mirrorTexture_->textureID(), 0);
+	//Set the list of buffers to draw to for this frame buffer
 	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
 	glDrawBuffers(1, drawBuffers);
-	// Make sure everything worked
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	//Make sure everything worked
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		// If it didn't work, delete the frame-buffer,
-		// unload/delete the texture and return false
-		glDeleteFramebuffers(1, &mMirrorBuffer);
-		mMirrorTexture->Unload();
-		delete mMirrorTexture;
-		mMirrorTexture = nullptr;
+		//If it didn't work, delete the frame-buffer,
+		//unload/delete the texture and return false
+		glDeleteFramebuffers(1, &mirrorBuffer_);
+		mirrorTexture_->~Texture();
+		delete mirrorTexture_;
+		mirrorTexture_ = nullptr;
 		return false;
 	}
 	return true;
 }
-void Renderer::DrawFromGBuffer()
+void Renderer::drawFromGBuffer()
 {
-	// Clear the current frame-buffer
+	//Clear the current frame-buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Disable depth testing for the global lighting pass
+	//Disable depth testing for the global lighting pass
 	glDisable(GL_DEPTH_TEST);
-	// Activate global G-buffer shader
-	SetShader("Global");
-	// Activate sprite vertices quad
-	mSpriteVerts->SetActive();
-	// Set the G-buffer textures to sample
-	mGBuffer->SetTexturesActive();
-	// Set the lighting uniforms
-	SetLightUniforms(mCurrentShader, mView);
-	// Draw the triangles
+	//Activate global G-buffer shader
+	setShader("Global");
+	//Activate sprite vertices quad
+	spriteVerts_->setActive();
+	//Set the G-buffer textures to sample
+	gBuffer_->setTexturesActive();
+	//Set the lighting uniforms
+	setLightUniforms(currentShader_, view_);
+	//Draw the triangles
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-	// Copy depth buffer from G-buffer to default frame buffer
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, mGBuffer->GetBufferID());
-	int width = static_cast<int>(mScreenWidth);
-	int height = static_cast<int>(mScreenHeight);
+	//Copy depth buffer from G-buffer to default frame buffer
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer_->bufferID());
+	int width = static_cast<int>(screenWidth_);
+	int height = static_cast<int>(screenHeight_);
 	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	// Enable depth test, but disable writes to depth buffer
+	//Enable depth test, but disable writes to depth buffer
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
-	// Set the point light shader and mesh as active
-	SetShader("PointLight");
-	mPointLightMesh->GetVertexArray()->SetActive();
-	// Set the view-projection matrix
-	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
-	// Set the G-buffer textures for sampling
-	mGBuffer->SetTexturesActive();
-	// The point light color should add to existing color
+	//Set the point light shader and mesh as active
+	setShader("PointLight");
+	pointLightMesh_->vertexArray()->setActive();
+	//Set the view-projection matrix
+	currentShader_->setMatrixUniform("uViewProj", view_ * projection_);
+	//Set the G-buffer textures for sampling
+	gBuffer_->setTexturesActive();
+	//The point light color should add to existing color
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
-	// Draw the point lights
-	for (PointLightComponent* p : mPointLights)
+	//Draw the point lights
+	for(PointLightComponent* p: pointLights_)
 	{
-		p->Draw(mCurrentShader, mPointLightMesh);
+		p->draw(currentShader_, pointLightMesh_);
 	}
 }
-bool Renderer::LoadShaders()
+bool Renderer::loadShaders()
 {
-	// Create sprite shader
-	mCurrentShader = CreateShader("Sprite", "Shaders/Sprite");
-	if (mCurrentShader == nullptr)
+	//Create sprite shader
+	currentShader_ = createShader("Sprite", "Shaders/Sprite");
+	if(currentShader_ == nullptr)
 	{
 		return false;
 	}
-	// Set the view-projection matrix
-	matrix4 spriteViewProj = matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
-	mCurrentShader->SetMatrixUniform("uViewProj", spriteViewProj);
-	// Create basic mesh shader
-	mCurrentShader = CreateShader("Mesh", "Shaders/Phong.vert", "Shaders/GBufferWrite.frag");
-	if (mCurrentShader == nullptr)
+	//Set the view-projection matrix
+	matrix4 spriteViewProj = matrix4::CreateSimpleViewProj(screenWidth_, screenHeight_);
+	currentShader_->setMatrixUniform("uViewProj", spriteViewProj);
+	//Create basic mesh shader
+	currentShader_ = createShader("Mesh", "Shaders/Phong.vert", "Shaders/GBufferWrite.frag");
+	if(currentShader_ == nullptr)
 	{
 		return false;
 	}
-	// Set the view-projection matrix
-	mView = matrix4::CreateLookAt(vector3::Zero, vector3::UnitZ, vector3::UnitY);
-	mProjection = matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), mScreenWidth, mScreenHeight, 10.0f, 10000.0f);
-	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
-	// Create skinned shader
-	mCurrentShader = CreateShader("Skinned", "Shaders/Skinned.vert", "Shaders/GBufferWrite.frag");
-	if (mCurrentShader == nullptr)
+	//Set the view-projection matrix
+	view_ = matrix4::CreateLookAt(vector3::Zero, vector3::UnitZ, vector3::UnitY);
+	projection_ = matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), screenWidth_, screenHeight_, 10.0f, 10000.0f);
+	currentShader_->setMatrixUniform("uViewProj", view_ * projection_);
+	//Create skinned shader
+	currentShader_ = createShader("Skinned", "Shaders/Skinned.vert", "Shaders/GBufferWrite.frag");
+	if(currentShader_ == nullptr)
 	{
 		return false;
 	}
-	mCurrentShader->SetMatrixUniform("uViewProj", mView * mProjection);
-	// Create shader for drawing from GBuffer (global lighting)
-	mCurrentShader = CreateShader("Global", "Shaders/GBufferGlobal");
-	if (mCurrentShader == nullptr)
+	currentShader_->setMatrixUniform("uViewProj", view_ * projection_);
+	//Create shader for drawing from GBuffer (global lighting)
+	currentShader_ = createShader("Global", "Shaders/GBufferGlobal");
+	if(currentShader_ == nullptr)
 	{
 		return false;
 	}
-	// For the GBuffer, we need to associate each sampler with an index
-	mCurrentShader->SetIntUniform("uGTexColor", 0);
-	mCurrentShader->SetIntUniform("uGNormal", 1);
-	mCurrentShader->SetIntUniform("uGWorldPos", 2);
-	// The view projection is just the sprite one
-	mCurrentShader->SetMatrixUniform("uViewProj", spriteViewProj);
-	// The world transform scales to the screen and flips y
-	matrix4 gbufferWorld = matrix4::CreateScale(mScreenWidth, -mScreenHeight, 1.0f);
-	mCurrentShader->SetMatrixUniform("uWorldTransform", gbufferWorld);
-	// Create a shader for point lights from GBuffer
-	mCurrentShader = CreateShader("PointLight","Shaders/BasicMesh.vert", "Shaders/GBufferPointLight.frag");
-	if (mCurrentShader == nullptr)
+	//For the GBuffer, we need to associate each sampler with an index
+	currentShader_->setIntUniform("uGTexColor", 0);
+	currentShader_->setIntUniform("uGNormal", 1);
+	currentShader_->setIntUniform("uGWorldPos", 2);
+	//The view projection is just the sprite one
+	currentShader_->setMatrixUniform("uViewProj", spriteViewProj);
+	//The world transform scales to the screen and flips y
+	matrix4 gbufferWorld = matrix4::CreateScale(screenWidth_, -screenHeight_, 1.0f);
+	currentShader_->setMatrixUniform("uWorldTransform", gbufferWorld);
+	//Create a shader for point lights from GBuffer
+	currentShader_ = createShader("PointLight","Shaders/BasicMesh.vert", "Shaders/GBufferPointLight.frag");
+	if(currentShader_ == nullptr)
 	{
 		return false;
 	}
-	// Set sampler indices
-	mCurrentShader->SetIntUniform("uGTexColor", 0);
-	mCurrentShader->SetIntUniform("uGNormal", 1);
-	mCurrentShader->SetIntUniform("uGWorldPos", 2);
-	mCurrentShader->SetVector2Uniform("uScreenDimensions", vector2(mScreenWidth, mScreenHeight));
+	//Set sampler indices
+	currentShader_->setIntUniform("uGTexColor", 0);
+	currentShader_->setIntUniform("uGNormal", 1);
+	currentShader_->setIntUniform("uGWorldPos", 2);
+	currentShader_->setVector2Uniform("uScreenDimensions", vector2(screenWidth_, screenHeight_));
 	return true;
 }
-void Renderer::CreateSpriteVerts()
+void Renderer::createSpriteVerts()
 {
 	float vertices[] = {
 		-0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // top left
@@ -659,41 +661,41 @@ void Renderer::CreateSpriteVerts()
 		0, 1, 2,
 		2, 3, 0
 	};
-	mSpriteVerts = new VertexArray(vertices, 4, VertexArray::PosNormTexRGB, indices, 6);
+	spriteVerts_ = new VertexArray(vertices, 4, VertexArray::PosNormTexRGB, indices, 6);
 }
-void Renderer::SetLightUniforms(Shader* shader, const matrix4& view)
+void Renderer::setLightUniforms(Shader* shader, const matrix4& view)
 {
-	// Camera position is from inverted view
+	//Camera position is from inverted view
 	matrix4 invView = view;
 	invView.Invert();
-	shader->SetVectorUniform("uCameraPos", invView.GetTranslation());
-	// Ambient light
-	shader->SetVectorUniform("uAmbientLight", mAmbientLight);
-	// Directional light
-	shader->SetVectorUniform("uDirLight.mDirection", mDirLight.mDirection);
-	shader->SetVectorUniform("uDirLight.mDiffuseColor", mDirLight.mDiffuseColor);
-	shader->SetVectorUniform("uDirLight.mSpecularColor", mDirLight.mSpecularColor);
+	shader->setVectorUniform("uCameraPos", invView.GetTranslation());
+	//Ambient light
+	shader->setVectorUniform("uAmbientLight", ambientLight_);
+	//Directional light
+	shader->setVectorUniform("uDirLight.direction_", dirLight_.direction_);
+	shader->setVectorUniform("uDirLight.diffuseColor_", dirLight_.diffuseColor_);
+	shader->setVectorUniform("uDirLight.specularColor_", dirLight_.specularColor_);
 }
-vector3 Renderer::Unproject(const vector3& screenPoint) const
+vector3 Renderer::unproject(const vector3& screenPoint) const
 {
-	// Convert screenPoint to device coordinates (between -1 and +1)
+	//Convert screenPoint to device coordinates (between -1 and +1)
 	vector3 deviceCoord = screenPoint;
-	deviceCoord.x /= (mScreenWidth) * 0.5f;
-	deviceCoord.y /= (mScreenHeight) * 0.5f;
-	// Transform vector by unprojection matrix
-	matrix4 unprojection = mView * mProjection;
+	deviceCoord.x /= (screenWidth_) * 0.5f;
+	deviceCoord.y /= (screenHeight_) * 0.5f;
+	//Transform vector by unprojection matrix
+	matrix4 unprojection = view_ * projection_;
 	unprojection.Invert();
 	return vector3::TransformWithPerspDiv(deviceCoord, unprojection);
 }
-void Renderer::GetScreenDirection(vector3& outStart, vector3& outDir) const
+void Renderer::getScreenDirection(vector3& outStart, vector3& outDir) const
 {
-	// Get start point (in center of screen on near plane)
+	//Get start point (in center of screen on near plane)
 	vector3 screenPoint(0.0f, 0.0f, 0.0f);
-	outStart = Unproject(screenPoint);
-	// Get end point (in center of screen, between near and far)
+	outStart = unproject(screenPoint);
+	//Get end point (in center of screen, between near and far)
 	screenPoint.z = 0.9f;
-	vector3 end = Unproject(screenPoint);
-	// Get direction vector
+	vector3 end = unproject(screenPoint);
+	//Get direction vector
 	outDir = end - outStart;
 	outDir.Normalize();
 }

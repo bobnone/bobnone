@@ -1,4 +1,3 @@
- // ----------------------------------------------------------------
 #pragma once
 #include <cstdint>
 #include "Math.h"
@@ -10,35 +9,35 @@ class Mouse
 public:
 	Mouse(class Game* game);
 	~Mouse();
-	void Update(float deltaTime);
-	void ProcessInput(SDL_Event* event);
-	// Returns the mouse's position vector
-	vector2 GetPosition()
+	void update(float deltaTime);
+	void processInput(SDL_Event* event);
+	//Returns the mouse's position vector
+	vector2 position()
 	{
-		return mPosition;
+		return position_;
 	}
-	// Returns a vector representing the change in position
-	vector2 GetPositionChange()
+	//Returns a vector representing the change in position
+	vector2 getPositionChange()
 	{
-		return mChange;
+		return change_;
 	}
-	// Sets the mouse mode to relative or not
-	void SetRelative(bool relative);
-	// Returns if the mouse mode is relative or not
-	bool IsRelative()
+	//Sets the mouse mode to relative or not
+	void setRelative(bool relative);
+	//Returns if the mouse mode is relative or not
+	bool relative()
 	{
-		return mRelative;
+		return relative_;
 	}
-	// Returns if the left mouse button is clicked or not
-	bool Clicked()
+	//Returns if the left mouse button is clicked or not
+	bool clicked()
 	{
-		return mClicked;
+		return clicked_;
 	}
 private:
-	class Game* mGame;
-	vector2 mPosition;
-	vector2 mOld;
-	vector2 mChange;
-	bool mRelative;
-	bool mClicked;
+	class Game* game_;
+	vector2 position_;
+	vector2 old_;
+	vector2 change_;
+	bool relative_;
+	bool clicked_;
 };

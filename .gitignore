@@ -1,13 +1,58 @@
+# Prerequisites
+*.d
+
+# Compiled object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Compiled dynamic libraries
+*.so
+*.dylib
+My3DGame/*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled static libraries
+*.lai
+*.la
+*.a
+My3DGame/*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Backup files
+*.zip
+*.rar
+
+# Visual Studios files
+_config.yml
+.vs
 *.db
 *.user
 *.opendb
-Debug/
-Release/
 .DS_Store
 *xcuserdatad*
 *.xccheckout
 *.stackdump
-.vs
-Chapter14/Assets/Saved.gplevel
-Chapter14/Assets/*.bin
-External/FMOD
+
+# Unnecessary folders
+My3DGame/Release
+My3DGame/Debug
+My3DGame/x64
+My3DGame/Metadata
+My3DGame/Assets/Saved.gplevel
+My3DGame/Assets/*.bin
+Exporter
+examples
+/External/FMOD SoundSystem/doc/FMOD API User Manual

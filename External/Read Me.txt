@@ -1,0 +1,62 @@
+// Note: $(SolutionDir) is the directory for visual studio's ".sln" solution file
+// Install Guide To External Software (32 bit)
+	Visual Studios Project Property's Page:
+		C/C++:
+			General:
+				Additional Include Directories:
+					$(SolutionDir)..\external\SDL\include
+					$(SolutionDir)..\external\rapidjson\include
+					$(SolutionDir)..\external\FMOD SoundSystem\include
+		Linker:
+			General:
+				Additional Library Directories:
+					$(SolutionDir)..\external\SDL\lib\win\x86
+					$(SolutionDir)..\external\FMOD SoundSystem\x86
+			Input:
+				Additional Dependencies:
+					SDL2.lib
+					SDL2main.lib
+					SDL2_ttf.lib
+					SDL2_mixer.lib
+					SDL2_image.lib
+					fmod_vc.lib
+					fmodL_vc.lib
+					fmodstudio_vc.lib
+					fmodstudioL_vc.lib
+					fsbank_vc.lib
+//Note: Used to automaticlly extract the individual ".dll" files into debug/release project folders
+		Build Events:
+			Post-Build Event:
+				xcopy "$(SolutionDir)..\external\SDL\lib\win\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\external\FMOD SoundSystem\x86\*.dll" "$(OutDir)" /i /s /y
+
+// Install Guide To External Software (64 bit)
+	Visual Studios Project Property's Page:
+		C/C++:
+			General:
+				Additional Include Directories:
+					$(SolutionDir)..\external\SDL\include
+					$(SolutionDir)..\external\rapidjson\include
+					$(SolutionDir)..\external\FMOD SoundSystem\include
+		Linker:
+			General:
+				Additional Library Directories:
+					$(SolutionDir)..\external\SDL\lib\win\x86
+					$(SolutionDir)..\external\FMOD SoundSystem\x64
+			Input:
+				Additional Dependencies:
+					SDL2.lib
+					SDL2main.lib
+					SDL2_ttf.lib
+					SDL2_mixer.lib
+					SDL2_image.lib
+					fmod_vc.lib
+					fmodL_vc.lib
+					fmodstudio_vc.lib
+					fmodstudioL_vc.lib
+					fsbank_vc.lib
+//Note: Used to automaticlly extract the individual ".dll" files into debug/release project folders
+		Build Events:
+			Post-Build Event:
+				xcopy "$(SolutionDir)..\external\SDL\lib\win\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\external\FMOD SoundSystem\x64\*.dll" "$(OutDir)" /i /s /y

@@ -1,61 +1,52 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "AIState.h"
 #include "AIComponent.h"
 #include <SDL/SDL_log.h>
 
-void AIPatrol::Update(float deltaTime)
+void AIPatrol::update(float deltaTime)
 {
-	SDL_Log("Updating %s state", GetName());
+	SDL_Log("Updating %s state", getName());
 	bool dead = true;
-	if (dead)
+	if(dead)
 	{
-		mOwner->ChangeState("Death");
+		owner_->changeState("Death");
 	}
 }
-
-void AIPatrol::OnEnter()
+void AIPatrol::onEnter()
 {
-	SDL_Log("Entering %s state", GetName());
+	SDL_Log("Entering %s state", getName());
 }
-
-void AIPatrol::OnExit()
+void AIPatrol::onExit()
 {
-	SDL_Log("Exiting %s state", GetName());
+	SDL_Log("Exiting %s state", getName());
 }
-
-void AIDeath::Update(float deltaTime)
+void AIDeath::update(float deltaTime)
 {
-	SDL_Log("Updating %s state", GetName());
+	SDL_Log("Updating %s state", getName());
 }
-
-void AIDeath::OnEnter()
+void AIDeath::onEnter()
 {
-	SDL_Log("Entering %s state", GetName());
+	SDL_Log("Entering %s state", getName());
 }
-
-void AIDeath::OnExit()
+void AIDeath::onExit()
 {
-	SDL_Log("Exiting %s state", GetName());
+	SDL_Log("Exiting %s state", getName());
 }
-
-void AIAttack::Update(float deltaTime)
+void AIAttack::update(float deltaTime)
 {
-	SDL_Log("Updating %s state", GetName());
+	SDL_Log("Updating %s state", getName());
 }
-
-void AIAttack::OnEnter()
+void AIAttack::onEnter()
 {
-	SDL_Log("Entering %s state", GetName());
+	SDL_Log("Entering %s state", getName());
 }
-
-void AIAttack::OnExit()
+void AIAttack::onExit()
 {
-	SDL_Log("Exiting %s state", GetName());
+	SDL_Log("Exiting %s state", getName());
 }

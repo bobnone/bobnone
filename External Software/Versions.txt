@@ -1,0 +1,18 @@
+ALMixer: ?
+https://playcontrol.net/opensource/ALmixer/
+DevIL: 1.8.0
+http://openil.sourceforge.net/
+FreeType: 2.10.1
+https://www.freetype.org/
+GLEW: 2.1.0
+http://glew.sourceforge.net/
+GLFW: 3.3.2
+https://www.glfw.org/
+GLM: 0.9.9.8
+https://glm.g-truc.net/0.9.9/index.html
+OpenAL: 1.1
+https://www.openal.org/
+OpenAL-Soft: 1.20.1
+https://kcat.strangesoft.net/openal.html
+OpenGL: 4.6?
+https://www.opengl.org/

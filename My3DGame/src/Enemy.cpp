@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Enemy.h"
 #include "Game.h"
@@ -15,42 +14,35 @@
 #include "CircleComponent.h"
 #include <algorithm>
 
-Enemy::Enemy(class Game* game)
-:Actor(game)
+Enemy::Enemy(class Game* game):Actor(game)
 {
-	// Add to enemy vector
-	game->GetEnemies().emplace_back(this);
-	
+	//Add to enemy vector
+	game->getEnemies().emplace_back(this);
 	SpriteComponent* sc = new SpriteComponent(this);
-	sc->SetTexture(game->GetTexture("Assets/Airplane.png"));
-	// Set position at start tile
-	SetPosition(GetGame()->GetGrid()->GetStartTile()->GetPosition());
-	// Setup a nav component at the start tile
+	sc->setTexture(game->renderer()->getTexture("Assets/Airplane.png"));
+	//Set position at start tile
+	setPosition(game->getGrid()->getStartTile()->getPosition());
+	//Setup a nav component at the start tile
 	NavComponent* nc = new NavComponent(this);
-	nc->SetForwardSpeed(150.0f);
-	nc->StartPath(GetGame()->GetGrid()->GetStartTile());
-	// Setup a circle for collision
-	mCircle = new CircleComponent(this);
-	mCircle->SetRadius(25.0f);
+	nc->setForwardSpeed(150.0f);
+	nc->startPath(game->getGrid()->getStartTile());
+	//Setup a circle for collision
+	circle_ = new CircleComponent(this);
+	circle_->setRadius(25.0f);
 }
-
 Enemy::~Enemy()
 {
-	// Remove from enemy vector
-	auto iter = std::find(GetGame()->GetEnemies().begin(),
-						  GetGame()->GetEnemies().end(),
-						  this);
-	GetGame()->GetEnemies().erase(iter);
+	//Remove from enemy vector
+	auto iter = std::find(game()->getEnemies().begin(), game()->getEnemies().end(), this);
+	game()->getEnemies().erase(iter);
 }
-
-void Enemy::UpdateActor(float deltaTime)
+void Enemy::updateActor(float deltaTime)
 {
-	Actor::UpdateActor(deltaTime);
-	
-	// Am I near the end tile?
-	Vector2 diff = GetPosition() - GetGame()->GetGrid()->GetEndTile()->GetPosition();
-	if (Math::NearZero(diff.Length(), 10.0f))
+	Actor::updateActor(deltaTime);
+	//Am I near the end tile?
+	vector2 diff = position() - game()->getGrid()->getEndTile()->getPosition();
+	if(Math::NearZero(diff.Length(), 10.0f))
 	{
-		SetState(EDead);
+		setState(ACTOR_DEAD);
 	}
 }

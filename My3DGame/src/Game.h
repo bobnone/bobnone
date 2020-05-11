@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include <string>
@@ -16,7 +15,7 @@
 #include "Actor.h"
 #include "Renderer.h"
 #include "Mouse.h"
-#include "PhysWorld.h"
+#include "Physics.h"
 #include "AudioSystem.h"
 #include "HUD.h"
 #include "UIScreen.h"
@@ -36,93 +35,93 @@ public:
 		GAME_QUIT
 	};
 	Game();
-	bool Initialize();
-	void RunLoop();
-	void Shutdown();
-	void AddActor(class Actor* actor);
-	void RemoveActor(class Actor* actor);
-	class Renderer* GetRenderer()
+	bool initialize();
+	void runLoop();
+	void shutdown();
+	void addActor(class Actor* actor);
+	void removeActor(class Actor* actor);
+	class Renderer* renderer()
 	{
-		return mRenderer;
+		return renderer_;
 	}
-	class AudioSystem* GetAudioSystem()
+	class AudioSystem* audioSystem()
 	{
-		return mAudioSystem;
+		return audioSystem_;
 	}
-	class PhysWorld* GetPhysWorld()
+	class Physics* physics()
 	{
-		return mPhysWorld;
+		return physics_;
 	}
-	class Mouse* GetMouse()
+	class Mouse* mouse()
 	{
-		return mMouse;
+		return mouse_;
 	}
-	class HUD* GetHUD()
+	class HUD* getHUD()
 	{
-		return mHUD;
+		return HUD_;
 	}
-	// Manage UI stack
-	const std::vector<class UIScreen*>& GetUIStack()
+	//Manage UI stack
+	const std::vector<class UIScreen*>& UIStack()
 	{
-		return mUIStack;
+		return UIStack_;
 	}
-	void PushUI(class UIScreen* screen);
-	class FollowActor* GetPlayer()
+	void pushUI(class UIScreen* screen);
+	class FollowActor* player()
 	{
-		return mFollowActor;
+		return player_;
 	}
-	GameState GetState() const
+	GameState getState() const
 	{
-		return mGameState;
+		return gameState_;
 	}
-	void SetState(GameState state)
+	void setState(GameState state)
 	{
-		mGameState = state;
+		gameState_ = state;
 	}
-	class Font* GetFont(const std::string& fileName);
-	void LoadText(const std::string& fileName);
-	const std::string& GetText(const std::string& key);
-	class Skeleton* GetSkeleton(const std::string& fileName);
-	class Animation* GetAnimation(const std::string& fileName);
-	const std::vector<class Actor*>& GetActors() const
+	class Font* getFont(const std::string& fileName);
+	void loadText(const std::string& fileName);
+	const std::string& getText(const std::string& key);
+	class Skeleton* getSkeleton(const std::string& fileName);
+	class Animation* getAnimation(const std::string& fileName);
+	const std::vector<class Actor*>& actors() const
 	{
-		return mActors;
+		return actors_;
 	}
-	void SetFollowActor(class FollowActor* actor)
+	void setPlayer(class FollowActor* actor)
 	{
-		mFollowActor = actor;
+		player_ = actor;
 	}
 private:
-	void ProcessInput();
-	void HandleKeyPress(int key);
-	void UpdateGame();
-	void GenerateOutput();
-	void LoadData();
-	void UnloadData();
-	// All the actors in the game
-	std::vector<class Actor*> mActors;
-	std::vector<class UIScreen*> mUIStack;
-	// Map for fonts
-	std::unordered_map<std::string, class Font*> mFonts;
-	// Map of loaded skeletons
-	std::unordered_map<std::string, class Skeleton*> mSkeletons;
-	// Map of loaded animations
-	std::unordered_map<std::string, class Animation*> mAnims;
-	// Map for text localization
-	std::unordered_map<std::string, std::string> mText;
-	// Any pending actors
-	std::vector<class Actor*> mPendingActors;
-	class Renderer* mRenderer;
-	class AudioSystem* mAudioSystem;
-	class PhysWorld* mPhysWorld;
-	class Mouse* mMouse;
-	class HUD* mHUD;
-	Uint32 mTicksCount;
-	GameState mGameState;
-	// Track if we're updating actors right now
-	bool mUpdatingActors;
-	// Game-specific code
-	class FollowActor* mFollowActor;
-	class SpriteComponent* mCrosshair;
-	SoundEvent mMusicEvent;
+	void processInput();
+	void handleKeyPress(int key);
+	void updateGame();
+	void generateOutput();
+	void loadData();
+	void unloadData();
+	//All the actors in the game
+	std::vector<class Actor*> actors_;
+	std::vector<class UIScreen*> UIStack_;
+	//Map for fonts
+	std::unordered_map<std::string, class Font*> fonts_;
+	//Map of loaded skeletons
+	std::unordered_map<std::string, class Skeleton*> skeletons_;
+	//Map of loaded animations
+	std::unordered_map<std::string, class Animation*> anims_;
+	//Map for text localization
+	std::unordered_map<std::string, std::string> text_;
+	//Any pending actors
+	std::vector<class Actor*> pendingActors_;
+	class Renderer* renderer_;
+	class AudioSystem* audioSystem_;
+	class Physics* physics_;
+	class Mouse* mouse_;
+	class HUD* HUD_;
+	Uint32 ticksCount_;
+	GameState gameState_;
+	//Track if we're updating actors right now
+	bool updatingActors_;
+	//Game-specific code
+	class FollowActor* player_;
+	class SpriteComponent* crosshair_;
+	SoundEvent musicEvent_;
 };

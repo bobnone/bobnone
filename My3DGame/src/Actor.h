@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include <vector>
@@ -32,109 +31,109 @@ public:
 	};
 	Actor(class Game* game);
 	virtual ~Actor();
-	// Update function called from Game (not overridable)
-	void Update(float deltaTime);
-	// Updates all the components attached to the actor (not overridable)
-	void UpdateComponents(float deltaTime);
-	// Any actor-specific update code (overridable)
-	virtual void UpdateActor(float deltaTime);
-	// ProcessInput function called from Game (not overridable)
-	void ProcessInput(const uint8_t* keyState);
-	// Any actor-specific input code (overridable)
-	virtual void ActorInput(const uint8_t* keyState);
-	// Getters/setters
-	const vector3& GetPosition() const
+	//Update function called from Game (not overridable)
+	void update(float deltaTime);
+	//Updates all the components attached to the actor (not overridable)
+	void updateComponents(float deltaTime);
+	//Any actor-specific update code (overridable)
+	virtual void updateActor(float deltaTime);
+	//ProcessInput function called from Game (not overridable)
+	void processInput(const uint8_t* keyState);
+	//Any actor-specific input code (overridable)
+	virtual void actorInput(const uint8_t* keyState);
+	//Getters/setters
+	const vector3& position() const
 	{
-		return mPosition;
+		return position_;
 	}
-	void SetPosition(const vector3& pos)
+	void setPosition(const vector3& position)
 	{
-		mPosition = pos;
-		mRecomputeTransform = true;
+		position_ = position;
+		recomputeTransform_ = true;
 	}
-	const vector3& GetVelocity() const
+	const vector3& velocity() const
 	{
-		return mVelocity;
+		return velocity_;
 	}
-	const vector3& GetAcceleration() const
+	const vector3& acceleration() const
 	{
-		return mAcceleration;
+		return acceleration_;
 	}
-	const bool IsMoving() const
+	const bool moving() const
 	{
-		return mMoving;
+		return moving_;
 	}
-	float GetScale() const
+	float scale() const
 	{
-		return mScale;
+		return scale_;
 	}
-	void SetScale(float scale)
+	void setScale(float scale)
 	{
-		mScale = scale;
-		mRecomputeTransform = true;
+		scale_ = scale;
+		recomputeTransform_ = true;
 	}
-	const quaternion& GetRotation() const
+	const quaternion& rotation() const
 	{
-		return mRotation;
+		return rotation_;
 	}
-	void SetRotation(const quaternion& rotation)
+	void setRotation(const quaternion& rotation)
 	{
-		mRotation = rotation;
-		mRecomputeTransform = true;
+		rotation_ = rotation;
+		recomputeTransform_ = true;
 	}
-	void ComputeWorldTransform();
-	const matrix4& GetWorldTransform() const
+	void computeWorldTransform();
+	const matrix4& worldTransform() const
 	{
-		return mWorldTransform;
+		return worldTransform_;
 	}
-	vector3 GetRight() const
+	vector3 getRight() const
 	{
-		return vector3::Transform(vector3::UnitY, mRotation);
+		return vector3::Transform(vector3::UnitY, rotation_);
 	}
-	vector3 GetUp() const
+	vector3 getUp() const
 	{
-		return vector3::Transform(vector3::UnitZ, mRotation);
+		return vector3::Transform(vector3::UnitZ, rotation_);
 	}
-	vector3 GetForward() const
+	vector3 getForward() const
 	{
-		return vector3::Transform(vector3::UnitX, mRotation);
+		return vector3::Transform(vector3::UnitX, rotation_);
 	}
-	void RotateToNewForward(const vector3& forward);
-	ActorState GetState() const
+	void rotateToNewForward(const vector3& forward);
+	ActorState state() const
 	{
-		return mState;
+		return state_;
 	}
-	void SetState(ActorState state)
+	void setState(ActorState state)
 	{
-		mState = state;
+		state_ = state;
 	}
-	class Game* GetGame()
+	class Game* game()
 	{
-		return mGame;
+		return game_;
 	}
 	// Add/remove components
-	void AddComponent(class Component* component);
-	void RemoveComponent(class Component* component);
+	void addComponent(class Component* component);
+	void removeComponent(class Component* component);
 	// Load/Save
-	virtual void LoadProperties(const rapidjson::Value& inObj);
-	virtual void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const;
+	virtual void loadProperties(const rapidjson::Value& inObj);
+	virtual void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const;
 	// Create an actor with specified properties
 	template <typename T>
-	static Actor* Create(class Game* game, const rapidjson::Value& inObj)
+	static Actor* create(class Game* game, const rapidjson::Value& inObj)
 	{
 		// Dynamically allocate actor of type T
 		T* t = new T(game);
 		// Call LoadProperties on new actor
-		t->LoadProperties(inObj);
+		t->loadProperties(inObj);
 		return t;
 	}
 	// Search through component vector for one of type
-	Component* GetComponentOfType(Component::TypeID type)
+	Component* getComponentOfType(Component::TypeID type)
 	{
 		Component* comp = nullptr;
-		for (Component* c : mComponents)
+		for (Component* c : components_)
 		{
-			if (c->GetType() == type)
+			if (c->getType() == type)
 			{
 				comp = c;
 				break;
@@ -142,28 +141,28 @@ public:
 		}
 		return comp;
 	}
-	virtual TypeID GetType() const
+	virtual TypeID getType() const
 	{
 		return TActor;
 	}
-	const std::vector<Component*>& GetComponents() const
+	const std::vector<Component*>& components() const
 	{
-		return mComponents;
+		return components_;
 	}
 protected:
-	// Actor's state
-	ActorState mState;
-	// Transform
-	matrix4 mWorldTransform;
-	vector3 mPosition;
-	vector3 mOldPosition;
-	vector3 mVelocity;
-	vector3 mOldVelocity;
-	vector3 mAcceleration;
-	quaternion mRotation;
-	float mScale;
-	bool mRecomputeTransform;
-	bool mMoving;
-	std::vector<Component*> mComponents;
-	class Game* mGame;
+	//Actor's state
+	ActorState state_;
+	//Transform
+	matrix4 worldTransform_;
+	vector3 position_;
+	vector3 oldPosition_;
+	vector3 velocity_;
+	vector3 oldVelocity_;
+	vector3 acceleration_;
+	quaternion rotation_;
+	float scale_;
+	bool recomputeTransform_;
+	bool moving_;
+	std::vector<Component*> components_;
+	class Game* game_;
 };

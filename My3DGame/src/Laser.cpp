@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Laser.h"
 #include "SpriteComponent.h"
@@ -13,42 +12,37 @@
 #include "CircleComponent.h"
 #include "Asteroid.h"
 
-Laser::Laser(Game* game)
-	:Actor(game)
-	,mDeathTimer(1.0f)
+Laser::Laser(Game* game):Actor(game), deathTimer_(1.0f)
 {
-	// Create a sprite component
+	//Create a sprite component
 	SpriteComponent* sc = new SpriteComponent(this);
-	sc->SetTexture(game->GetTexture("Assets/Laser.png"));
-
+	sc->setTexture(game->renderer()->getTexture("Assets/Laser.png"));
 	// Create a move component, and set a forward speed
 	MoveComponent* mc = new MoveComponent(this);
-	mc->SetForwardSpeed(800.0f);
-
+	mc->setForwardSpeed(800.0f);
 	// Create a circle component (for collision)
-	mCircle = new CircleComponent(this);
-	mCircle->SetRadius(11.0f);
+	circle_ = new CircleComponent(this);
+	circle_->setRadius(11.0f);
 }
-
-void Laser::UpdateActor(float deltaTime)
+void Laser::updateActor(float deltaTime)
 {
-	// If we run out of time, laser is dead
-	mDeathTimer -= deltaTime;
-	if (mDeathTimer <= 0.0f)
+	//If we run out of time, laser is dead
+	deathTimer_ -= deltaTime;
+	if(deathTimer_ <= 0.0f)
 	{
-		SetState(EDead);
+		setState(ACTOR_DEAD);
 	}
 	else
 	{
-		// Do we intersect with an asteroid?
-		for (auto ast : GetGame()->GetAsteroids())
+		//Do we intersect with an asteroid?
+		for(auto ast : game()->getAsteroids())
 		{
-			if (Intersect(*mCircle, *(ast->GetCircle())))
+			if(intersect(*circle_, *(ast->getCircle())))
 			{
-				// The first asteroid we intersect with,
-				// set ourselves and the asteroid to dead
-				SetState(EDead);
-				ast->SetState(EDead);
+				//The first asteroid we intersect with,
+				//set ourselves and the asteroid to dead
+				setState(ACTOR_DEAD);
+				ast->setState(ACTOR_DEAD);
 				break;
 			}
 		}

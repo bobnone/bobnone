@@ -8,7 +8,7 @@
 class Button
 {
 public:
-	// Tracks the Button's current state
+	//Tracks the Button's current state
 	enum ButtonState
 	{
 		BUTTON_NORMAL = 0,
@@ -17,56 +17,56 @@ public:
 	};
 	Button(const std::string& name, class Game* game, class Font* font, std::function<void()> onClick, const vector2& pos);
 	~Button();
-	// Getters/setters
-	class Texture* GetNameTexture()
+	//Getters/setters
+	class Texture* getNameTexture()
 	{
-		return mTexture;
+		return texture_;
 	}
-	class Texture* GetButtonTexure();
-	const vector2& GetPosition() const
+	class Texture* getButtonTexure();
+	const vector2& position() const
 	{
-		return mPosition;
+		return position_;
 	}
-	const vector2& GetDimensions() const
+	const vector2& dimensions() const
 	{
-		return mDimensions;
+		return dimensions_;
 	}
-	void Update(float deltaTime);
-	void Draw(class Shader* shader);
-	void DrawTexture(class Shader* shader, class Texture* texture);
-	void SetState(ButtonState bs)
+	void update(float deltaTime);
+	void draw(class Shader* shader);
+	void drawTexture(class Shader* shader, class Texture* texture);
+	void setState(ButtonState bs)
 	{
-		mState = bs;
+		state_ = bs;
 	}
-	ButtonState GetState() const
+	ButtonState state() const
 	{
-		return mState;
+		return state_;
 	}
-	bool IsHighlighted() const
+	bool isHighlighted() const
 	{
-		return mState == BUTTON_HOVER;
+		return state_ == BUTTON_HOVER;
 	}
-	bool IsClicked() const
+	bool isClicked() const
 	{
-		return mState == BUTTON_CLICKED;
+		return state_ == BUTTON_CLICKED;
 	}
-	// Handles mouse positions
-	void ProcessInput(const vector2& mousePos);
-	// Returns true if the point is within the button's bounds
-	bool ContainsPoint(const vector2& pt) const;
-	// Called when button is clicked
-	void OnClick();
+	//Handles mouse positions
+	void processInput(const vector2& mousePos);
+	//Returns true if the point is within the button's bounds
+	bool containsPoint(const vector2& pt) const;
+	//Called when button is clicked
+	void onClick();
 private:
-	std::function<void()> mOnClick;
-	std::string mName;
-	class Texture* mTexture;
-	class Texture* mButtonNormal;
-	class Texture* mButtonHover;
-	class Texture* mButtonClicked;
-	class Font* mFont;
-	vector2 mPosition;
-	vector2 mDimensions;
-	ButtonState mState;
-	// Set the name of the button
-	void SetName(const std::string& name);
+	std::function<void()> f_onClick_;
+	std::string name_;
+	class Texture* texture_;
+	class Texture* buttonNormal_;
+	class Texture* buttonHover_;
+	class Texture* buttonClicked_;
+	class Font* font_;
+	vector2 position_;
+	vector2 dimensions_;
+	ButtonState state_;
+	//Set the name of the button
+	void setName(const std::string& name);
 };

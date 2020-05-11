@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include <limits>
@@ -98,11 +97,11 @@ class vector2
 public:
 	float x;
 	float y;
-	vector2():x(0.0f), y(0.0f)
+	vector2() :x(0.0f), y(0.0f)
 	{
 		//
 	}
-	explicit vector2(float inX, float inY):x(inX), y(inY)
+	explicit vector2(float inX, float inY) :x(inX), y(inY)
 	{
 		//
 	}
@@ -192,7 +191,7 @@ public:
 	// Length squared of vector
 	float Length2() const
 	{
-		return (x*x + y * y);
+		return (x * x + y * y);
 	}
 	// Length of vector
 	float Length() const
@@ -243,11 +242,11 @@ public:
 	float x;
 	float y;
 	float z;
-	vector3():x(0.0f), y(0.0f), z(0.0f)
+	vector3() :x(0.0f), y(0.0f), z(0.0f)
 	{
 		//
 	}
-	explicit vector3(float inX, float inY, float inZ):x(inX), y(inY), z(inZ)
+	explicit vector3(float inX, float inY, float inZ) :x(inX), y(inY), z(inZ)
 	{
 		//
 	}
@@ -358,7 +357,7 @@ public:
 	// Length squared of vector
 	float Length2() const
 	{
-		return (x*x + y * y + z * z);
+		return (x * x + y * y + z * z);
 	}
 	// Length of vector
 	float Length() const
@@ -557,7 +556,7 @@ public:
 		retVal.matrix[3][1] = a.matrix[3][0] * b.matrix[0][1] + a.matrix[3][1] * b.matrix[1][1] + a.matrix[3][2] * b.matrix[2][1] + a.matrix[3][3] * b.matrix[3][1];
 		retVal.matrix[3][2] = a.matrix[3][0] * b.matrix[0][2] + a.matrix[3][1] * b.matrix[1][2] + a.matrix[3][2] * b.matrix[2][2] + a.matrix[3][3] * b.matrix[3][2];
 		retVal.matrix[3][3] = a.matrix[3][0] * b.matrix[0][3] + a.matrix[3][1] * b.matrix[1][3] + a.matrix[3][2] * b.matrix[2][3] + a.matrix[3][3] * b.matrix[3][3];
-		return retVal;                                                                                     
+		return retVal;
 	}
 	matrix4& operator*=(const matrix4& right)
 	{
@@ -766,7 +765,7 @@ public:
 	}
 	float Length2() const
 	{
-		return (x*x + y * y + z * z + w * w);
+		return (x * x + y * y + z * z + w * w);
 	}
 	float Length() const
 	{

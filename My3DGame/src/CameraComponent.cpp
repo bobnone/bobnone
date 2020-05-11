@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "CameraComponent.h"
 #include "Actor.h"
@@ -12,13 +11,13 @@
 #include "Game.h"
 #include "AudioSystem.h"
 
-CameraComponent::CameraComponent(Actor* owner, int updateOrder) :Component(owner, updateOrder)
+CameraComponent::CameraComponent(Actor* owner, int updateOrder):Component(owner, updateOrder)
 {
-	//
+	//EMPTY:
 }
-void CameraComponent::SetViewMatrix(const matrix4& view)
+void CameraComponent::setViewMatrix(const matrix4& view)
 {
-	// Pass view matrix to renderer and audio system
-	mOwner->GetGame()->GetRenderer()->SetViewMatrix(view);
-	mOwner->GetGame()->GetAudioSystem()->SetListener(mOwner, view);
+	//Pass view matrix to renderer and audio system
+	owner_->game()->renderer()->setViewMatrix(view);
+	owner_->game()->audioSystem()->setListener(owner_, view);
 }

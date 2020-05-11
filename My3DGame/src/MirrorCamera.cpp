@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "MirrorCamera.h"
 #include "Actor.h"
@@ -12,51 +11,49 @@
 #include "Renderer.h"
 #include "JsonHelper.h"
 
-MirrorCamera::MirrorCamera(Actor* owner) :CameraComponent(owner), mHorzDist(150.0f), mVertDist(200.0f), mTargetDist(400.0f)
+MirrorCamera::MirrorCamera(Actor* owner) :CameraComponent(owner), horzDist_(150.0f), vertDist_(200.0f), targetDist_(400.0f)
 {
-	//
+	//EMPTY:
 }
-void MirrorCamera::Update(float deltaTime)
+void MirrorCamera::update(float deltaTime)
 {
-	CameraComponent::Update(deltaTime);
-	// Compute ideal position
-	vector3 idealPos = ComputeCameraPos();
-	// Target is target dist in front of owning actor
-	vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
-	// Use actual position here, not ideal
+	CameraComponent::update(deltaTime);
+	//Compute ideal position
+	vector3 idealPos = computeCameraPos();
+	//Target is target dist in front of owning actor
+	vector3 target = owner_->position() - owner_->getForward() * targetDist_;
+	//Use actual position here, not ideal
 	matrix4 view = matrix4::CreateLookAt(idealPos, target, vector3::UnitZ);
-	Game* game = mOwner->GetGame();
-	game->GetRenderer()->SetMirrorView(view);
+	owner_->game()->renderer()->setMirrorView(view);
 }
-void MirrorCamera::SnapToIdeal()
+void MirrorCamera::snapToIdeal()
 {
-	vector3 idealPos = ComputeCameraPos();
-	// Compute target and view
-	vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
-	// Use actual position here, not ideal
+	vector3 idealPos = computeCameraPos();
+	//Compute target and view
+	vector3 target = owner_->position() - owner_->getForward() * targetDist_;
+	//Use actual position here, not ideal
 	matrix4 view = matrix4::CreateLookAt(idealPos, target, vector3::UnitZ);
-	Game* game = mOwner->GetGame();
-	game->GetRenderer()->SetMirrorView(view);
+	owner_->game()->renderer()->setMirrorView(view);
 }
-void MirrorCamera::LoadProperties(const rapidjson::Value& inObj)
+void MirrorCamera::loadProperties(const rapidjson::Value& inObj)
 {
-	CameraComponent::LoadProperties(inObj);
-	JsonHelper::GetFloat(inObj, "horzDist", mHorzDist);
-	JsonHelper::GetFloat(inObj, "vertDist", mVertDist);
-	JsonHelper::GetFloat(inObj, "targetDist", mTargetDist);
+	CameraComponent::loadProperties(inObj);
+	JsonHelper::getFloat(inObj, "horzDist", horzDist_);
+	JsonHelper::getFloat(inObj, "vertDist", vertDist_);
+	JsonHelper::getFloat(inObj, "targetDist", targetDist_);
 }
-void MirrorCamera::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void MirrorCamera::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	CameraComponent::SaveProperties(alloc, inObj);
-	JsonHelper::AddFloat(alloc, inObj, "horzDist", mHorzDist);
-	JsonHelper::AddFloat(alloc, inObj, "vertDist", mVertDist);
-	JsonHelper::AddFloat(alloc, inObj, "targetDist", mTargetDist);
+	CameraComponent::saveProperties(alloc, inObj);
+	JsonHelper::addFloat(alloc, inObj, "horzDist", horzDist_);
+	JsonHelper::addFloat(alloc, inObj, "vertDist", vertDist_);
+	JsonHelper::addFloat(alloc, inObj, "targetDist", targetDist_);
 }
-vector3 MirrorCamera::ComputeCameraPos() const
+vector3 MirrorCamera::computeCameraPos() const
 {
-	// Set camera position in front of
-	vector3 cameraPos = mOwner->GetPosition();
-	cameraPos += mOwner->GetForward() * mHorzDist;
-	cameraPos += vector3::UnitZ * mVertDist;
+	//Set camera position in front of
+	vector3 cameraPos = owner_->position();
+	cameraPos += owner_->getForward() * horzDist_;
+	cameraPos += vector3::UnitZ * vertDist_;
 	return cameraPos;
 }

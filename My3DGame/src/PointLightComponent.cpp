@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "PointLightComponent.h"
 #include "Shader.h"
@@ -14,49 +13,49 @@
 #include "Actor.h"
 #include "JsonHelper.h"
 
-PointLightComponent::PointLightComponent(Actor* owner) :Component(owner), mInnerRadius(100.0f), mOuterRadius(200.0f)
+PointLightComponent::PointLightComponent(Actor* owner) :Component(owner), innerRadius_(100.0f), outerRadius_(200.0f)
 {
-	owner->GetGame()->GetRenderer()->AddPointLight(this);
+	owner->game()->renderer()->addPointLight(this);
 }
 PointLightComponent::~PointLightComponent()
 {
-	mOwner->GetGame()->GetRenderer()->RemovePointLight(this);
+	owner_->game()->renderer()->removePointLight(this);
 }
-void PointLightComponent::Draw(Shader* shader, Mesh* mesh)
+void PointLightComponent::draw(Shader* shader, Mesh* mesh)
 {
-	// We assume, coming into this function, that the shader is active
-	// and the sphere mesh is active
-	// World transform is scaled to the outer radius (divided by the mesh radius)
-	// and positioned to the world position
-	matrix4 scale = matrix4::CreateScale(mOwner->GetScale() * mOuterRadius / mesh->GetRadius());
-	matrix4 trans = matrix4::CreateTranslation(mOwner->GetPosition());
+	//We assume, coming into this function, that the shader is active
+	//and the sphere mesh is active
+	//World transform is scaled to the outer radius (divided by the mesh radius)
+	//and positioned to the world position
+	matrix4 scale = matrix4::CreateScale(owner_->scale() * outerRadius_ / mesh->radius());
+	matrix4 trans = matrix4::CreateTranslation(owner_->position());
 	matrix4 worldTransform = scale * trans;
-	shader->SetMatrixUniform("uWorldTransform", worldTransform);
-	// Set point light shader constants
-	shader->SetVectorUniform("uPointLight.mWorldPos", mOwner->GetPosition());
-	shader->SetVectorUniform("uPointLight.mDiffuseColor", mDiffuseColor);
-	shader->SetVectorUniform("uPointLight.mSpecularColor", mSpecularColor);
-	shader->SetVectorUniform("uPointLight.mSpecularPower", mSpecularPower);
-	shader->SetFloatUniform("uPointLight.mInnerRadius", mInnerRadius);
-	shader->SetFloatUniform("uPointLight.mOuterRadius", mOuterRadius);
-	// Draw the sphere
-	glDrawElements(GL_TRIANGLES, mesh->GetVertexArray()->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
+	shader->setMatrixUniform("uWorldTransform", worldTransform);
+	//Set point light shader constants
+	shader->setVectorUniform("uPointLight.worldPos_", owner_->position());
+	shader->setVectorUniform("uPointLight.diffuseColor_", diffuseColor_);
+	shader->setVectorUniform("uPointLight.specularColor_", specularColor_);
+	shader->setVectorUniform("uPointLight.specularPower_", specularPower_);
+	shader->setFloatUniform("uPointLight.innerRadius_", innerRadius_);
+	shader->setFloatUniform("uPointLight.outerRadius_", outerRadius_);
+	//Draw the sphere
+	glDrawElements(GL_TRIANGLES, mesh->vertexArray()->numIndices(), GL_UNSIGNED_INT, nullptr);
 }
-void PointLightComponent::LoadProperties(const rapidjson::Value& inObj)
+void PointLightComponent::loadProperties(const rapidjson::Value& inObj)
 {
-	Component::LoadProperties(inObj);
-	JsonHelper::GetVector3(inObj, "color", mDiffuseColor);
-	JsonHelper::GetVector3(inObj, "diffuseColor", mDiffuseColor);
-	JsonHelper::GetVector3(inObj, "specularColor", mSpecularColor);
-	JsonHelper::GetVector3(inObj, "specularPower", mSpecularPower);
-	JsonHelper::GetFloat(inObj, "innerRadius", mInnerRadius);
-	JsonHelper::GetFloat(inObj, "outerRadius", mOuterRadius);
+	Component::loadProperties(inObj);
+	JsonHelper::getVector3(inObj, "color", diffuseColor_);
+	JsonHelper::getVector3(inObj, "diffuseColor", diffuseColor_);
+	JsonHelper::getVector3(inObj, "specularColor", specularColor_);
+	JsonHelper::getVector3(inObj, "specularPower", specularPower_);
+	JsonHelper::getFloat(inObj, "innerRadius", innerRadius_);
+	JsonHelper::getFloat(inObj, "outerRadius", outerRadius_);
 }
-void PointLightComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void PointLightComponent::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	JsonHelper::AddVector3(alloc, inObj, "diffuseColor", mDiffuseColor);
-	JsonHelper::AddVector3(alloc, inObj, "specularColor", mSpecularColor);
-	JsonHelper::AddVector3(alloc, inObj, "specularPower", mSpecularPower);
-	JsonHelper::AddFloat(alloc, inObj, "innerRadius", mInnerRadius);
-	JsonHelper::AddFloat(alloc, inObj, "outerRadius", mOuterRadius);
+	JsonHelper::addVector3(alloc, inObj, "diffuseColor", diffuseColor_);
+	JsonHelper::addVector3(alloc, inObj, "specularColor", specularColor_);
+	JsonHelper::addVector3(alloc, inObj, "specularPower", specularPower_);
+	JsonHelper::addFloat(alloc, inObj, "innerRadius", innerRadius_);
+	JsonHelper::addFloat(alloc, inObj, "outerRadius", outerRadius_);
 }

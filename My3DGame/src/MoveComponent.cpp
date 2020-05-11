@@ -2,71 +2,71 @@
 #include "Actor.h"
 #include "JsonHelper.h"
 
-MoveComponent::MoveComponent(class Actor* owner, int updateOrder) :Component(owner, updateOrder), mAngularXSpeed(0.0f), mAngularYSpeed(0.0f), mAngularZSpeed(0.0f), mForwardSpeed(0.0f), mStrafeSpeed(0.0f), mJumpSpeed(0.0f)
+MoveComponent::MoveComponent(class Actor* owner, int updateOrder):Component(owner, updateOrder), angularXSpeed_(0.0f), angularYSpeed_(0.0f), angularZSpeed_(0.0f), forwardSpeed_(0.0f), strafeSpeed_(0.0f), jumpSpeed_(0.0f)
 {
-	//
+	//EMPTY:
 }
-void MoveComponent::Update(float deltaTime)
+void MoveComponent::update(float deltaTime)
 {
-	if (!Math::NearZero(mAngularXSpeed))
+	if(!Math::NearZero(angularXSpeed_))
 	{
-		quaternion rot = mOwner->GetRotation();
-		float angle = mAngularXSpeed * deltaTime;
-		// Create quaternion for incremental rotation
-		// (Rotate about up axis)
+		quaternion rot = owner_->rotation();
+		float angle = angularXSpeed_ * deltaTime;
+		//Create quaternion for incremental rotation
+		//(Rotate about up axis)
 		quaternion inc(vector3::UnitX, angle);
-		// Concatenate old and new quaternion
+		//Concatenate old and new quaternion
 		rot = quaternion::Concatenate(rot, inc);
-		mOwner->SetRotation(rot);
+		owner_->setRotation(rot);
 	}
-	if (!Math::NearZero(mAngularYSpeed))
+	if(!Math::NearZero(angularYSpeed_))
 	{
-		quaternion rot = mOwner->GetRotation();
-		float angle = mAngularYSpeed * deltaTime;
-		// Create quaternion for incremental rotation
-		// (Rotate about up axis)
+		quaternion rot = owner_->rotation();
+		float angle = angularYSpeed_ * deltaTime;
+		//Create quaternion for incremental rotation
+		//(Rotate about up axis)
 		quaternion inc(vector3::UnitY, angle);
-		// Concatenate old and new quaternion
+		//Concatenate old and new quaternion
 		rot = quaternion::Concatenate(rot, inc);
-		mOwner->SetRotation(rot);
+		owner_->setRotation(rot);
 	}
-	if (!Math::NearZero(mAngularZSpeed))
+	if(!Math::NearZero(angularZSpeed_))
 	{
-		quaternion rot = mOwner->GetRotation();
-		float angle = mAngularZSpeed * deltaTime;
-		// Create quaternion for incremental rotation
-		// (Rotate about up axis)
+		quaternion rot = owner_->rotation();
+		float angle = angularZSpeed_ * deltaTime;
+		//Create quaternion for incremental rotation
+		//(Rotate about up axis)
 		quaternion inc(vector3::UnitZ, angle);
-		// Concatenate old and new quaternion
+		//Concatenate old and new quaternion
 		rot = quaternion::Concatenate(rot, inc);
-		mOwner->SetRotation(rot);
+		owner_->setRotation(rot);
 	}
-	if (!Math::NearZero(mForwardSpeed) || !Math::NearZero(mStrafeSpeed) || !Math::NearZero(mJumpSpeed))
+	if(!Math::NearZero(forwardSpeed_) || !Math::NearZero(strafeSpeed_) || !Math::NearZero(jumpSpeed_))
 	{
-		vector3 pos = mOwner->GetPosition();
-		pos += mOwner->GetForward() * mForwardSpeed * deltaTime;
-		pos += mOwner->GetRight() * mStrafeSpeed * deltaTime;
-		pos += mOwner->GetUp() * mJumpSpeed * deltaTime;
-		mOwner->SetPosition(pos);
+		vector3 pos = owner_->position();
+		pos += owner_->getForward() * forwardSpeed_ * deltaTime;
+		pos += owner_->getRight() * strafeSpeed_ * deltaTime;
+		pos += owner_->getUp() * jumpSpeed_ * deltaTime;
+		owner_->setPosition(pos);
 	}
 }
-void MoveComponent::LoadProperties(const rapidjson::Value& inObj)
+void MoveComponent::loadProperties(const rapidjson::Value& inObj)
 {
-	Component::LoadProperties(inObj);
-	JsonHelper::GetFloat(inObj, "angularXSpeed", mAngularXSpeed);
-	JsonHelper::GetFloat(inObj, "angularYSpeed", mAngularYSpeed);
-	JsonHelper::GetFloat(inObj, "angularZSpeed", mAngularZSpeed);
-	JsonHelper::GetFloat(inObj, "forwardSpeed", mForwardSpeed);
-	JsonHelper::GetFloat(inObj, "strafeSpeed", mStrafeSpeed);
-	JsonHelper::GetFloat(inObj, "jumpSpeed", mJumpSpeed);
+	Component::loadProperties(inObj);
+	JsonHelper::getFloat(inObj, "angularXSpeed", angularXSpeed_);
+	JsonHelper::getFloat(inObj, "angularYSpeed", angularYSpeed_);
+	JsonHelper::getFloat(inObj, "angularZSpeed", angularZSpeed_);
+	JsonHelper::getFloat(inObj, "forwardSpeed", forwardSpeed_);
+	JsonHelper::getFloat(inObj, "strafeSpeed", strafeSpeed_);
+	JsonHelper::getFloat(inObj, "jumpSpeed", jumpSpeed_);
 }
-void MoveComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void MoveComponent::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	Component::SaveProperties(alloc, inObj);
-	JsonHelper::AddFloat(alloc, inObj, "angularXSpeed", mAngularXSpeed);
-	JsonHelper::AddFloat(alloc, inObj, "angularYSpeed", mAngularYSpeed);
-	JsonHelper::AddFloat(alloc, inObj, "angularZSpeed", mAngularZSpeed);
-	JsonHelper::AddFloat(alloc, inObj, "forwardSpeed", mForwardSpeed);
-	JsonHelper::AddFloat(alloc, inObj, "strafeSpeed", mStrafeSpeed);
-	JsonHelper::AddFloat(alloc, inObj, "jumpSpeed", mJumpSpeed);
+	Component::saveProperties(alloc, inObj);
+	JsonHelper::addFloat(alloc, inObj, "angularXSpeed", angularXSpeed_);
+	JsonHelper::addFloat(alloc, inObj, "angularYSpeed", angularYSpeed_);
+	JsonHelper::addFloat(alloc, inObj, "angularZSpeed", angularZSpeed_);
+	JsonHelper::addFloat(alloc, inObj, "forwardSpeed", forwardSpeed_);
+	JsonHelper::addFloat(alloc, inObj, "strafeSpeed", strafeSpeed_);
+	JsonHelper::addFloat(alloc, inObj, "jumpSpeed", jumpSpeed_);
 }

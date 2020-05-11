@@ -1,0 +1,94 @@
+// Note: $(SolutionDir) is the directory for visual studio's ".sln" solution file
+// Install Guide To External Software (32 bit)
+	Visual Studios Project Property's Page:
+		C/C++:
+			General:
+				Additional Include Directories:
+					$(SolutionDir)..\External Software\DevIL\include
+					$(SolutionDir)..\External Software\FreeType\include
+					$(SolutionDir)..\External Software\GLEW\include
+					$(SolutionDir)..\External Software\GLFW\include
+					$(SolutionDir)..\External Software\GLM\include
+					$(SolutionDir)..\External Software\OpenAL\include
+					$(SolutionDir)..\External Software\OpenAL-Soft\include
+		Linker:
+			General:
+				Additional Library Directories:
+					$(SolutionDir)..\External Software\DevIL\x86
+					$(SolutionDir)..\External Software\FreeType\x86
+					$(SolutionDir)..\External Software\GLEW\x86
+					$(SolutionDir)..\External Software\GLFW\x86
+					$(SolutionDir)..\External Software\OpenAL\x86
+					$(SolutionDir)..\External Software\OpenAL-Soft\x86
+					$(SolutionDir)..\External Software\OpenGL\x86
+			Input:
+				Additional Dependencies:
+					DevIL.lib
+					ILU.lib
+					ILUT.lib
+					freetype.lib
+					glew32.lib
+					glew32s.lib
+					glfw3.lib
+					glfw3dll.lib
+					OpenAL32.lib
+					EFX-Util.lib
+					GlU32.lib
+					OpenGL32.lib
+//Note: Used to automaticlly extract the individual ".dll" files into debug/release project folders
+		Build Events:
+			Post-Build Event:
+				xcopy "$(SolutionDir)..\External Software\DevIL\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\FreeType\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\GLEW\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\GLFW\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\OpenAL\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\OpenAL-Soft\x86\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\OpenGL\x86\*.dll" "$(OutDir)" /i /s /y
+
+// Install Guide To External Software (64 bit)
+	Visual Studios Project Property's Page:
+		C/C++:
+			General:
+				Additional Include Directories:
+					$(SolutionDir)..\External Software\DevIL\include
+					$(SolutionDir)..\External Software\FreeType\include
+					$(SolutionDir)..\External Software\GLEW\include
+					$(SolutionDir)..\External Software\GLFW\include
+					$(SolutionDir)..\External Software\GLM\include
+					$(SolutionDir)..\External Software\OpenAL\include
+					$(SolutionDir)..\External Software\OpenAL-Soft\include
+		Linker:
+			General:
+				Additional Library Directories:
+					$(SolutionDir)..\External Software\DevIL\x64
+					$(SolutionDir)..\External Software\FreeType\x64
+					$(SolutionDir)..\External Software\GLEW\x64
+					$(SolutionDir)..\External Software\GLFW\x64
+					$(SolutionDir)..\External Software\OpenAL\x64
+					$(SolutionDir)..\External Software\OpenAL-Soft\x64
+					$(SolutionDir)..\External Software\OpenGL\x64
+			Input:
+				Additional Dependencies:
+					DevIL.lib
+					ILU.lib
+					ILUT.lib
+					freetype.lib
+					glew32.lib
+					glew32s.lib
+					glfw3.lib
+					glfw3dll.lib
+					OpenAL32.lib
+					EFX-Util.lib
+					GlU32.Lib
+					OpenGL32.Lib
+//Note: Used to automaticlly extract the individual ".dll" files into debug/release project folders
+		Build Events:
+			Post-Build Event:
+				xcopy "$(SolutionDir)..\External Software\DevIL\x64\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\FreeType\x64\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\GLEW\x64\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\GLFW\x64\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\OpenAL\x64\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\OpenAL-Soft\x64\*.dll" "$(OutDir)" /i /s /y
+				xcopy "$(SolutionDir)..\External Software\OpenGL\x64\*.dll" "$(OutDir)" /i /s /y

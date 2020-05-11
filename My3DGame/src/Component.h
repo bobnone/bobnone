@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include <rapidjson/document.h>
@@ -29,45 +28,45 @@ public:
 		NUM_COMPONENT_TYPES
 	};
 	static const char* TypeNames[NUM_COMPONENT_TYPES];
-	// Constructor
-	// (the lower the update order, the earlier the component updates)
+	/*Constructor
+	Note: the lower the update order, the earlier the component updates*/
 	Component(class Actor* owner, int updateOrder = 100);
-	// Destructor
+	//Destructor
 	virtual ~Component();
-	// Update this component by delta time
-	virtual void Update(float deltaTime);
-	// Process input for this component
-	virtual void ProcessInput(const uint8_t* keyState)
+	//Update this component by delta time
+	virtual void update(float deltaTime);
+	//Process input for this component
+	virtual void processInput(const uint8_t* keyState)
 	{
-		//
+		//EMPTY:
 	}
-	// Called when world transform changes
-	virtual void OnUpdateWorldTransform();
-	class Actor* GetOwner()
+	//Called when world transform changes
+	virtual void onUpdateWorldTransform();
+	class Actor* owner()
 	{
-		return mOwner;
+		return owner_;
 	}
-	int GetUpdateOrder() const
+	int updateOrder() const
 	{
-		return mUpdateOrder;
+		return updateOrder_;
 	}
-	virtual TypeID GetType() const = 0;
-	// Load/Save
-	virtual void LoadProperties(const rapidjson::Value& inObj);
-	virtual void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const;
-	// Create a component with specified properties
+	virtual TypeID getType() const = 0;
+	//Load/Save
+	virtual void loadProperties(const rapidjson::Value& inObj);
+	virtual void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const;
+	//Create a component with specified properties
 	template <typename T>
-	static Component* Create(class Actor* actor, const rapidjson::Value& inObj)
+	static Component* create(class Actor* actor, const rapidjson::Value& inObj)
 	{
-		// Dynamically allocate component of type T
+		//Dynamically allocate component of type T
 		T* t = new T(actor);
-		// Call LoadProperties on new component
-		t->LoadProperties(inObj);
+		//Call LoadProperties on new component
+		t->loadProperties(inObj);
 		return t;
 	}
 protected:
-	// Owning actor
-	class Actor* mOwner;
-	// Update order of component
-	int mUpdateOrder;
+	//Owning actor
+	class Actor* owner_;
+	//Update order of component
+	int updateOrder_;
 };

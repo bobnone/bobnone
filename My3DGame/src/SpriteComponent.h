@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "Component.h"
@@ -12,41 +11,41 @@
 class SpriteComponent : public Component
 {
 public:
-	// (Lower draw order corresponds with further back)
+	//(Lower draw order corresponds with further back)
 	SpriteComponent(class Actor* owner, int drawOrder = 100);
 	~SpriteComponent();
-	virtual void Draw(class Shader* shader);
-	virtual void SetTexture(class Texture* texture);
-	int GetDrawOrder() const
+	virtual void draw(class Shader* shader);
+	virtual void setTexture(class Texture* texture);
+	int drawOrder() const
 	{
-		return mDrawOrder;
+		return drawOrder_;
 	}
-	int GetTexHeight() const
+	int texHeight() const
 	{
-		return mTexHeight;
+		return texHeight_;
 	}
-	int GetTexWidth() const
+	int texWidth() const
 	{
-		return mTexWidth;
+		return texWidth_;
 	}
-	void SetVisible(bool visible)
+	void setVisible(bool visible)
 	{
-		mVisible = visible;
+		visible_ = visible;
 	}
-	bool GetVisible() const
+	bool visible() const
 	{
-		return mVisible;
+		return visible_;
 	}
-	TypeID GetType() const override
+	TypeID getType() const override
 	{
 		return TSpriteComponent;
 	}
-	void LoadProperties(const rapidjson::Value& inObj) override;
-	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
+	void loadProperties(const rapidjson::Value& inObj) override;
+	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 protected:
-	class Texture* mTexture;
-	int mDrawOrder;
-	int mTexWidth;
-	int mTexHeight;
-	bool mVisible;
+	class Texture* texture_;
+	int drawOrder_;
+	int texWidth_;
+	int texHeight_;
+	bool visible_;
 };

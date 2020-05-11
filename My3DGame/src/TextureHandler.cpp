@@ -2,86 +2,88 @@
 
 TextureHandler::TextureHandler()
 {
-	//
+	//EMPTY:
 }
 TextureHandler::~TextureHandler()
 {
-	//
+	//EMPTY:
 }
-bool TextureHandler::Initialize()
+bool TextureHandler::initialize()
 {
 	//Version checking
-	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
+	if(ilGetInteger(IL_VERSION_NUM) < IL_VERSION)
 	{
-		printf("DevIL IL version is different!\n");
+		SDL_Log("DevIL IL version is different!\n");
 		return false;
 	}
-	if (iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION)
+	else if(iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION)
 	{
-		printf("DevIL ILU version is different!\n");
+		SDL_Log("DevIL ILU version is different!\n");
 		return false;
 	}
-	if (ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
+	else if(ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
 	{
-		printf("DevIL ILUT version is different!\n");
+		SDL_Log("DevIL ILUT version is different!\n");
 		return false;
 	}
-	// Initialize DevIL
+	//Initialize DevIL
 	ilInit();
-	// Initialize ILU
+	//Initialize ILU
 	iluInit();
-	// Initialize ILUT
+	//Initialize ILUT
 	ilutInit();
-	// Tell ILUT to use OpenGL
-	ILboolean noError = ilutRenderer(ILUT_OPENGL);
-	if (!noError)
+	//Tell DevIL to use English
+	if(!iluSetLanguage(ILU_ENGLISH))
 	{
-		printf("DevIL failed to enable OpenGL support!\n");
+		SDL_Log("DevIL failed to set \"English\" as its language!\n");
 		return false;
 	}
-	//When enabled, DevIL automatically converts palette'd images to their base types, e.g. converting to a BGRA image.
-	// Note: Most modern graphics cards and OpenGL can't use palettes
-	// Note: Palettes are a really old convention that has been replaced by shaders
-	noError = ilEnable(IL_CONV_PAL);
-	if (!noError)
+	//Tell ILUT to use OpenGL
+	if(!ilutRenderer(ILUT_OPENGL))
 	{
-		printf("DevIL failed to enable palette conversions!\n");
+		SDL_Log("DevIL failed to enable OpenGL support!\n");
+		return false;
+	}
+	/*When enabled, DevIL automatically converts paletted images to their base types, e.g. converting to a BGRA image.
+	Note: Most modern graphics cards and OpenGL can't use palettes
+	Note: Palettes are a really old convention that has been replaced by shaders*/
+	if(!ilEnable(IL_CONV_PAL))
+	{
+		SDL_Log("DevIL failed to enable palette conversions!\n");
 		return false;
 	}
 	//If enabled while saving, DevIL will overwrite existing files, else IL_FILE_ALREADY_EXISTS is set, and the image is not saved.
-	noError = ilEnable(IL_FILE_OVERWRITE);
-	if (!noError)
+	if(!ilEnable(IL_FILE_OVERWRITE))
 	{
-		printf("DevIL failed to enable file overwriting!\n");
+		SDL_Log("DevIL failed to enable file overwriting!\n");
 		return false;
 	}
 	//When enabled, the origin is specified at an absolute position, and all images loaded or saved adhere to this set origin. For more information, check out ilOriginFunc.
-	noError = ilEnable(IL_ORIGIN_SET);
-	if (!noError)
+	if(!ilEnable(IL_ORIGIN_SET))
 	{
-		printf("DevIL failed to enable origin setting!\n");
+		SDL_Log("DevIL failed to enable origin setting!\n");
 		return false;
 	}
-	noError = ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
-	if (!noError)
+	if(!ilOriginFunc(IL_ORIGIN_UPPER_LEFT))
 	{
-		printf("DevIL failed to set image origin!\n");
+		SDL_Log("DevIL failed to set image origin!\n");
 		return false;
 	}
-	// Disable on-board image conversion, allowing DevIL to handle everything.
-	noError = ilutEnable(ILUT_OPENGL_CONV);
-	if (!noError)
+	//Disable on-board (hardware) image conversion, allowing DevIL to handle everything.
+	if(!ilutEnable(ILUT_OPENGL_CONV))
 	{
-		printf("DevIL failed take over image conversions!\n");
+		SDL_Log("DevIL failed take over image conversions!\n");
 		return false;
 	}
 	return true;
 }
-bool TextureHandler::Screenshot()
+//Used to take a screenshot
+ILboolean TextureHandler::screenshot()
 {
-	//ilutOglScreen loads the view-port's data into the current bound image, for you to decide what to do with it.
-	//ILboolean ilutOglScreen();
-	//ilutGLScreen copies the current OpenGL window contents to the current bound image, effectively taking a screen-shot. The new image attributes are that of the current OpenGL window's.
-	//ILboolean ilutGLScreen();
-	return false;
+	//TODO: decide how to do this
+	//loads the viewport's data into the current bound image, for you to decide what to do with it. If you want to automate the process even further and save the viewport's data directly to disk, use:
+	//return ilutGLScreen();
+	//does not modify the current bound image at all.This function is very specialized and saves the image to a Targa file with the filename format of screen% d.tga, where% d is a number from 0 to 126. This function will probably not be suited to most developers' preferences.
+	//return ilutGLScreenie();
+	return true;
 }

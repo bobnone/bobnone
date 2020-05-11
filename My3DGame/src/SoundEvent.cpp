@@ -1,126 +1,127 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "SoundEvent.h"
 #include "AudioSystem.h"
-#include <fmod_studio.hpp>
+#include <FMOD/fmod_studio.hpp>
 
-SoundEvent::SoundEvent(class AudioSystem* system, unsigned int id) :mSystem(system), mID(id)
+SoundEvent::SoundEvent(class AudioSystem* system, unsigned int id): system_(system), ID_(id)
 {
-	//
+	//EMPTY:
 }
-SoundEvent::SoundEvent() : mSystem(nullptr), mID(0)
+SoundEvent::SoundEvent(): system_(nullptr), ID_(0)
 {
-	//
+	//EMPTY:
 }
-bool SoundEvent::IsValid()
+bool SoundEvent::isValid()
 {
-	return (mSystem && mSystem->GetEventInstance(mID) != nullptr);
+	return (system_ && system_->getEventInstance(ID_) != nullptr);
 }
-void SoundEvent::Restart()
+void SoundEvent::restart()
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
 		event->start();
 	}
 }
-void SoundEvent::Stop(bool allowFadeOut /* true */)
+void SoundEvent::stop(bool allowFadeOut /* true */)
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
-		FMOD_STUDIO_STOP_MODE mode = allowFadeOut ? FMOD_STUDIO_STOP_ALLOWFADEOUT : FMOD_STUDIO_STOP_IMMEDIATE;
+		FMOD_STUDIO_STOP_MODE mode = allowFadeOut ? FMOD_STUDIO_STOP_ALLOWFADEOUT:FMOD_STUDIO_STOP_IMMEDIATE;
 		event->stop(mode);
 	}
 }
-void SoundEvent::SetPaused(bool pause)
+void SoundEvent::setPaused(bool pause)
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
 		event->setPaused(pause);
 	}
 }
-void SoundEvent::SetVolume(float value)
+void SoundEvent::setVolume(float value)
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
 		event->setVolume(value);
 	}
 }
-void SoundEvent::SetPitch(float value)
+void SoundEvent::setPitch(float value)
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
 		event->setPitch(value);
 	}
 }
-void SoundEvent::SetParameter(const std::string& name, float value)
+void SoundEvent::setParameter(const std::string& name, float value)
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_): nullptr;
+	if(event)
 	{
-		event->setParameterValue(name.c_str(), value);
+		//event->setParameterValue(name.c_str(), value);
+		event->setParameterByName(name.c_str(), value);
 	}
 }
-bool SoundEvent::GetPaused() const
+bool SoundEvent::getPaused() const
 {
 	bool retVal = false;
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_):nullptr;
+	if(event)
 	{
 		event->getPaused(&retVal);
 	}
 	return retVal;
 }
-float SoundEvent::GetVolume() const
+float SoundEvent::getVolume() const
 {
 	float retVal = 0.0f;
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
 		event->getVolume(&retVal);
 	}
 	return retVal;
 }
-float SoundEvent::GetPitch() const
+float SoundEvent::getPitch() const
 {
 	float retVal = 0.0f;
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
 		event->getPitch(&retVal);
 	}
 	return retVal;
 }
-float SoundEvent::GetParameter(const std::string& name)
+float SoundEvent::getParameter(const std::string& name)
 {
 	float retVal = 0.0f;
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
-		event->getParameterValue(name.c_str(), &retVal);
+		//event->getParameterValue(name.c_str(), &retVal);
+		event->getParameterByName(name.c_str(), &retVal);
 	}
 	return retVal;
 }
-bool SoundEvent::Is3D() const
+bool SoundEvent::is3D() const
 {
 	bool retVal = false;
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_) : nullptr;
+	if(event)
 	{
-		// Get the event description
+		//Get the event description
 		FMOD::Studio::EventDescription* ed = nullptr;
 		event->getDescription(&ed);
-		if (ed)
+		if(ed)
 		{
 			ed->is3D(&retVal);
 		}
@@ -129,7 +130,7 @@ bool SoundEvent::Is3D() const
 }
 namespace
 {
-	FMOD_VECTOR VecToFMOD(const vector3& in)
+	FMOD_VECTOR vecToFMOD(const vector3& in)
 	{
 		//FMOD_VECTOR(+x right, +y up, +z forward)
 		FMOD_VECTOR v;
@@ -139,21 +140,21 @@ namespace
 		return v;
 	}
 }
-void SoundEvent::Set3DAttributes(Actor* mOwner)
+void SoundEvent::set3DAttributes(Actor* owner)
 {
-	auto event = mSystem ? mSystem->GetEventInstance(mID) : nullptr;
-	if (event)
+	auto event = system_ ? system_->getEventInstance(ID_):nullptr;
+	if(event)
 	{
 		FMOD_3D_ATTRIBUTES attr;
-		const matrix4 worldTrans = mOwner->GetWorldTransform();
-		// Set position, forward, up
-		attr.position = VecToFMOD(worldTrans.GetTranslation());
-		// In world transform, first row is forward
-		attr.forward = VecToFMOD(worldTrans.GetXAxis());
-		// Third row is up
-		attr.up = VecToFMOD(worldTrans.GetZAxis());
-		// Set velocity
-		attr.velocity = VecToFMOD(mOwner->GetVelocity());
+		const matrix4 worldTrans = owner->worldTransform();
+		//Set position, forward, up
+		attr.position = vecToFMOD(worldTrans.GetTranslation());
+		//In world transform, first row is forward
+		attr.forward = vecToFMOD(worldTrans.GetXAxis());
+		//Third row is up
+		attr.up = vecToFMOD(worldTrans.GetZAxis());
+		//Set velocity
+		attr.velocity = vecToFMOD(owner->velocity());
 		event->set3DAttributes(&attr);
 	}
 }

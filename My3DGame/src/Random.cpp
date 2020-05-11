@@ -1,50 +1,43 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Random.h"
 
-void Random::Init()
+void Random::init()
 {
 	std::random_device rd;
-	Random::Seed(rd());
+	Random::seed(rd());
 }
-
-void Random::Seed(unsigned int seed)
+void Random::seed(unsigned int seed)
 {
 	sGenerator.seed(seed);
 }
-
-float Random::GetFloat()
+float Random::getFloat()
 {
-	return GetFloatRange(0.0f, 1.0f);
+	return getFloatRange(0.0f, 1.0f);
 }
-
-float Random::GetFloatRange(float min, float max)
+float Random::getFloatRange(float min, float max)
 {
 	std::uniform_real_distribution<float> dist(min, max);
 	return dist(sGenerator);
 }
-
-int Random::GetIntRange(int min, int max)
+int Random::getIntRange(int min, int max)
 {
 	std::uniform_int_distribution<int> dist(min, max);
 	return dist(sGenerator);
 }
-
-Vector2 Random::GetVector(const Vector2& min, const Vector2& max)
+vector2 Random::getVector(const vector2& min, const vector2& max)
 {
-	Vector2 r = Vector2(GetFloat(), GetFloat());
+	vector2 r = vector2(getFloat(), getFloat());
 	return min + (max - min) * r;
 }
-
-Vector3 Random::GetVector(const Vector3& min, const Vector3& max)
+vector3 Random::getVector(const vector3& min, const vector3& max)
 {
-	Vector3 r = Vector3(GetFloat(), GetFloat(), GetFloat());
+	vector3 r = vector3(getFloat(), getFloat(), getFloat());
 	return min + (max - min) * r;
 }
 

@@ -2,94 +2,93 @@
 #include "Texture.h"
 #include "Font.h"
 
-Button::Button(const std::string& name, Game* game, Font* font, std::function<void()> onClick, const vector2& pos) :mOnClick(onClick), mTexture(nullptr), mFont(font), mPosition(pos), mState(BUTTON_NORMAL)
+Button::Button(const std::string& name, Game* game, Font* font, std::function<void()> onClick, const vector2& pos):f_onClick_(onClick), texture_(nullptr), font_(font), position_(pos), state_(BUTTON_NORMAL)
 {
-	SetName(name);
-	mButtonNormal = game->GetRenderer()->GetTexture("Assets/ButtonNormal.png");
-	mButtonHover = game->GetRenderer()->GetTexture("Assets/ButtonHover.png");
-	mButtonClicked = game->GetRenderer()->GetTexture("Assets/ButtonClicked.png");
-	mDimensions = vector2(static_cast<float>(mButtonNormal->GetWidth()), static_cast<float>(mButtonNormal->GetHeight()));
+	setName(name);
+	buttonNormal_ = game->renderer()->getTexture("Assets/ButtonNormal.png");
+	buttonHover_ = game->renderer()->getTexture("Assets/ButtonHover.png");
+	buttonClicked_ = game->renderer()->getTexture("Assets/ButtonClicked.png");
+	dimensions_ = vector2(static_cast<float>(buttonNormal_->getWidth()), static_cast<float>(buttonNormal_->getHeight()));
 }
 Button::~Button()
 {
-	if(mTexture)
+	if(texture_)
 	{
-		mTexture->Unload();
-		delete mTexture;
+		texture_->~Texture();
+		delete texture_;
+		texture_ = nullptr;
 	}
-	// Note: mButtonNormal, mButtonHover, and mButtonClicked are pointers to Textures that get deleted by Renderer
+	//Note: mButtonNormal, mButtonHover, and mButtonClicked are pointers to Textures that get deleted by Renderer
 }
-void Button::ProcessInput(const vector2& mousePos)
+void Button::processInput(const vector2& mousePos)
 {
-	
-	if (ContainsPoint(mousePos))
+	if(containsPoint(mousePos))
 	{
-		if (mState != BUTTON_CLICKED)
+		if(state_ != BUTTON_CLICKED)
 		{
-			mState = BUTTON_HOVER;
+			state_ = BUTTON_HOVER;
 		}
 	}
 	else
 	{
-		mState = BUTTON_NORMAL;
+		state_ = BUTTON_NORMAL;
 	}
 }
-bool Button::ContainsPoint(const vector2& pt) const
+bool Button::containsPoint(const vector2& pt) const
 {
-	bool no = pt.x < (mPosition.x - mDimensions.x / 2.0f) || pt.x >(mPosition.x + mDimensions.x / 2.0f) || pt.y < (mPosition.y - mDimensions.y / 2.0f) || pt.y >(mPosition.y + mDimensions.y / 2.0f);
-	return !no;
+	return !(pt.x < (position_.x - dimensions_.x / 2.0f) || pt.x >(position_.x + dimensions_.x / 2.0f) || pt.y < (position_.y - dimensions_.y / 2.0f) || pt.y >(position_.y + dimensions_.y / 2.0f));
 }
-Texture* Button::GetButtonTexure()
+Texture* Button::getButtonTexure()
 {
-	switch (mState)
+	switch(state_)
 	{
 	case BUTTON_HOVER:
-		return mButtonHover;
+		return buttonHover_;
 	case BUTTON_CLICKED:
-		return mButtonClicked;
+		return buttonClicked_;
 	default:
-		return mButtonNormal;
+		return buttonNormal_;
 	}
 }
-void Button::Update(float deltaTime)
+void Button::update(float deltaTime)
 {
-	//
+	//EMPTY:
 }
-void Button::Draw(class Shader* shader)
+void Button::draw(class Shader* shader)
 {
-	DrawTexture(shader, GetButtonTexure());
-	DrawTexture(shader, mTexture);
+	drawTexture(shader, getButtonTexure());
+	drawTexture(shader, texture_);
 }
-void Button::DrawTexture(class Shader* shader, class Texture* texture)
+void Button::drawTexture(class Shader* shader, class Texture* texture)
 {
-	matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()), 1.0f);
-	// Translate to position on screen
-	matrix4 transMat = matrix4::CreateTranslation(vector3(mPosition, 0.0f));
-	// Set world transform
+	matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(texture->getWidth()), static_cast<float>(texture->getHeight()), 1.0f);
+	//Translate to position on screen
+	matrix4 transMat = matrix4::CreateTranslation(vector3(position_, 0.0f));
+	//Set world transform
 	matrix4 world = scaleMat * transMat;
-	shader->SetMatrixUniform("uWorldTransform", world);
-	// Set current texture
-	texture->SetActive();
-	// Draw quad
+	shader->setMatrixUniform("uWorldTransform", world);
+	//Set current texture
+	texture->setActive();
+	//Draw quad
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
-void Button::OnClick()
+void Button::onClick()
 {
-	// Call attached handler, if it exists
-	if (mOnClick)
+	//Call attached handler, if it exists
+	if(f_onClick_)
 	{
-		mState = BUTTON_CLICKED;
-		mOnClick();
+		state_ = BUTTON_CLICKED;
+		f_onClick_();
 	}
 }
-void Button::SetName(const std::string& name)
+void Button::setName(const std::string& name)
 {
-	mName = name;
-	if (mTexture)
+	name_ = name;
+	if(texture_)
 	{
-		mTexture->Unload();
-		delete mTexture;
-		mTexture = nullptr;
+		texture_->~Texture();
+		delete texture_;
+		texture_ = nullptr;
 	}
-	mTexture = mFont->RenderText(mName);
+	texture_ = font_->renderText(name_);
 }

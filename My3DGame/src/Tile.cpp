@@ -1,46 +1,33 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Tile.h"
 #include "SpriteComponent.h"
 #include "Game.h"
 
-Tile::Tile(class Game* game)
-:Actor(game)
-,mParent(nullptr)
-,f(0.0f)
-,g(0.0f)
-,h(0.0f)
-,mBlocked(false)
-,mSprite(nullptr)
-,mTileState(EDefault)
-,mSelected(false)
+Tile::Tile(class Game* game):Actor(game), parent_(nullptr), f_(0.0f), g_(0.0f), h_(0.0f), blocked_(false), sprite_(nullptr), tileState_(EDefault), selected_(false)
 {
-	mSprite = new SpriteComponent(this);
-	UpdateTexture();
+	sprite_ = new SpriteComponent(this);
+	updateTexture();
 }
-
-void Tile::SetTileState(TileState state)
+void Tile::setTileState(TileState state)
 {
-	mTileState = state;
-	UpdateTexture();
+	tileState_ = state;
+	updateTexture();
 }
-
-void Tile::ToggleSelect()
+void Tile::toggleSelect()
 {
-	mSelected = !mSelected;
-	UpdateTexture();
+	selected_ = !selected_;
+	updateTexture();
 }
-
-void Tile::UpdateTexture()
+void Tile::updateTexture()
 {
 	std::string text;
-	switch (mTileState)
+	switch(tileState_)
 	{
 		case EStart:
 			text = "Assets/TileTan.png";
@@ -49,18 +36,18 @@ void Tile::UpdateTexture()
 			text = "Assets/TileGreen.png";
 			break;
 		case EPath:
-			if (mSelected)
+			if(selected_)
 				text = "Assets/TileGreySelected.png";
 			else
 				text = "Assets/TileGrey.png";
 			break;
 		case EDefault:
 		default:
-			if (mSelected)
+			if(selected_)
 				text = "Assets/TileBrownSelected.png";
 			else
 				text = "Assets/TileBrown.png";
 			break;
 	}
-	mSprite->SetTexture(GetGame()->GetTexture(text));
+	sprite_->setTexture(game()->renderer()->getTexture(text));
 }

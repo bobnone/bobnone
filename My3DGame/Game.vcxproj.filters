@@ -67,9 +67,6 @@
     <ClCompile Include="src\MirrorCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\PlaneActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +136,9 @@
     <ClCompile Include="src\FollowActor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Actor.h" />
@@ -160,7 +160,6 @@
     <ClInclude Include="src\Mesh.h" />
     <ClInclude Include="src\MeshComponent.h" />
     <ClInclude Include="src\MirrorCamera.h" />
-    <ClInclude Include="src\PhysWorld.h" />
     <ClInclude Include="src\PlaneActor.h" />
     <ClInclude Include="src\PointLightComponent.h" />
     <ClInclude Include="src\Shader.h" />
@@ -185,6 +184,7 @@
     <ClInclude Include="src\TextureHandler.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\FollowActor.h" />
+    <ClInclude Include="src\Physics.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Sprite.frag">

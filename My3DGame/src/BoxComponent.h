@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "Component.h"
@@ -15,27 +14,27 @@ class BoxComponent : public Component
 public:
 	BoxComponent(class Actor* owner, int updateOrder = 100);
 	~BoxComponent();
-	void OnUpdateWorldTransform() override;
-	void SetObjectBox(const AABB& model)
+	void onUpdateWorldTransform() override;
+	void setObjectBox(const AABB& model)
 	{
-		mObjectBox = model;
+		objectBox_ = model;
 	}
-	const AABB& GetWorldBox() const
+	const AABB& worldBox() const
 	{
-		return mWorldBox;
+		return worldBox_;
 	}
-	TypeID GetType() const override
+	TypeID getType() const override
 	{
 		return TBoxComponent;
 	}
-	void LoadProperties(const rapidjson::Value& inObj) override;
-	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
-	void SetShouldRotate(bool value)
+	void loadProperties(const rapidjson::Value& inObj) override;
+	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
+	void setShouldRotate(bool value)
 	{
-		mShouldRotate = value;
+		shouldRotate_ = value;
 	}
 private:
-	AABB mObjectBox;
-	AABB mWorldBox;
-	bool mShouldRotate;
+	AABB objectBox_;
+	AABB worldBox_;
+	bool shouldRotate_;
 };

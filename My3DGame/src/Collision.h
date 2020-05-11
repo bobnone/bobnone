@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "Math.h"
@@ -14,13 +13,13 @@ struct LineSegment
 {
 	LineSegment(const vector3& start, const vector3& end);
 	// Get point along segment where 0 <= t <= 1
-	vector3 PointOnSegment(float t) const;
+	vector3 pointOnSegment(float t) const;
 	// Get minimum distance squared between point and line segment
-	float MinDistSq(const vector3& point) const;
+	float minDistSq(const vector3& point) const;
 	// Get MinDistSq between two line segments
-	static float MinDistSq(const LineSegment& s1, const LineSegment& s2);
-	vector3 mStart;
-	vector3 mEnd;
+	static float minDistSq(const LineSegment& s1, const LineSegment& s2);
+	vector3 start_;
+	vector3 end_;
 };
 struct Plane
 {
@@ -28,57 +27,56 @@ struct Plane
 	// Construct plane from three points
 	Plane(const vector3& a, const vector3& b, const vector3& c);
 	// Get the signed distance between the point and the plane
-	float SignedDist(const vector3& point) const;
-	vector3 mNormal;
-	float mD;
+	float signedDist(const vector3& point) const;
+	vector3 normal_;
+	float d_;
 };
 struct Sphere
 {
 	Sphere(const vector3& center, float radius);
-	bool Contains(const vector3& point) const;
-	vector3 mCenter;
-	float mRadius;
+	bool contains(const vector3& point) const;
+	vector3 center_;
+	float radius_;
 };
 struct AABB
 {
 	AABB(const vector3& min, const vector3& max);
-	// Update min and max accounting for this point
-	// (used when loading a model)
-	void UpdateMinMax(const vector3& point);
-	// Rotated by a quaternion
-	void Rotate(const quaternion& q);
-	bool Contains(const vector3& point) const;
-	float MinDistSq(const vector3& point) const;
-	vector3 mMin;
-	vector3 mMax;
+	//Update min and max accounting for this point (used when loading a model)
+	void updateMinMax(const vector3& point);
+	//Rotated by a quaternion
+	void rotate(const quaternion& q);
+	bool contains(const vector3& point) const;
+	float minDistSq(const vector3& point) const;
+	vector3 min_;
+	vector3 max_;
 };
 struct OBB
 {
-	vector3 mCenter;
-	quaternion mRotation;
-	vector3 mExtents;
+	vector3 center_;
+	quaternion rotation_;
+	vector3 extents_;
 };
 struct Capsule
 {
 	Capsule(const vector3& start, const vector3& end, float radius);
-	// Get point along segment where 0 <= t <= 1
-	vector3 PointOnSegment(float t) const;
-	bool Contains(const vector3& point) const;
-	LineSegment mSegment;
-	float mRadius;
+	//Get point along segment where 0 <= t <= 1
+	vector3 pointOnSegment(float t) const;
+	bool contains(const vector3& point) const;
+	LineSegment segment_;
+	float radius_;
 };
 struct ConvexPolygon
 {
-	bool Contains(const vector2& point) const;
-	// Vertices have a clockwise ordering
-	std::vector<vector2> mVertices;
+	bool contains(const vector2& point) const;
+	//Vertices have a clockwise ordering
+	std::vector<vector2> vertices_;
 };
-// Intersection functions
-bool Intersect(const Sphere& a, const Sphere& b);
-bool Intersect(const AABB& a, const AABB& b);
-bool Intersect(const Capsule& a, const Capsule& b);
-bool Intersect(const Sphere& s, const AABB& box);
-bool Intersect(const LineSegment& l, const Sphere& s, float& outT);
-bool Intersect(const LineSegment& l, const Plane& p, float& outT);
-bool Intersect(const LineSegment& l, const AABB& b, float& outT, vector3& outNorm);
-bool SweptSphere(const Sphere& P0, const Sphere& P1, const Sphere& Q0, const Sphere& Q1, float& t);
+//Intersection functions
+bool intersect(const Sphere& a, const Sphere& b);
+bool intersect(const AABB& a, const AABB& b);
+bool intersect(const Capsule& a, const Capsule& b);
+bool intersect(const Sphere& s, const AABB& box);
+bool intersect(const LineSegment& l, const Sphere& s, float& outT);
+bool intersect(const LineSegment& l, const Plane& p, float& outT);
+bool intersect(const LineSegment& l, const AABB& b, float& outT, vector3& outNorm);
+bool sweptSphere(const Sphere& P0, const Sphere& P1, const Sphere& Q0, const Sphere& Q1, float& t);

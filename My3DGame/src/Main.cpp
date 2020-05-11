@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #define ILUT_USE_OPENGL
 
@@ -13,11 +12,11 @@
 int main(int argc, char** argv)
 {
 	Game game;
-	bool success = game.Initialize();
+	bool success = game.initialize();
 	if (success)
 	{
-		game.RunLoop();
+		game.runLoop();
 	}
-	game.Shutdown();
+	game.shutdown();
 	return 0;
 }

@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "Actor.h"
@@ -14,16 +13,17 @@ class CameraActor : public Actor
 {
 public:
 	CameraActor(class Game* game);
-
-	void UpdateActor(float deltaTime) override;
-	void ActorInput(const uint8_t* keys) override;
-
-	void SetFootstepSurface(float value);
-	const Vector3& GetCameraPosition() const { return mCameraPos; }
+	void updateActor(float deltaTime) override;
+	void actorInput(const uint8_t* keys) override;
+	void setFootstepSurface(float value);
+	const vector3& getCameraPosition() const
+	{
+		return cameraPos_;
+	}
 private:
-	class MoveComponent* mMoveComp;
-	class AudioComponent* mAudioComp;
-	Vector3 mCameraPos;
-	SoundEvent mFootstep;
-	float mLastFootstep;
+	class MoveComponent* moveComp_;
+	class AudioComponent* audioComp_;
+	vector3 cameraPos_;
+	SoundEvent footstep_;
+	float lastFootstep_;
 };

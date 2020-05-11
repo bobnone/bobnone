@@ -12,20 +12,20 @@ class FollowActor : public Actor
 {
 public:
 	FollowActor(class Game* game);
-	void UpdateActor(float deltaTime) override;
-	void ActorInput(const uint8_t* keys) override;
-	void SetVisible(bool visible);
-	void SetFootstepSurface(float value);
-	TypeID GetType() const override
+	void updateActor(float deltaTime) override;
+	void actorInput(const uint8_t* keys) override;
+	void setVisible(bool visible);
+	void setFootstepSurface(float value);
+	TypeID getType() const override
 	{
 		return TFollowActor;
 	}
 private:
-	class MoveComponent* mMoveComp;
-	class AudioComponent* mAudioComp;
-	SoundEvent mFootstep;
-	float mLastFootstep;
-	class FollowCamera* mCameraComp;
-	class SkeletalMeshComponent* mMeshComp;
-	bool mAnimated;
+	class MoveComponent* moveComp_;
+	class AudioComponent* audioComp_;
+	SoundEvent footstep_;
+	float lastFootstep_;
+	class FollowCamera* cameraComp_;
+	class SkeletalMeshComponent* meshComp_;
+	bool animated_;
 };

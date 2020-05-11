@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "Tower.h"
 #include "SpriteComponent.h"
@@ -13,41 +12,36 @@
 #include "Enemy.h"
 #include "Bullet.h"
 
-Tower::Tower(class Game* game)
-:Actor(game)
+Tower::Tower(class Game* game):Actor(game)
 {
 	SpriteComponent* sc = new SpriteComponent(this, 200);
-	sc->SetTexture(game->GetTexture("Assets/Tower.png"));
-	
-	mMove = new MoveComponent(this);
-	//mMove->SetAngularSpeed(Math::Pi);
-	
-	mNextAttack = AttackTime;
+	sc->setTexture(game->renderer()->getTexture("Assets/Tower.png"));
+	move_ = new MoveComponent(this);
+	//move_->setAngularXSpeed(Math::Pi);
+	nextAttack_ = attackTime_;
 }
-
-void Tower::UpdateActor(float deltaTime)
+void Tower::updateActor(float deltaTime)
 {
-	Actor::UpdateActor(deltaTime);
-	
-	mNextAttack -= deltaTime;
-	if (mNextAttack <= 0.0f)
+	Actor::updateActor(deltaTime);
+	nextAttack_ -= deltaTime;
+	if(nextAttack_ <= 0.0f)
 	{
-		Enemy* e = GetGame()->GetNearestEnemy(GetPosition());
-		if (e != nullptr)
+		Enemy* e = game()->getNearestEnemy(position());
+		if(e != nullptr)
 		{
-			// Vector from me to enemy
-			Vector2 dir = e->GetPosition() - GetPosition();
+			//Vector from me to enemy
+			vector2 dir = e->position() - position();
 			float dist = dir.Length();
-			if (dist < AttackRange)
+			if(dist < attackRange_)
 			{
-				// Rotate to face enemy
-				SetRotation(Math::Atan2(-dir.y, dir.x));
-				// Spawn bullet at tower position facing enemy
-				Bullet* b = new Bullet(GetGame());
-				b->SetPosition(GetPosition());
-				b->SetRotation(GetRotation());
+				//Rotate to face enemy
+				setRotation(Math::Atan2(-dir.y, dir.x));
+				//Spawn bullet at tower position facing enemy
+				Bullet* b = new Bullet(game());
+				b->setPosition(position());
+				b->setRotation(rotation());
 			}
 		}
-		mNextAttack += AttackTime;
+		nextAttack_ += attackTime_;
 	}
 }

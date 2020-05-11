@@ -4,28 +4,28 @@
 
 PauseMenu::PauseMenu(Game* game):UIScreen(game)
 {
-	mGame->SetState(Game::GAME_PAUSED);
-	mGame->GetMouse()->SetRelative(false);
-	SetTitle("PauseTitle");
-	AddButton("ResumeButton", [this](){
-		Close();
+	game_->setState(Game::GAME_PAUSED);
+	game_->mouse()->setRelative(false);
+	setTitle("PauseTitle");
+	addButton("ResumeButton", [this](){
+		close();
 	});
-	AddButton("QuitButton", [this]() {
-		new DialogBoxMenu(mGame, "QuitText", [this](){
-			mGame->SetState(Game::GAME_QUIT);
+	addButton("QuitButton", [this]() {
+		new DialogBoxMenu(game_, "QuitText", [this](){
+			game_->setState(Game::GAME_QUIT);
 		});
 	});
 }
 PauseMenu::~PauseMenu()
 {
-	mGame->GetMouse()->SetRelative(true);
-	mGame->SetState(Game::GAME_PLAY);
+	game_->mouse()->setRelative(true);
+	game_->setState(Game::GAME_PLAY);
 }
-void PauseMenu::HandleKeyPress(int key)
+void PauseMenu::handleKeyPress(int key)
 {
-	UIScreen::HandleKeyPress(key);
-	if (key == SDLK_ESCAPE)
+	UIScreen::handleKeyPress(key);
+	if(key == SDLK_ESCAPE)
 	{
-		Close();
+		close();
 	}
 }

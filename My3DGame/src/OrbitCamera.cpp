@@ -1,49 +1,39 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "OrbitCamera.h"
 #include "Actor.h"
 
-OrbitCamera::OrbitCamera(Actor* owner)
-	:CameraComponent(owner)
-	,mOffset(-400.0f, 0.0f, 0.0f)
-	,mUp(Vector3::UnitZ)
-	,mPitchSpeed(0.0f)
-	,mYawSpeed(0.0f)
+OrbitCamera::OrbitCamera(Actor* owner):CameraComponent(owner), offset_(-400.0f, 0.0f, 0.0f), up_(vector3::UnitZ), pitchSpeed_(0.0f), yawSpeed_(0.0f)
 {
+	//EMPTY:
 }
-
-void OrbitCamera::Update(float deltaTime)
+void OrbitCamera::update(float deltaTime)
 {
-	CameraComponent::Update(deltaTime);
-	// Create a quaternion for yaw about world up
-	Quaternion yaw(Vector3::UnitZ, mYawSpeed * deltaTime);
-	// Transform offset and up by yaw
-	mOffset = Vector3::Transform(mOffset, yaw);
-	mUp = Vector3::Transform(mUp, yaw);
-
-	// Compute camera forward/right from these vectors
-	// Forward owner.position - (owner.position + offset)
-	// = -offset
-	Vector3 forward = -1.0f * mOffset;
+	CameraComponent::update(deltaTime);
+	//Create a quaternion for yaw about world up
+	quaternion yaw(vector3::UnitZ, yawSpeed_ * deltaTime);
+	//Transform offset and up by yaw
+	offset_ = vector3::Transform(offset_, yaw);
+	up_ = vector3::Transform(up_, yaw);
+	//Compute camera forward/right from these vectors
+	//Forward owner.position - (owner.position + offset) = -offset
+	vector3 forward = -1.0f * offset_;
 	forward.Normalize();
-	Vector3 right = Vector3::Cross(mUp, forward);
+	vector3 right = vector3::Cross(up_, forward);
 	right.Normalize();
-	
-	// Create quaternion for pitch about camera right
-	Quaternion pitch(right, mPitchSpeed * deltaTime);
-	// Transform camera offset and up by pitch
-	mOffset = Vector3::Transform(mOffset, pitch);
-	mUp = Vector3::Transform(mUp, pitch);
-
-	// Compute transform matrix
-	Vector3 target = mOwner->GetPosition();
-	Vector3 cameraPos = target + mOffset;
-	Matrix4 view = Matrix4::CreateLookAt(cameraPos, target, mUp);
-	SetViewMatrix(view);
+	//Create quaternion for pitch about camera right
+	quaternion pitch(right, pitchSpeed_ * deltaTime);
+	//Transform camera offset and up by pitch
+	offset_ = vector3::Transform(offset_, pitch);
+	up_ = vector3::Transform(up_, pitch);
+	//Compute transform matrix
+	vector3 target = owner_->position();
+	vector3 cameraPos = target + offset_;
+	matrix4 view = matrix4::CreateLookAt(cameraPos, target, up_);
+	setViewMatrix(view);
 }

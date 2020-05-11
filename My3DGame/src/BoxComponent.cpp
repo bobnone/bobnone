@@ -1,57 +1,55 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "BoxComponent.h"
 #include "Actor.h"
 #include "Game.h"
-#include "PhysWorld.h"
+#include "Physics.h"
 #include "JsonHelper.h"
 
-BoxComponent::BoxComponent(Actor* owner, int updateOrder) :Component(owner, updateOrder), mObjectBox(vector3::Zero, vector3::Zero), mWorldBox(vector3::Zero, vector3::Zero), mShouldRotate(true)
+BoxComponent::BoxComponent(Actor* owner, int updateOrder):Component(owner, updateOrder), objectBox_(vector3::Zero, vector3::Zero), worldBox_(vector3::Zero, vector3::Zero), shouldRotate_(true)
 {
-	mOwner->GetGame()->GetPhysWorld()->AddBox(this);
+	owner->game()->physics()->addBox(this);
 }
 BoxComponent::~BoxComponent()
 {
-	mOwner->GetGame()->GetPhysWorld()->RemoveBox(this);
+	owner_->game()->physics()->removeBox(this);
 }
-void BoxComponent::OnUpdateWorldTransform()
+void BoxComponent::onUpdateWorldTransform()
 {
-	// Reset to object space box
-	mWorldBox = mObjectBox;
-	// Scale
-	mWorldBox.mMin *= mOwner->GetScale();
-	mWorldBox.mMax *= mOwner->GetScale();
-	// Rotate (if we want to)
-	if (mShouldRotate)
+	//Reset to object space box
+	worldBox_ = objectBox_;
+	//Scale
+	worldBox_.min_ *= owner_->scale();
+	worldBox_.max_ *= owner_->scale();
+	//Rotate (if we want to)
+	if(shouldRotate_)
 	{
-		mWorldBox.Rotate(mOwner->GetRotation());
+		worldBox_.rotate(owner_->rotation());
 	}
 	// Translate
-	mWorldBox.mMin += mOwner->GetPosition();
-	mWorldBox.mMax += mOwner->GetPosition();
+	worldBox_.min_ += owner_->position();
+	worldBox_.max_ += owner_->position();
 }
-void BoxComponent::LoadProperties(const rapidjson::Value& inObj)
+void BoxComponent::loadProperties(const rapidjson::Value& inObj)
 {
-	Component::LoadProperties(inObj);
-	JsonHelper::GetVector3(inObj, "objectMin", mObjectBox.mMin);
-	JsonHelper::GetVector3(inObj, "objectMax", mObjectBox.mMax);
-	JsonHelper::GetVector3(inObj, "worldMin", mWorldBox.mMin);
-	JsonHelper::GetVector3(inObj, "worldMax", mWorldBox.mMax);
-	JsonHelper::GetBool(inObj, "shouldRotate", mShouldRotate);
+	Component::loadProperties(inObj);
+	JsonHelper::getVector3(inObj, "objectMin", objectBox_.min_);
+	JsonHelper::getVector3(inObj, "objectMax", objectBox_.max_);
+	JsonHelper::getVector3(inObj, "worldMin", worldBox_.min_);
+	JsonHelper::getVector3(inObj, "worldMax", worldBox_.max_);
+	JsonHelper::getBool(inObj, "shouldRotate", shouldRotate_);
 }
-
-void BoxComponent::SaveProperties(rapidjson::Document::AllocatorType & alloc, rapidjson::Value & inObj) const
+void BoxComponent::saveProperties(rapidjson::Document::AllocatorType & alloc, rapidjson::Value & inObj) const
 {
-	Component::SaveProperties(alloc, inObj);
-	JsonHelper::AddVector3(alloc, inObj, "objectMin", mObjectBox.mMin);
-	JsonHelper::AddVector3(alloc, inObj, "objectMax", mObjectBox.mMax);
-	JsonHelper::AddVector3(alloc, inObj, "worldMin", mWorldBox.mMin);
-	JsonHelper::AddVector3(alloc, inObj, "worldMax", mWorldBox.mMax);
-	JsonHelper::AddBool(alloc, inObj, "shouldRotate", mShouldRotate);
+	Component::saveProperties(alloc, inObj);
+	JsonHelper::addVector3(alloc, inObj, "objectMin", objectBox_.min_);
+	JsonHelper::addVector3(alloc, inObj, "objectMax", objectBox_.max_);
+	JsonHelper::addVector3(alloc, inObj, "worldMin", worldBox_.min_);
+	JsonHelper::addVector3(alloc, inObj, "worldMax", worldBox_.max_);
+	JsonHelper::addBool(alloc, inObj, "shouldRotate", shouldRotate_);
 }

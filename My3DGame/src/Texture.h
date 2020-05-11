@@ -9,83 +9,183 @@
 class Texture
 {
 public:
-	Texture();
+	//Default Constructor
+	Texture(const std::string fileName);
+	//Used to create a texture from an SDL Surface
+	Texture(SDL_Surface* surface);
+	//Used to create a texture for rendering
+	Texture(int width, int height, unsigned int format);
 	~Texture();
-	bool Texture::Load(const std::string& fileName);
-	void Unload();
-	// Returns true if an error is found with DevIL
-	bool ErrorCheck();
-	std::wstring Texture::StringToWstring(const std::string& str);
-	std::string Texture::WstringToString(const std::wstring& wstr);
-	// Returns whether the file is loaded or not
-	bool LoadData(const wchar_t* fileName);
-	/* Returns whether the file is loaded or not
-	Ignores file extensions and uses "type" instead*/
-	bool LoadData(const wchar_t* fileName, ILenum type);
-	/* Returns whether the file is loaded or not
-	"file" points to an open file to read from*/
-	bool LoadData(ILHANDLE* file, ILenum type);
-	/* Returns whether the file is loaded or not
-	"lump points" to block of memory of size "size" to read from*/
-	bool LoadData(const void* lump, ILenum type, ILuint size);
-	// Returns whether the file is saved or not
-	bool SaveData(const wchar_t* fileName);
-	/* Returns whether the file is saved or not
-	Ignores file extensions and uses "type" instead*/
-	bool SaveData(const wchar_t* fileName, ILenum type);
-	/* Returns whether the file is saved or not
-	"file" points to an open file to write to*/
-	bool SaveData(ILHANDLE* file, ILenum type);
-	/* Returns whether the file is saved or not
-	"lump points" to block of memory of size "size" to write to*/
-	bool SaveData(void* lump, ILenum type, ILuint size);
-	enum TextureFilter
+	//Detects if an error has occurred with DevIL
+	void errorCheck();
+	//Used to load an image file
+	ILboolean load(const ILstring fileName);
+	//Used to load an image file but it ignores file extensions and uses "type" instead
+	ILboolean load(const ILstring fileName, ILenum type);
+	//Used to load an image from a previously opened file
+	ILboolean load(ILHANDLE* file, ILenum type);
+	//Loads an image from a lump/section of memory
+	ILboolean load(const void* lump, ILenum type, ILuint size);
+	//Used to save an image file
+	ILboolean save(const ILstring fileName);
+	///Used to save an image file with extension "type" instead
+	ILboolean save(const ILstring fileName, ILenum type);
+	//Used to save an image to a previously opened file
+	ILboolean save(ILHANDLE* file, ILenum type);
+	//Saves an image to a lump/section of memory
+	ILboolean save(void* lump, ILenum type, ILuint size);
+	/*Applies an "Alien" filter to the image
+	Note: Images with people in them turn out the best with this filter*/
+	ILboolean applyAlienFilter();
+	/*Blurs an image using an averaging convolution filter iter number of times.
+	Note: All pixels around a pixel get averaged.
+	Note: More blurring the higher iter is, but beware, as it will be slow.*/
+	ILboolean applyBlurAverageFilter(ILuint iter);
+	void createFromSDLSurface(struct SDL_Surface* surface);
+	void createForRendering(int width, int height, unsigned int format);
+	/*Sets this texture as the current texture so that DevIL and OpenGL performs all subsequent operations it
+	Note: resets animation frame and mipmap level*/
+	void setActive();
+	/*Sets the frame in an animation chain (image array)
+	Note: resets mipmap level*/
+	void setFrame(int frame);
+	//Sets the mipmap level for an image (image array)
+	void setMipmap(int level);
+	std::string fileName()
 	{
-		FILTER_ALIENIFY = 0,
-		FILTER_BIT_1,
-		FILTER_BIT_2,
-		FILTER_BIT_3,
-		FILTER_BLUR_AVG,
-		FILTER_BLUR_GAUSSIAN,
-		FILTER_EDGE_DETECT_PREWITT,
-		FILTER_EDGE_DETECT_SOBEL,
-		FILTER_EMBOSS,
-		FILTER_GAMMA_CORRECT_CURVE,
-		FILTER_NEGATIVE,
-		FILTER_NOISE,
-		FILTER_PIXELIZE,
-		FILTER_SHARPEN
-	};
-	// Returns a boolean value telling whether the filter was successfully applied
-	ILboolean ApplyFilter(TextureFilter filter);
-	void CreateFromSurface(struct SDL_Surface* surface);
-	void CreateForRendering(int width, int height, unsigned int format);
-	void SetActive(int index = 0);
-	const std::string& GetFileName() const
-	{
-		return mFileName;
+		return fileName_;
 	}
-	GLuint GetTextureID() const
+	GLuint textureID()
 	{
-		return mTextureID;
+		return textureID_;
 	}
-	ILuint GetImageID() const
+	ILuint imageID()
 	{
-		return mImageID;
+		return imageID_;
 	}
-	const int GetWidth() const
+	//Image size of data in bytes
+	ILuint getSizeOfData()
 	{
-		return mWidth;
+		return info_->SizeOfData;
 	}
-	const int GetHeight() const
+	//Image bytes per pixel(not bits)
+	ILubyte getBytesPerPixel()
 	{
-		return mHeight;
+		return info_->Bpp;
+	}
+	//Depth - ILuint which contains the image depth
+	//Format - ILuint which contains the image format
+	//Image height
+	ILuint getHeight() const
+	{
+		return info_->Height;
+	}
+	//NumLayers - ILenum which contains the image number of layer
+	//NumMips - ILenum which contains the number of image mipmaps
+	//NumNext - ILenum which contains the number of image following the current
+	//Origin - ILenum which contains the image origin
+	//PalSize - ILenum which contains the image palette size
+	//PalType - ILenum which contains the image palette type
+	//Type - ILenum which contains the image type
+	//Image width
+	ILuint getWidth() const
+	{
+		return info_->Width;
+	}
+	bool isLoaded() const
+	{
+		return loaded_;
 	}
 private:
-	std::string mFileName;
-	GLuint mTextureID;
-	ILuint mImageID;
-	ILinfo* mInfo;
-	int mWidth;
-	int mHeight;
+	GLuint textureID_;
+	ILuint imageID_;
+	std::string fileName_;
+	ILinfo* info_;
+	bool loaded_;
+/*
+ilActiveFace(ILuint Number);
+ilActiveLayer(ILuint Number);
+ilApplyProfile(ILstring InProfile, ILstring OutProfile);
+ilBlit(ILuint Source, ILint DestX, ILint DestY, ILint DestZ, ILuint SrcX, ILuint SrcY, ILuint SrcZ, ILuint Width, ILuint Height, ILuint Depth);
+ilClampNTSC();
+ilClearColour(ILclampf Red, ILclampf Green, ILclampf Blue, ILclampf Alpha);
+ilClearImage();
+ilCloneCurImage();
+ilCompressDXT(ILubyte *Data, ILuint Width, ILuint Height, ILuint Depth, ILenum DXTCFormat, ILuint *DXTCSize);
+ilCompressFunc(ILenum Mode);
+ilConvertImage(ILenum DestFormat, ILenum DestType);
+ilCopyImage(ILuint Src);
+ilCopyPixels(ILuint XOff, ILuint YOff, ILuint ZOff, ILuint Width, ILuint Height, ILuint Depth, ILenum Format, ILenum Type, void *Data);
+ilCreateSubImage(ILenum Type, ILuint Num);
+ilDefaultImage();
+ilFormatFunc(ILenum Mode);
+ilGetAlpha(ILenum Type);
+ilGetLumpPos(void);
+ilHint(ILenum Target, ILenum Mode);
+ilIsDisabled(ILenum Mode);
+ilIsEnabled(ILenum Mode);
+ilIsImage(ILuint Image);
+ilIsValid(ILenum Type, ILconst_string FileName);
+ilIsValidF(ILenum Type, ILHANDLE File);
+ilIsValidL(ILenum Type, void *Lump, ILuint Size);
+ilKeyColour(ILclampf Red, ILclampf Green, ILclampf Blue, ILclampf Alpha);
+ilModAlpha(ILdouble AlphaValue);
+ilOriginFunc(ILenum Mode);
+ilOverlayImage(ILuint Source, ILint XCoord, ILint YCoord, ILint ZCoord);
+ilPopAttrib();
+ilPushAttrib(ILuint Bits);
+ilRegisterMipNum(ILuint Num);
+ilRegisterNumFaces(ILuint Num);
+ilRegisterNumImages(ILuint Num);
+ilRegisterOrigin(ILenum Origin);
+ilRegisterSave(ILconst_string Ext, IL_SAVEPROC Save);
+ilRegisterType(ILenum Type);
+ilResetRead();
+ilResetWrite();
+ilSetAlpha(ILdouble AlphaValue);
+ilSetDuration(ILuint Duration);
+ilSetMemory(mAlloc, mFree);
+ilSetPixels(ILint XOff, ILint YOff, ILint ZOff, ILuint Width, ILuint Height, ILuint Depth, ILenum Format, ILenum Type, void *Data);
+ilSetRead(fOpenRProc, fCloseRProc, fEofProc, fGetcProc, fReadProc, fSeekRProc, fTellRProc);
+ilSetWrite(fOpenWProc, fCloseWProc, fPutcProc, fSeekWProc, fTellWProc, fWriteProc);
+ilShutDown();
+ilTexImage(ILuint Width, ILuint Height, ILuint Depth, ILubyte NumChannels, ILenum Format, ILenum Type, void *Data);
+ilTypeFromExt(ILconst_string FileName);
+ilTypeFunc(ILenum Mode);
+
+iluBlurGaussian(ILuint Iter);
+iluColoursUsed(void);
+iluCompareImage(ILuint Comp);
+iluContrast(ILfloat Contrast);
+iluCrop(ILuint XOff, ILuint YOff, ILuint ZOff, ILuint Width, ILuint Height, ILuint Depth);
+iluEdgeDetectE(void);
+iluEdgeDetectP(void);
+iluEdgeDetectS(void);
+iluEmboss(void);
+iluEnlargeCanvas(ILuint Width, ILuint Height, ILuint Depth);
+iluEnlargeImage(ILfloat XDim, ILfloat YDim, ILfloat ZDim);
+iluEqualize(void);
+iluEqualize2(void);
+iluConvolution(ILint *matrix, ILint scale, ILint bias);
+iluFlipImage(void);
+iluGammaCorrect(ILfloat Gamma);
+iluInvertAlpha(void);
+iluMirror(void);
+iluNegative(void);
+iluNoisify(ILclampf Tolerance);
+iluPixelize(ILuint PixSize);
+iluRegionfv(ILpointf *Points, ILuint n);
+iluRegioniv(ILpointi *Points, ILuint n);
+iluReplaceColour(ILubyte Red, ILubyte Green, ILubyte Blue, ILfloat Tolerance);
+iluRotate(ILfloat Angle);
+iluSaturate1f(ILfloat Saturation);
+iluSaturate4f(ILfloat r, ILfloat g, ILfloat b, ILfloat Saturation);
+iluScale(ILuint Width, ILuint Height, 0);
+iluScaleAlpha(ILfloat scale);
+iluScaleColours(ILfloat r, ILfloat g, ILfloat b);
+iluSepia(void);
+iluSharpen(ILfloat Factor, ILuint Iter);
+iluSwapColours(void);
+iluWave(ILfloat Angle);
+*/
 };

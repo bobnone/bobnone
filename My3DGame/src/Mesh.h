@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include <string>
@@ -16,51 +15,51 @@ class Mesh
 public:
 	Mesh();
 	~Mesh();
-	// Load/unload mesh
-	bool Load(const std::string& fileName, class Renderer* renderer);
-	void Unload();
-	// Get the vertex array associated with this mesh
-	VertexArray* GetVertexArray()
+	//Load/unload mesh
+	bool load(const std::string& fileName, class Renderer* renderer);
+	void unload();
+	//Get the vertex array associated with this mesh
+	VertexArray* vertexArray()
 	{
-		return mVertexArray;
+		return vertexArray_;
 	}
-	// Get a texture from specified index
-	class Texture* GetTexture(size_t index);
-	// Get file name
-	const std::string& GetFileName() const
+	//Get a texture from specified index
+	class Texture* getTexture(size_t index);
+	//Get file name
+	const std::string& fileName() const
 	{
-		return mFileName;
+		return fileName_;
 	}
-	// Get object space bounding sphere radius
-	float GetRadius() const
+	//Get object space bounding sphere radius
+	float radius() const
 	{
-		return mRadius;
+		return radius_;
 	}
-	// Get object space bounding box
-	const AABB& GetBox() const
+	//Get object space bounding box
+	const AABB& box() const
 	{
-		return mBox;
+		return box_;
 	}
-	// Get specular power of mesh
-	float GetSpecularPower() const
+	//Get specular power of mesh
+	float specularPower() const
 	{
-		return mSpecularPower;
+		return specularPower_;
 	}
-	// Save the mesh in binary format
-	void SaveBinary(const std::string& fileName, const void* verts, uint32_t numVerts, VertexArray::Layout layout, const uint32_t* indices, uint32_t numIndices, const std::vector<std::string>& textureNames, const AABB& box, float radius, float specularPower);
-	// Load in the mesh from binary format
-	bool LoadBinary(const std::string& fileName, class Renderer* renderer);
+	//Save the mesh in binary format
+	void saveBinary(const std::string& fileName, const void* verts, uint32_t numVerts, VertexArray::Layout layout, const uint32_t* indices, uint32_t numIndices, const std::vector<std::string>& textureNames, const AABB& box, float radius, float specularPower);
+	//Load in the mesh from binary format
+	bool loadBinary(const std::string& fileName, class Renderer* renderer);
 private:
-	// AABB collision
-	AABB mBox;
-	// Textures associated with this mesh
-	std::vector<class Texture*> mTextures;
-	// Vertex array associated with this mesh
-	VertexArray* mVertexArray;
-	// Name of mesh file
-	std::string mFileName;
-	// Stores object space bounding sphere radius
-	float mRadius;
-	// Specular power of surface
-	float mSpecularPower;
+	//AABB collision
+	AABB box_;
+	//Textures associated with this mesh
+	std::vector<class Texture*> textures_;
+	//Vertex array associated with this mesh
+	VertexArray* vertexArray_;
+	//Name of mesh file
+	std::string fileName_;
+	//Stores object space bounding sphere radius
+	float radius_;
+	//Specular power of surface
+	float specularPower_;
 };

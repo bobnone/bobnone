@@ -1,20 +1,19 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "Actor.h"
 
-class Bullet : public Actor
+class Bullet: public Actor
 {
 public:
 	Bullet(class Game* game);
-	void UpdateActor(float deltaTime) override;
+	void updateActor(float deltaTime) override;
 private:
-	class CircleComponent* mCircle;
-	float mLiveTime;
+	class CircleComponent* circle_;
+	float liveTime_;
 };

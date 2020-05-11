@@ -1,48 +1,40 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "InputComponent.h"
 #include "Actor.h"
 #include "InputSystem.h"
 
-InputComponent::InputComponent(class Actor* owner)
-:MoveComponent(owner)
-,mForwardKey(0)
-,mBackKey(0)
-,mClockwiseKey(0)
-,mCounterClockwiseKey(0)
+InputComponent::InputComponent(class Actor* owner):MoveComponent(owner), forwardKey_(0), backKey_(0), clockwiseKey_(0), counterClockwiseKey_(0)
 {
-	
+	//EMPTY:
 }
-
-void InputComponent::ProcessInput(const InputState& state)
+void InputComponent::processInput(const InputState& state)
 {
-	// Calculate forward speed for MoveComponent
+	//Calculate forward speed for MoveComponent
 	float forwardSpeed = 0.0f;
-	if (state.Keyboard.GetKeyValue(SDL_Scancode(mForwardKey)))
+	if(state.Keyboard.getKeyValue(SDL_Scancode(forwardKey_)))
 	{
-		forwardSpeed += mMaxForwardSpeed;
+		forwardSpeed += maxForwardSpeed_;
 	}
-	if (state.Keyboard.GetKeyValue(SDL_Scancode(mBackKey)))
+	if(state.Keyboard.getKeyValue(SDL_Scancode(backKey_)))
 	{
-		forwardSpeed -= mMaxForwardSpeed;
+		forwardSpeed -= maxForwardSpeed_;
 	}
-	SetForwardSpeed(forwardSpeed);
-
-	// Calculate angular speed for MoveComponent
+	setForwardSpeed(forwardSpeed);
+	//Calculate angular speed for MoveComponent
 	float angularSpeed = 0.0f;
-	if (state.Keyboard.GetKeyValue(SDL_Scancode(mClockwiseKey)))
+	if(state.Keyboard.getKeyValue(SDL_Scancode(clockwiseKey_)))
 	{
-		angularSpeed += mMaxAngularSpeed;
+		angularSpeed += maxAngularSpeed_;
 	}
-	if (state.Keyboard.GetKeyValue(SDL_Scancode(mCounterClockwiseKey)))
+	if(state.Keyboard.getKeyValue(SDL_Scancode(counterClockwiseKey_)))
 	{
-		angularSpeed -= mMaxAngularSpeed;
+		angularSpeed -= maxAngularSpeed_;
 	}
-	SetAngularSpeed(angularSpeed);
+	setAngularXSpeed(angularSpeed);
 }

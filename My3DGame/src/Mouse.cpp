@@ -2,62 +2,62 @@
 #include "Game.h"
 #include "Renderer.h"
 
-Mouse::Mouse(Game* game):mGame(game), mPosition(0.0f,0.0f), mOld(0.0f, 0.0f), mChange(0.0f, 0.0f), mRelative(false), mClicked(false)
+Mouse::Mouse(Game* game):game_(game), position_(0.0f,0.0f), old_(0.0f, 0.0f), change_(0.0f, 0.0f), relative_(false), clicked_(false)
 {
-	//
+	//EMPTY:
 }
 Mouse::~Mouse()
 {
-	//
+	//EMPTY:
 }
-void Mouse::Update(float deltaTime)
+void Mouse::update(float deltaTime)
 {
-	// Get position of mouse
+	//Get position of mouse
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	// Convert to (0,0) center coordinates
-	mPosition = vector2(static_cast<float>(x), static_cast<float>(y));
-	mPosition.x -= mGame->GetRenderer()->GetScreenWidth() * 0.5f;
-	mPosition.y = mGame->GetRenderer()->GetScreenHeight() * 0.5f - mPosition.y;
-	// Calculate the change in position
-	if (mOld != mPosition)
+	//Convert to (0,0) center coordinates
+	position_ = vector2(static_cast<float>(x), static_cast<float>(y));
+	position_.x -= game_->renderer()->screenWidth() * 0.5f;
+	position_.y = game_->renderer()->screenHeight() * 0.5f - position_.y;
+	//Calculate the change in position
+	if(old_ != position_)
 	{
-		mChange.x = mOld.x - mPosition.x;
-		mChange.y = mOld.y - mPosition.y;
-		mOld = mPosition;
+		change_.x = old_.x - position_.x;
+		change_.y = old_.y - position_.y;
+		old_ = position_;
 	}
 }
-void Mouse::ProcessInput(SDL_Event* event)
+void Mouse::processInput(SDL_Event* event)
 {
-	switch (event->type)
+	switch(event->type)
 	{
 	case SDL_MOUSEBUTTONDOWN:
-		switch (event->button.button)
+		switch(event->button.button)
 		{
 		case SDL_BUTTON_LEFT:
-			mClicked = true;
+			clicked_ = true;
 			break;
 		case SDL_BUTTON_MIDDLE:
-			//
+			//EMPTY:
 			break;
 		case SDL_BUTTON_RIGHT:
-			//
+			//EMPTY:
 			break;
 		default:
 			break;
 		}
 		break;
 	case SDL_MOUSEBUTTONUP:
-		switch (event->button.button)
+		switch(event->button.button)
 		{
 		case SDL_BUTTON_LEFT:
-			mClicked = false;
+			clicked_ = false;
 			break;
 		case SDL_BUTTON_MIDDLE:
-			//
+			//EMPTY:
 			break;
 		case SDL_BUTTON_RIGHT:
-			//
+			//EMPTY:
 			break;
 		default:
 			break;
@@ -67,12 +67,12 @@ void Mouse::ProcessInput(SDL_Event* event)
 		break;
 	}
 }
-void Mouse::SetRelative(bool relative)
+void Mouse::setRelative(bool relative)
 {
 	if(relative)
 	{
 		SDL_SetRelativeMouseMode(SDL_TRUE);
-		// Make an initial call to get relative to clear out
+		//Make an initial call to get relative to clear out
 		SDL_GetRelativeMouseState(nullptr, nullptr);
 	}
 	else

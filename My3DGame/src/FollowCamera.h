@@ -1,57 +1,56 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "CameraComponent.h"
 #include "Actor.h"
 
-class FollowCamera : public CameraComponent
+class FollowCamera: public CameraComponent
 {
 public:
 	FollowCamera(class Actor* owner);
-	void Update(float deltaTime) override;
-	void SnapToIdeal();
-	void SetHorzDist(float dist)
+	void update(float deltaTime) override;
+	void snapToIdeal();
+	void setHorzDist(float dist)
 	{
-		mHorzDist = dist;
+		horzDist_ = dist;
 	}
-	void SetVertDist(float dist)
+	void setVertDist(float dist)
 	{
-		mVertDist = dist;
+		vertDist_ = dist;
 	}
-	void SetTargetDist(float dist)
+	void setTargetDist(float dist)
 	{
-		mTargetDist = dist;
+		targetDist_ = dist;
 	}
-	void SetSpringConstant(float spring)
+	void setSpringConstant(float spring)
 	{
-		mSpringConstant = spring;
+		springConstant_ = spring;
 	}
-	TypeID GetType() const override
+	TypeID getType() const override
 	{
 		return TFollowCamera;
 	}
-	void LoadProperties(const rapidjson::Value& inObj) override;
-	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
+	void loadProperties(const rapidjson::Value& inObj) override;
+	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 private:
-	void SetViewMatrix(const matrix4& view) override;
-	vector3 GetVirtualPosition();
-	vector3 ComputeCameraPos() const;
-	// Actual position of camera
-	vector3 mActualPos;
-	// Velocity of actual camera
-	vector3 mVelocity;
-	// Horizontal follow distance
-	float mHorzDist;
-	// Vertical follow distance
-	float mVertDist;
-	// Target distance
-	float mTargetDist;
-	// Spring constant (higher is more stiff)
-	float mSpringConstant;
+	void setViewMatrix(const matrix4& view) override;
+	vector3 getVirtualPosition();
+	vector3 computeCameraPos() const;
+	//Actual position of camera
+	vector3 actualPos_;
+	//Velocity of actual camera
+	vector3 velocity_;
+	//Horizontal follow distance
+	float horzDist_;
+	//Vertical follow distance
+	float vertDist_;
+	//Target distance
+	float targetDist_;
+	//Spring constant (higher is more stiff)
+	float springConstant_;
 };

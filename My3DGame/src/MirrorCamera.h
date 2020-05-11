@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #pragma once
 #include "CameraComponent.h"
@@ -13,32 +12,32 @@ class MirrorCamera : public CameraComponent
 {
 public:
 	MirrorCamera(class Actor* owner);
-	void Update(float deltaTime) override;
-	void SnapToIdeal();
-	void SetHorzDist(float dist)
+	void update(float deltaTime) override;
+	void snapToIdeal();
+	void setHorzDist(float dist)
 	{
-		mHorzDist = dist;
+		horzDist_ = dist;
 	}
-	void SetVertDist(float dist)
+	void setVertDist(float dist)
 	{
-		mVertDist = dist;
+		vertDist_ = dist;
 	}
-	void SetTargetDist(float dist)
+	void setTargetDist(float dist)
 	{
-		mTargetDist = dist;
+		targetDist_ = dist;
 	}
-	TypeID GetType() const override
+	TypeID getType() const override
 	{
 		return TMirrorCamera;
 	}
-	void LoadProperties(const rapidjson::Value& inObj) override;
-	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
+	void loadProperties(const rapidjson::Value& inObj) override;
+	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 private:
-	vector3 ComputeCameraPos() const;
-	// Horizontal follow distance
-	float mHorzDist;
-	// Vertical follow distance
-	float mVertDist;
-	// Target distance
-	float mTargetDist;
+	vector3 computeCameraPos() const;
+	//Horizontal follow distance
+	float horzDist_;
+	//Vertical follow distance
+	float vertDist_;
+	//Target distance
+	float targetDist_;
 };

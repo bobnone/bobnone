@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "SkeletalMeshComponent.h"
 #include "Mesh.h"
@@ -12,98 +11,98 @@
 #include "Texture.h"
 #include "JsonHelper.h"
 
-SkeletalMeshComponent::SkeletalMeshComponent(Actor* owner):MeshComponent(owner, true), mSkeleton(nullptr), mAnimation(nullptr), mAnimPlayRate(0.0f), mAnimTime(0.0f)
+SkeletalMeshComponent::SkeletalMeshComponent(Actor* owner):MeshComponent(owner, true), skeleton_(nullptr), animation_(nullptr), animPlayRate_(0.0f), animTime_(0.0f)
 {
-	//
+	//EMPTY:
 }
-void SkeletalMeshComponent::Draw(Shader* shader)
+void SkeletalMeshComponent::draw(Shader* shader)
 {
-	if (mMesh)
+	if(mesh_)
 	{
-		// Set the world transform
-		shader->SetMatrixUniform("uWorldTransform", mOwner->GetWorldTransform());
-		// Set the matrix palette
-		shader->SetMatrixUniforms("uMatrixPalette", &mPalette.mEntry[0], MAX_SKELETON_BONES);
-		// Set specular power
-		shader->SetFloatUniform("uSpecularPower", mMesh->GetSpecularPower());
-		// Set the active texture
-		Texture* t = mMesh->GetTexture(mTextureIndex);
-		if (t)
+		//Set the world transform
+		shader->setMatrixUniform("uWorldTransform", owner_->worldTransform());
+		//Set the matrix palette
+		shader->setMatrixUniforms("uMatrixPalette", &palette_.entry_[0], MAX_SKELETON_BONES);
+		//Set specular power
+		shader->setFloatUniform("uSpecularPower", mesh_->specularPower());
+		//Set the active texture
+		Texture* t = mesh_->getTexture(textureIndex_);
+		if(t)
 		{
-			t->SetActive();
+			t->setActive();
 		}
-		// Set the mesh's vertex array as active
-		VertexArray* va = mMesh->GetVertexArray();
-		va->SetActive();
-		// Draw
-		glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
+		//Set the mesh's vertex array as active
+		VertexArray* va = mesh_->vertexArray();
+		va->setActive();
+		//Draw
+		glDrawElements(GL_TRIANGLES, va->numIndices(), GL_UNSIGNED_INT, nullptr);
 	}
 }
-void SkeletalMeshComponent::Update(float deltaTime)
+void SkeletalMeshComponent::update(float deltaTime)
 {
-	if (mAnimation && mSkeleton)
+	if(animation_ && skeleton_)
 	{
-		mAnimTime += deltaTime * mAnimPlayRate;
-		// Wrap around mAnimTime if past duration
-		while (mAnimTime > mAnimation->GetDuration())
+		animTime_ += deltaTime * animPlayRate_;
+		//Wrap around mAnimTime if past duration
+		while(animTime_ > animation_->duration())
 		{
-			mAnimTime -= mAnimation->GetDuration();
+			animTime_ -= animation_->duration();
 		}
-		// Recompute matrix palette
-		ComputeMatrixPalette();
+		//Recompute matrix palette
+		computeMatrixPalette();
 	}
 }
-float SkeletalMeshComponent::PlayAnimation(Animation* anim, float playRate)
+float SkeletalMeshComponent::playAnimation(Animation* anim, float playRate)
 {
-	mAnimation = anim;
-	mAnimTime = 0.0f;
-	mAnimPlayRate = playRate;
-	if (!mAnimation)
+	animation_ = anim;
+	animTime_ = 0.0f;
+	animPlayRate_ = playRate;
+	if(!animation_)
 	{
 		return 0.0f;
 	}
-	ComputeMatrixPalette();
-	return mAnimation->GetDuration();
+	computeMatrixPalette();
+	return animation_->duration();
 }
-void SkeletalMeshComponent::LoadProperties(const rapidjson::Value& inObj)
+void SkeletalMeshComponent::loadProperties(const rapidjson::Value& inObj)
 {
-	MeshComponent::LoadProperties(inObj);
+	MeshComponent::loadProperties(inObj);
 	std::string skelFile;
-	if (JsonHelper::GetString(inObj, "skelFile", skelFile))
+	if(JsonHelper::getString(inObj, "skelFile", skelFile))
 	{
-		SetSkeleton(mOwner->GetGame()->GetSkeleton(skelFile));
+		setSkeleton(owner_->game()->getSkeleton(skelFile));
 	}
 	std::string animFile;
-	if (JsonHelper::GetString(inObj, "animFile", animFile))
+	if(JsonHelper::getString(inObj, "animFile", animFile))
 	{
-		PlayAnimation(mOwner->GetGame()->GetAnimation(animFile));
+		playAnimation(owner_->game()->getAnimation(animFile));
 	}
-	JsonHelper::GetFloat(inObj, "animPlayRate", mAnimPlayRate);
-	JsonHelper::GetFloat(inObj, "animTime", mAnimTime);
+	JsonHelper::getFloat(inObj, "animPlayRate", animPlayRate_);
+	JsonHelper::getFloat(inObj, "animTime", animTime_);
 }
-void SkeletalMeshComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void SkeletalMeshComponent::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	MeshComponent::SaveProperties(alloc, inObj);
-	if (mSkeleton)
+	MeshComponent::saveProperties(alloc, inObj);
+	if(skeleton_)
 	{
-		JsonHelper::AddString(alloc, inObj, "skelFile", mSkeleton->GetFileName());
+		JsonHelper::addString(alloc, inObj, "skelFile", skeleton_->fileName());
 	}
-	if (mAnimation)
+	if(animation_)
 	{
-		JsonHelper::AddString(alloc, inObj, "animFile", mAnimation->GetFileName());
+		JsonHelper::addString(alloc, inObj, "animFile", animation_->fileName());
 	}
-	JsonHelper::AddFloat(alloc, inObj, "animPlayRate", mAnimPlayRate);
-	JsonHelper::AddFloat(alloc, inObj, "animTime", mAnimTime);
+	JsonHelper::addFloat(alloc, inObj, "animPlayRate", animPlayRate_);
+	JsonHelper::addFloat(alloc, inObj, "animTime", animTime_);
 }
-void SkeletalMeshComponent::ComputeMatrixPalette()
+void SkeletalMeshComponent::computeMatrixPalette()
 {
-	const std::vector<matrix4>& globalInvBindPoses = mSkeleton->GetGlobalInvBindPoses();
+	const std::vector<matrix4>& globalInvBindPoses = skeleton_->globalInvBindPoses();
 	std::vector<matrix4> currentPoses;
-	mAnimation->GetGlobalPoseAtTime(currentPoses, mSkeleton, mAnimTime);
-	// Setup the palette for each bone
-	for (size_t i = 0; i < mSkeleton->GetNumBones(); i++)
+	animation_->getGlobalPoseAtTime(currentPoses, skeleton_, animTime_);
+	//Setup the palette for each bone
+	for(size_t i = 0; i < skeleton_->getNumBones(); i++)
 	{
-		// Global inverse bind pose matrix times current pose matrix
-		mPalette.mEntry[i] = globalInvBindPoses[i] * currentPoses[i];
+		//Global inverse bind pose matrix times current pose matrix
+		palette_.entry_[i] = globalInvBindPoses[i] * currentPoses[i];
 	}
 }

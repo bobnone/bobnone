@@ -1,80 +1,80 @@
 #pragma once
 #include "Component.h"
 
-class MoveComponent : public Component
+class MoveComponent: public Component
 {
 public:
-	// Lower update order to update first
+	//Lower update order to update first
 	MoveComponent(class Actor* owner, int updateOrder = 10);
-	void Update(float deltaTime) override;
-	float GetAngularXSpeed() const
+	void update(float deltaTime) override;
+	float angularXSpeed() const
 	{
-		return mAngularXSpeed;
+		return angularXSpeed_;
 	}
-	float GetAngularYSpeed() const
+	float angularYSpeed() const
 	{
-		return mAngularYSpeed;
+		return angularYSpeed_;
 	}
-	float GetAngularZSpeed() const
+	float angularZSpeed() const
 	{
-		return mAngularZSpeed;
+		return angularZSpeed_;
 	}
-	float GetForwardSpeed() const
+	float forwardSpeed() const
 	{
-		return mForwardSpeed;
+		return forwardSpeed_;
 	}
-	float GetStrafeSpeed() const
+	float strafeSpeed() const
 	{
-		return mStrafeSpeed;
+		return strafeSpeed_;
 	}
-	float GetJumpSpeed() const
+	float jumpSpeed() const
 	{
-		return mJumpSpeed;
+		return jumpSpeed_;
 	}
-	void SetSpeed(float angularXSpeed, float angularYSpeed, float angularZSpeed, float forwardSpeed, float strafeSpeed, float jumpSpeed)
+	void setSpeed(float angularXSpeed, float angularYSpeed, float angularZSpeed, float forwardSpeed, float strafeSpeed, float jumpSpeed)
 	{
-		mAngularXSpeed = angularXSpeed;
-		mAngularYSpeed = angularYSpeed;
-		mAngularZSpeed = angularZSpeed;
-		mForwardSpeed = forwardSpeed;
-		mStrafeSpeed = strafeSpeed;
-		mJumpSpeed = jumpSpeed;
+		angularXSpeed_ = angularXSpeed;
+		angularYSpeed_ = angularYSpeed;
+		angularZSpeed_ = angularZSpeed;
+		forwardSpeed_ = forwardSpeed;
+		strafeSpeed_ = strafeSpeed;
+		jumpSpeed_ = jumpSpeed;
 	}
-	void SetAngularXSpeed(float speed)
+	void setAngularXSpeed(float speed)
 	{
-		mAngularXSpeed = speed;
+		angularXSpeed_ = speed;
 	}
-	void SetAngularYSpeed(float speed)
+	void setAngularYSpeed(float speed)
 	{
-		mAngularYSpeed = speed;
+		angularYSpeed_ = speed;
 	}
-	void SetAngularZSpeed(float speed)
+	void setAngularZSpeed(float speed)
 	{
-		mAngularZSpeed = speed;
+		angularZSpeed_ = speed;
 	}
-	void SetForwardSpeed(float speed)
+	void setForwardSpeed(float speed)
 	{
-		mForwardSpeed = speed;
+		forwardSpeed_ = speed;
 	}
-	void SetStrafeSpeed(float speed)
+	void setStrafeSpeed(float speed)
 	{
-		mStrafeSpeed = speed;
+		strafeSpeed_ = speed;
 	}
-	void SetJumpSpeed(float speed)
+	void setJumpSpeed(float speed)
 	{
-		mStrafeSpeed = speed;
+		strafeSpeed_ = speed;
 	}
-	TypeID GetType() const override
+	TypeID getType() const override
 	{
 		return TMoveComponent;
 	}
-	void LoadProperties(const rapidjson::Value& inObj) override;
-	void SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
+	void loadProperties(const rapidjson::Value& inObj) override;
+	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 protected:
-	float mAngularXSpeed;
-	float mAngularYSpeed;
-	float mAngularZSpeed;
-	float mForwardSpeed;
-	float mStrafeSpeed;
-	float mJumpSpeed;
+	float angularXSpeed_;
+	float angularYSpeed_;
+	float angularZSpeed_;
+	float forwardSpeed_;
+	float strafeSpeed_;
+	float jumpSpeed_;
 };

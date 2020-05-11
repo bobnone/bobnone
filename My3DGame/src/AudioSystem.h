@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------
 // From Game Programming in C++ by Sanjay Madhav
 // Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
+//
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
@@ -30,41 +30,41 @@ class AudioSystem
 public:
 	AudioSystem(class Game* game);
 	~AudioSystem();
-	bool Initialize();
-	void Shutdown();
+	bool initialize();
+	void shutdown();
 	// Load/unload banks
-	void LoadBank(const std::string& name);
-	void UnloadBank(const std::string& name);
-	void UnloadAllBanks();
-	SoundEvent PlayEvent(const std::string& name);
-	void Update(float deltaTime);
+	void loadBank(const std::string& name);
+	void unloadBank(const std::string& name);
+	void unloadAllBanks();
+	SoundEvent playEvent(const std::string& name);
+	void update(float deltaTime);
 	// For positional audio
-	void SetListener(class Actor* mOwner, const matrix4& viewMatrix);
+	void setListener(class Actor* mOwner, const matrix4& viewMatrix);
 	/* Used to manually set the position
 	Note: Can be used to set virtual positions*/
-	void AudioSystem::SetListener(class Actor* mOwner, const matrix4& viewMatrix, const vector3 position);
+	void AudioSystem::setListener(class Actor* mOwner, const matrix4& viewMatrix, const vector3 position);
 	// Control buses
-	float GetBusVolume(const std::string& name) const;
-	bool GetBusPaused(const std::string& name) const;
-	void SetBusVolume(const std::string& name, float volume);
-	void SetBusPaused(const std::string& name, bool pause);
+	float getBusVolume(const std::string& name) const;
+	bool getBusPaused(const std::string& name) const;
+	void setBusVolume(const std::string& name, float volume);
+	void setBusPaused(const std::string& name, bool pause);
 protected:
 	friend class SoundEvent;
-	FMOD::Studio::EventInstance* GetEventInstance(unsigned int id);
+	FMOD::Studio::EventInstance* getEventInstance(unsigned int id);
 private:
 	// Tracks the next ID to use for event instances
-	static unsigned int sNextID;
-	class Game* mGame;
+	static unsigned int nextID_;
+	class Game* game_;
 	// Map of loaded banks
-	std::unordered_map<std::string, FMOD::Studio::Bank*> mBanks;
+	std::unordered_map<std::string, FMOD::Studio::Bank*> banks_;
 	// Map of event name to EventDescription
-	std::unordered_map<std::string, FMOD::Studio::EventDescription*> mEvents;
+	std::unordered_map<std::string, FMOD::Studio::EventDescription*> events_;
 	// Map of event id to EventInstance
-	std::unordered_map<unsigned int, FMOD::Studio::EventInstance*> mEventInstances;
+	std::unordered_map<unsigned int, FMOD::Studio::EventInstance*> eventInstances_;
 	// Map of buses
-	std::unordered_map<std::string, FMOD::Studio::Bus*> mBuses;
+	std::unordered_map<std::string, FMOD::Studio::Bus*> buses_;
 	// FMOD studio system
-	FMOD::Studio::System* mSystem;
+	FMOD::Studio::System* system_;
 	// FMOD Low-level system (in case needed)
-	FMOD::System* mLowLevelSystem;
+	FMOD::System* lowLevelSystem_;
 };

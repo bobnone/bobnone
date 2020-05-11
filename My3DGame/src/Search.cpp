@@ -5,385 +5,348 @@
 
 struct GraphNode
 {
-	// Adjacency list
-	std::vector<GraphNode*> mAdjacent;
+	//Adjacency list
+	std::vector<GraphNode*> adjacent_;
 };
-
 struct Graph
 {
-	// A graph contains nodes
-	std::vector<GraphNode*> mNodes;
+	//A graph contains nodes
+	std::vector<GraphNode*> nodes_;
 };
-
 struct WeightedEdge
 {
-	// Which nodes are connected by this edge?
-	struct WeightedGraphNode* mFrom;
-	struct WeightedGraphNode* mTo;
-	// Weight of this edge
-	float mWeight;
+	//Which nodes are connected by this edge?
+	struct WeightedGraphNode* from_;
+	struct WeightedGraphNode* to_;
+	//Weight of this edge
+	float weight_;
 };
-
 struct WeightedGraphNode
 {
-	std::vector<WeightedEdge*> mEdges;
+	std::vector<WeightedEdge*> edges_;
 };
-
 struct WeightedGraph
 {
-	std::vector<WeightedGraphNode*> mNodes;
+	std::vector<WeightedGraphNode*> nodes_;
 };
-
 struct GBFSScratch
 {
-	const WeightedEdge* mParentEdge = nullptr;
-	float mHeuristic = 0.0f;
-	bool mInOpenSet = false;
-	bool mInClosedSet = false;
+	const WeightedEdge* parentEdge_ = nullptr;
+	float heuristic_ = 0.0f;
+	bool inOpenSet_ = false;
+	bool inClosedSet_ = false;
 };
 
-using GBFSMap =
-std::unordered_map<const WeightedGraphNode*, GBFSScratch>;
+using GBFSMap = std::unordered_map<const WeightedGraphNode*, GBFSScratch>;
 
 struct AStarScratch
 {
-	const WeightedEdge* mParentEdge = nullptr;
-	float mHeuristic = 0.0f;
-	float mActualFromStart = 0.0f;
-	bool mInOpenSet = false;
-	bool mInClosedSet = false;
+	const WeightedEdge* parentEdge_ = nullptr;
+	float heuristic_ = 0.0f;
+	float actualFromStart_ = 0.0f;
+	bool inOpenSet_ = false;
+	bool inClosedSet_ = false;
 };
 
-using AStarMap =
-std::unordered_map<const WeightedGraphNode*, AStarScratch>;
+using AStarMap = std::unordered_map<const WeightedGraphNode*, AStarScratch>;
 
-float ComputeHeuristic(const WeightedGraphNode* a, const WeightedGraphNode* b)
+float computeHeuristic(const WeightedGraphNode* a, const WeightedGraphNode* b)
 {
 	return 0.0f;
 }
-
-bool AStar(const WeightedGraph& g, const WeightedGraphNode* start,
-	const WeightedGraphNode* goal, AStarMap& outMap)
+bool aStar(const WeightedGraph& g, const WeightedGraphNode* start, const WeightedGraphNode* goal, AStarMap& outMap)
 {
 	std::vector<const WeightedGraphNode*> openSet;
-
-	// Set current node to start, and mark in closed set
+	//Set current node to start, and mark in closed set
 	const WeightedGraphNode* current = start;
-	outMap[current].mInClosedSet = true;
-
+	outMap[current].inClosedSet_ = true;
 	do
 	{
-		// Add adjacent nodes to open set
-		for (const WeightedEdge* edge : current->mEdges)
+		//Add adjacent nodes to open set
+		for(const WeightedEdge* edge : current->edges_)
 		{
-			const WeightedGraphNode* neighbor = edge->mTo;
-			// Get scratch data for this node
+			const WeightedGraphNode* neighbor = edge->to_;
+			//Get scratch data for this node
 			AStarScratch& data = outMap[neighbor];
-			// Only check nodes that aren't in the closed set
-			if (!data.mInClosedSet)
+			//Only check nodes that aren't in the closed set
+			if(!data.inClosedSet_)
 			{
-				if (!data.mInOpenSet)
+				if(!data.inOpenSet_)
 				{
-					// Not in the open set, so parent must be current
-					data.mParentEdge = edge;
-					data.mHeuristic = ComputeHeuristic(neighbor, goal);
-					// Actual cost is the parent's plus cost of traversing edge
-					data.mActualFromStart = outMap[current].mActualFromStart +
-						edge->mWeight;
-					data.mInOpenSet = true;
+					//Not in the open set, so parent must be current
+					data.parentEdge_ = edge;
+					data.heuristic_ = computeHeuristic(neighbor, goal);
+					//Actual cost is the parent's plus cost of traversing edge
+					data.actualFromStart_ = outMap[current].actualFromStart_ + edge->weight_;
+					data.inOpenSet_ = true;
 					openSet.emplace_back(neighbor);
 				}
 				else
 				{
-					// Compute what new actual cost is if current becomes parent
-					float newG = outMap[current].mActualFromStart + edge->mWeight;
-					if (newG < data.mActualFromStart)
+					//Compute what new actual cost is if current becomes parent
+					float newG = outMap[current].actualFromStart_ + edge->weight_;
+					if (newG < data.actualFromStart_)
 					{
-						// Current should adopt this node
-						data.mParentEdge = edge;
-						data.mActualFromStart = newG;
+						//Current should adopt this node
+						data.parentEdge_ = edge;
+						data.actualFromStart_ = newG;
 					}
 				}
 			}
 		}
-
-		// If open set is empty, all possible paths are exhausted
-		if (openSet.empty())
+		//If open set is empty, all possible paths are exhausted
+		if(openSet.empty())
 		{
 			break;
 		}
-
-		// Find lowest cost node in open set
-		auto iter = std::min_element(openSet.begin(), openSet.end(),
-			[&outMap](const WeightedGraphNode* a, const WeightedGraphNode* b) {
-			// Calculate f(x) for nodes a/b
-			float fOfA = outMap[a].mHeuristic + outMap[a].mActualFromStart;
-			float fOfB = outMap[b].mHeuristic + outMap[b].mActualFromStart;
+		//Find lowest cost node in open set
+		auto iter = std::min_element(openSet.begin(), openSet.end(), [&outMap](const WeightedGraphNode* a, const WeightedGraphNode* b) {
+			//Calculate f(x) for nodes a/b
+			float fOfA = outMap[a].heuristic_ + outMap[a].actualFromStart_;
+			float fOfB = outMap[b].heuristic_ + outMap[b].actualFromStart_;
 			return fOfA < fOfB;
 		});
-		// Set to current and move from open to closed
+		//Set to current and move from open to closed
 		current = *iter;
 		openSet.erase(iter);
-		outMap[current].mInOpenSet = true;
-		outMap[current].mInClosedSet = true;
-	} while (current != goal);
-
-	// Did we find a path?
-	return (current == goal) ? true : false;
+		outMap[current].inOpenSet_ = true;
+		outMap[current].inClosedSet_ = true;
+	}
+	while(current != goal);
+	//Did we find a path?
+	return (current == goal) ? true:false;
 }
-
-bool GBFS(const WeightedGraph& g, const WeightedGraphNode* start,
-	const WeightedGraphNode* goal, GBFSMap& outMap)
+bool gBFS(const WeightedGraph& g, const WeightedGraphNode* start, const WeightedGraphNode* goal, GBFSMap& outMap)
 {
 	std::vector<const WeightedGraphNode*> openSet;
-
-	// Set current node to start, and mark in closed set
+	//Set current node to start, and mark in closed set
 	const WeightedGraphNode* current = start;
-	outMap[current].mInClosedSet = true;
-
+	outMap[current].inClosedSet_ = true;
 	do
 	{
-		// Add adjacent nodes to open set
-		for (const WeightedEdge* edge : current->mEdges)
+		//Add adjacent nodes to open set
+		for (const WeightedEdge* edge : current->edges_)
 		{
-			// Get scratch data for this node
-			GBFSScratch& data = outMap[edge->mTo];
-			// Add it only if it's not in the closed set
-			if (!data.mInClosedSet)
+			//Get scratch data for this node
+			GBFSScratch& data = outMap[edge->to_];
+			//Add it only if it's not in the closed set
+			if (!data.inClosedSet_)
 			{
-				// Set the adjacent node's parent edge
-				data.mParentEdge = edge;
-				if (!data.mInOpenSet)
+				//Set the adjacent node's parent edge
+				data.parentEdge_ = edge;
+				if (!data.inOpenSet_)
 				{
-					// Compute the heuristic for this node, and add to open set
-					data.mHeuristic = ComputeHeuristic(edge->mTo, goal);
-					data.mInOpenSet = true;
-					openSet.emplace_back(edge->mTo);
+					//Compute the heuristic for this node, and add to open set
+					data.heuristic_ = computeHeuristic(edge->to_, goal);
+					data.inOpenSet_ = true;
+					openSet.emplace_back(edge->to_);
 				}
 			}
 		}
-
-		// If open set is empty, all possible paths are exhausted
-		if (openSet.empty())
+		//If open set is empty, all possible paths are exhausted
+		if(openSet.empty())
 		{
 			break;
 		}
-
-		// Find lowest cost node in open set
-		auto iter = std::min_element(openSet.begin(), openSet.end(),
-			[&outMap](const WeightedGraphNode* a, const WeightedGraphNode* b) {
-			return outMap[a].mHeuristic < outMap[b].mHeuristic;
+		//Find lowest cost node in open set
+		auto iter = std::min_element(openSet.begin(), openSet.end(), [&outMap](const WeightedGraphNode* a, const WeightedGraphNode* b) {
+			return outMap[a].heuristic_ < outMap[b].heuristic_;
 		});
-
-		// Set to current and move from open to closed
+		//Set to current and move from open to closed
 		current = *iter;
 		openSet.erase(iter);
-		outMap[current].mInOpenSet = false;
-		outMap[current].mInClosedSet = true;
-	} while (current != goal);
-
-	// Did we find a path?
-	return (current == goal) ? true : false;
+		outMap[current].inOpenSet_ = false;
+		outMap[current].inClosedSet_ = true;
+	}
+	while(current != goal);
+	//Did we find a path?
+	return (current == goal) ? true:false;
 }
 
-using NodeToParentMap =
-std::unordered_map<const GraphNode*, const GraphNode*>;
+using NodeToParentMap = std::unordered_map<const GraphNode*, const GraphNode*>;
 
-bool BFS(const Graph& graph, const GraphNode* start, const GraphNode* goal, NodeToParentMap& outMap)
+bool bFS(const Graph& graph, const GraphNode* start, const GraphNode* goal, NodeToParentMap& outMap)
 {
-	// Whether we found a path
+	//Whether we found a path
 	bool pathFound = false;
-	// Nodes to consider
+	//Nodes to consider
 	std::queue<const GraphNode*> q;
-	// Enqueue the first node
+	//Enqueue the first node
 	q.emplace(start);
-
-	while (!q.empty())
+	while(!q.empty())
 	{
-		// Dequeue a node
+		//Dequeue a node
 		const GraphNode* current = q.front();
 		q.pop();
-		if (current == goal)
+		if(current == goal)
 		{
 			pathFound = true;
 			break;
 		}
-
-		// Enqueue adjacent nodes that aren't already in the queue
-		for (const GraphNode* node : current->mAdjacent)
+		//Enqueue adjacent nodes that aren't already in the queue
+		for(const GraphNode* node : current->adjacent_)
 		{
-			// If the parent is null, it hasn't been enqueued
-			// (except for the start node)
+			//If the parent is null, it hasn't been enqueued
+			//(except for the start node)
 			const GraphNode* parent = outMap[node];
-			if (parent == nullptr && node != start)
+			if(parent == nullptr && node != start)
 			{
-				// Enqueue this node, setting its parent
+				//Enqueue this node, setting its parent
 				outMap[node] = current;
 				q.emplace(node);
 			}
 		}
 	}
-
 	return pathFound;
 }
-
 void testBFS()
 {
 	Graph g;
-	for (int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for(int j = 0; j < 5; j++)
 		{
 			GraphNode* node = new GraphNode;
-			g.mNodes.emplace_back(node);
+			g.nodes_.emplace_back(node);
 		}
 	}
-
-	for (int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for(int j = 0; j < 5; j++)
 		{
-			GraphNode* node = g.mNodes[i * 5 + j];
+			GraphNode* node = g.nodes_[i * 5 + j];
 			if (i > 0)
 			{
-				node->mAdjacent.emplace_back(g.mNodes[(i - 1) * 5 + j]);
+				node->adjacent_.emplace_back(g.nodes_[(i - 1) * 5 + j]);
 			}
 			if (i < 4)
 			{
-				node->mAdjacent.emplace_back(g.mNodes[(i + 1) * 5 + j]);
+				node->adjacent_.emplace_back(g.nodes_[(i + 1) * 5 + j]);
 			}
 			if (j > 0)
 			{
-				node->mAdjacent.emplace_back(g.mNodes[i * 5 + j - 1]);
+				node->adjacent_.emplace_back(g.nodes_[i * 5 + j - 1]);
 			}
 			if (j < 4)
 			{
-				node->mAdjacent.emplace_back(g.mNodes[i * 5 + j + 1]);
+				node->adjacent_.emplace_back(g.nodes_[i * 5 + j + 1]);
 			}
 		}
 	}
-
 	NodeToParentMap map;
-	bool found = BFS(g, g.mNodes[0], g.mNodes[9], map);
+	bool found = bFS(g, g.nodes_[0], g.nodes_[9], map);
 	std::cout << found << '\n';
 }
-
 void testHeuristic(bool useAStar)
 {
 	WeightedGraph g;
-	for (int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for(int j = 0; j < 5; j++)
 		{
 			WeightedGraphNode* node = new WeightedGraphNode;
-			g.mNodes.emplace_back(node);
+			g.nodes_.emplace_back(node);
 		}
 	}
-
-	for (int i = 0; i < 5; i++)
+	for(int i = 0; i < 5; i++)
 	{
-		for (int j = 0; j < 5; j++)
+		for(int j = 0; j < 5; j++)
 		{
-			WeightedGraphNode* node = g.mNodes[i * 5 + j];
-			if (i > 0)
+			WeightedGraphNode* node = g.nodes_[i * 5 + j];
+			if(i > 0)
 			{
 				WeightedEdge* e = new WeightedEdge;
-				e->mFrom = node;
-				e->mTo = g.mNodes[(i - 1) * 5 + j];
-				e->mWeight = 1.0f;
-				node->mEdges.emplace_back(e);
+				e->from_ = node;
+				e->to_ = g.nodes_[(i - 1) * 5 + j];
+				e->weight_ = 1.0f;
+				node->edges_.emplace_back(e);
 			}
-			if (i < 4)
+			if(i < 4)
 			{
 				WeightedEdge* e = new WeightedEdge;
-				e->mFrom = node;
-				e->mTo = g.mNodes[(i + 1) * 5 + j];
-				e->mWeight = 1.0f;
-				node->mEdges.emplace_back(e);
+				e->from_ = node;
+				e->to_ = g.nodes_[(i + 1) * 5 + j];
+				e->weight_ = 1.0f;
+				node->edges_.emplace_back(e);
 			}
-			if (j > 0)
+			if(j > 0)
 			{
 				WeightedEdge* e = new WeightedEdge;
-				e->mFrom = node;
-				e->mTo = g.mNodes[i * 5 + j - 1];
-				e->mWeight = 1.0f;
-				node->mEdges.emplace_back(e);
+				e->from_ = node;
+				e->to_ = g.nodes_[i * 5 + j - 1];
+				e->weight_ = 1.0f;
+				node->edges_.emplace_back(e);
 			}
-			if (j < 4)
+			if(j < 4)
 			{
 				WeightedEdge* e = new WeightedEdge;
-				e->mFrom = node;
-				e->mTo = g.mNodes[i * 5 + j + 1];
-				e->mWeight = 1.0f;
-				node->mEdges.emplace_back(e);
+				e->from_ = node;
+				e->to_ = g.nodes_[i * 5 + j + 1];
+				e->weight_ = 1.0f;
+				node->edges_.emplace_back(e);
 			}
 		}
 	}
 	bool found = false;
-	if (useAStar)
+	if(useAStar)
 	{
 		AStarMap map;
-		found = AStar(g, g.mNodes[0], g.mNodes[9], map);
+		found = aStar(g, g.nodes_[0], g.nodes_[9], map);
 	}
 	else
 	{
 		GBFSMap map;
-		found = GBFS(g, g.mNodes[0], g.mNodes[9], map);
+		found = gBFS(g, g.nodes_[0], g.nodes_[9], map);
 	}
 	std::cout << found << '\n';
 }
-
 struct GameState
 {
-	// (For tic-tac-toe, array of board)
+	//(For tic-tac-toe, array of board)
 	enum SquareState { Empty, X, O };
-	SquareState mBoard[3][3];
+	SquareState board_[3][3];
 };
-
 struct GTNode
 {
-	// Children nodes
-	std::vector<GTNode*> mChildren;
-	// State of game
-	GameState mState;
+	//Children nodes
+	std::vector<GTNode*> children_;
+	//State of game
+	GameState state_;
 };
-
-void GenStates(GTNode* root, bool xPlayer)
+void genStates(GTNode* root, bool xPlayer)
 {
-	for (int i = 0; i < 3; i++)
+	for(int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < 3; j++)
+		for(int j = 0; j < 3; j++)
 		{
-			if (root->mState.mBoard[i][j] == GameState::Empty)
+			if(root->state_.board_[i][j] == GameState::Empty)
 			{
 				GTNode* node = new GTNode;
-				root->mChildren.emplace_back(node);
-				node->mState = root->mState;
-				node->mState.mBoard[i][j] = xPlayer ? GameState::X : GameState::O;
-				GenStates(node, !xPlayer);
+				root->children_.emplace_back(node);
+				node->state_ = root->state_;
+				node->state_.board_[i][j] = xPlayer ? GameState::X : GameState::O;
+				genStates(node, !xPlayer);
 			}
 		}
 	}
 }
-
-float GetScore(const GameState& state)
+float getScore(const GameState& state)
 {
-	// Are any of the rows the same?
-	for (int i = 0; i < 3; i++)
+	//Are any of the rows the same?
+	for(int i = 0; i < 3; i++)
 	{
 		bool same = true;
-		GameState::SquareState v = state.mBoard[i][0];
-		for (int j = 1; j < 3; j++)
+		GameState::SquareState v = state.board_[i][0];
+		for(int j = 1; j < 3; j++)
 		{
-			if (state.mBoard[i][j] != v)
+			if(state.board_[i][j] != v)
 			{
 				same = false;
 			}
 		}
-
-		if (same)
+		if(same)
 		{
-			if (v == GameState::X)
+			if(v == GameState::X)
 			{
 				return 1.0f;
 			}
@@ -393,23 +356,21 @@ float GetScore(const GameState& state)
 			}
 		}
 	}
-
-	// Are any of the columns the same?
-	for (int j = 0; j < 3; j++)
+	//Are any of the columns the same?
+	for(int j = 0; j < 3; j++)
 	{
 		bool same = true;
-		GameState::SquareState v = state.mBoard[0][j];
-		for (int i = 1; i < 3; i++)
+		GameState::SquareState v = state.board_[0][j];
+		for(int i = 1; i < 3; i++)
 		{
-			if (state.mBoard[i][j] != v)
+			if(state.board_[i][j] != v)
 			{
 				same = false;
 			}
 		}
-
-		if (same)
+		if(same)
 		{
-			if (v == GameState::X)
+			if(v == GameState::X)
 			{
 				return 1.0f;
 			}
@@ -419,14 +380,10 @@ float GetScore(const GameState& state)
 			}
 		}
 	}
-
-	// What about diagonals?
-	if (((state.mBoard[0][0] == state.mBoard[1][1]) &&
-		(state.mBoard[1][1] == state.mBoard[2][2])) ||
-		((state.mBoard[2][0] == state.mBoard[1][1]) &&
-		(state.mBoard[1][1] == state.mBoard[0][2])))
+	//What about diagonals?
+	if(((state.board_[0][0] == state.board_[1][1]) && (state.board_[1][1] == state.board_[2][2])) || ((state.board_[2][0] == state.board_[1][1]) && (state.board_[1][1] == state.board_[0][2])))
 	{
-		if (state.mBoard[1][1] == GameState::X)
+		if(state.board_[1][1] == GameState::X)
 		{
 			return 1.0f;
 		}
@@ -435,55 +392,51 @@ float GetScore(const GameState& state)
 			return -1.0f;
 		}
 	}
-	// We tied
+	//We tied
 	return 0.0f;
 }
 
-float MinPlayer(const GTNode* node);
+float minPlayer(const GTNode* node);
 
-float MaxPlayer(const GTNode* node)
+float maxPlayer(const GTNode* node)
 {
-	// If this is a leaf, return score
-	if (node->mChildren.empty())
+	//If this is a leaf, return score
+	if(node->children_.empty())
 	{
-		return GetScore(node->mState);
+		return getScore(node->state_);
 	}
-
 	float maxValue = -std::numeric_limits<float>::infinity();
-	// Find the subtree with the maximum value
-	for (const GTNode* child : node->mChildren)
+	//Find the subtree with the maximum value
+	for(const GTNode* child : node->children_)
 	{
-		maxValue = std::max(maxValue, MinPlayer(child));
+		maxValue = std::max(maxValue, minPlayer(child));
 	}
 	return maxValue;
 }
-
-float MinPlayer(const GTNode* node)
+float minPlayer(const GTNode* node)
 {
-	// If this is a leaf, return score
-	if (node->mChildren.empty())
+	//If this is a leaf, return score
+	if(node->children_.empty())
 	{
-		return GetScore(node->mState);
+		return getScore(node->state_);
 	}
-
 	float minValue = std::numeric_limits<float>::infinity();
-	// Find the subtree with the minimum value
-	for (const GTNode* child : node->mChildren)
+	//Find the subtree with the minimum value
+	for(const GTNode* child : node->children_)
 	{
-		minValue = std::min(minValue, MaxPlayer(child));
+		minValue = std::min(minValue, maxPlayer(child));
 	}
 	return minValue;
 }
-
-const GTNode* MinimaxDecide(const GTNode* root)
+const GTNode* minimaxDecide(const GTNode* root)
 {
-	// Find the subtree with the maximum value, and save the choice
+	//Find the subtree with the maximum value, and save the choice
 	const GTNode* choice = nullptr;
 	float maxValue = -std::numeric_limits<float>::infinity();
-	for (const GTNode* child : root->mChildren)
+	for(const GTNode* child : root->children_)
 	{
-		float v = MinPlayer(child);
-		if (v > maxValue)
+		float v = minPlayer(child);
+		if(v > maxValue)
 		{
 			maxValue = v;
 			choice = child;
@@ -494,60 +447,58 @@ const GTNode* MinimaxDecide(const GTNode* root)
 
 float AlphaBetaMin(const GTNode* node, float alpha, float beta);
 
-float AlphaBetaMax(const GTNode* node, float alpha, float beta)
+float alphaBetaMax(const GTNode* node, float alpha, float beta)
 {
-	// If this is a leaf, return score
-	if (node->mChildren.empty())
+	//If this is a leaf, return score
+	if(node->children_.empty())
 	{
-		return GetScore(node->mState);
+		return getScore(node->state_);
 	}
-
 	float maxValue = -std::numeric_limits<float>::infinity();
-	// Find the subtree with the maximum value
-	for (const GTNode* child : node->mChildren)
+	//Find the subtree with the maximum value
+	for(const GTNode* child : node->children_)
 	{
-		maxValue = std::max(maxValue, AlphaBetaMin(child, alpha, beta));
-		if (maxValue >= beta)
+		maxValue = std::max(maxValue, alphaBetaMin(child, alpha, beta));
+		if(maxValue >= beta)
 		{
-			return maxValue; // Beta prune
+			//Beta prune
+			return maxValue;
 		}
 		alpha = std::max(maxValue, alpha);
 	}
 	return maxValue;
 }
-
-float AlphaBetaMin(const GTNode* node, float alpha, float beta)
+float alphaBetaMin(const GTNode* node, float alpha, float beta)
 {
-	// If this is a leaf, return score
-	if (node->mChildren.empty())
+	//If this is a leaf, return score
+	if(node->children_.empty())
 	{
-		return GetScore(node->mState);
+		return getScore(node->state_);
 	}
-
 	float minValue = std::numeric_limits<float>::infinity();
-	// Find the subtree with the minimum value
-	for (const GTNode* child : node->mChildren)
+	//Find the subtree with the minimum value
+	for(const GTNode* child : node->children_)
 	{
-		minValue = std::min(minValue, AlphaBetaMax(child, alpha, beta));
-		if (minValue <= alpha)
+		minValue = std::min(minValue, alphaBetaMax(child, alpha, beta));
+		if(minValue <= alpha)
 		{
-			return minValue; // Alpha prune
+			//Alpha prune
+			return minValue;
 		}
 		beta = std::min(minValue, beta);
 	}
 	return minValue;
 }
-
-const GTNode* AlphaBetaDecide(const GTNode* root)
+const GTNode* alphaBetaDecide(const GTNode* root)
 {
-	// Find the subtree with the maximum value, and save the choice
+	//Find the subtree with the maximum value, and save the choice
 	const GTNode* choice = nullptr;
 	float maxValue = -std::numeric_limits<float>::infinity();
 	float beta = std::numeric_limits<float>::infinity();
-	for (const GTNode* child : root->mChildren)
+	for(const GTNode* child : root->children_)
 	{
-		float v = AlphaBetaMin(child, maxValue, beta);
-		if (v > maxValue)
+		float v = alphaBetaMin(child, maxValue, beta);
+		if(v > maxValue)
 		{
 			maxValue = v;
 			choice = child;
@@ -555,21 +506,19 @@ const GTNode* AlphaBetaDecide(const GTNode* root)
 	}
 	return choice;
 }
-
 void testTicTac()
 {
 	GTNode* root = new GTNode;
-	root->mState.mBoard[0][0] = GameState::O;
-	root->mState.mBoard[0][1] = GameState::Empty;
-	root->mState.mBoard[0][2] = GameState::X;
-	root->mState.mBoard[1][0] = GameState::X;
-	root->mState.mBoard[1][1] = GameState::O;
-	root->mState.mBoard[1][2] = GameState::O;
-	root->mState.mBoard[2][0] = GameState::X;
-	root->mState.mBoard[2][1] = GameState::Empty;
-	root->mState.mBoard[2][2] = GameState::Empty;
-
-	GenStates(root, true);
-	const GTNode* choice = AlphaBetaDecide(root);
-	std::cout << choice->mChildren.size();
+	root->state_.board_[0][0] = GameState::O;
+	root->state_.board_[0][1] = GameState::Empty;
+	root->state_.board_[0][2] = GameState::X;
+	root->state_.board_[1][0] = GameState::X;
+	root->state_.board_[1][1] = GameState::O;
+	root->state_.board_[1][2] = GameState::O;
+	root->state_.board_[2][0] = GameState::X;
+	root->state_.board_[2][1] = GameState::Empty;
+	root->state_.board_[2][2] = GameState::Empty;
+	genStates(root, true);
+	const GTNode* choice = alphaBetaDecide(root);
+	std::cout << choice->children_.size();
 }

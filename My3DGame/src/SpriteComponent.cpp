@@ -1,10 +1,9 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
+//----------------------------------------------------------------
+//From Game Programming in C++ by Sanjay Madhav
+//Copyright (C) 2017 Sanjay Madhav. All rights reserved.
+//Released under the BSD License
+//See LICENSE in root directory for full details.
+//----------------------------------------------------------------
 
 #include "SpriteComponent.h"
 #include "Math.h"
@@ -15,56 +14,56 @@
 #include "Renderer.h"
 #include "JsonHelper.h"
 
-SpriteComponent::SpriteComponent(Actor* owner, int drawOrder) :Component(owner), mTexture(nullptr), mDrawOrder(drawOrder), mTexWidth(0), mTexHeight(0), mVisible(true)
+SpriteComponent::SpriteComponent(Actor* owner, int drawOrder):Component(owner), texture_(nullptr), drawOrder_(drawOrder), texWidth_(0), texHeight_(0), visible_(true)
 {
-	mOwner->GetGame()->GetRenderer()->AddSprite(this);
+	owner_->game()->renderer()->addSprite(this);
 }
 SpriteComponent::~SpriteComponent()
 {
-	mOwner->GetGame()->GetRenderer()->RemoveSprite(this);
+	owner_->game()->renderer()->removeSprite(this);
 }
-void SpriteComponent::Draw(Shader* shader)
+void SpriteComponent::draw(Shader* shader)
 {
-	if (mTexture)
+	if(texture_)
 	{
-		// Scale the quad by the width/height of texture
-		matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(mTexWidth), static_cast<float>(mTexHeight), 1.0f);
-		matrix4 world = scaleMat * mOwner->GetWorldTransform();
-		// Since all sprites use the same shader/vertices,
-		// the game first sets them active before any sprite draws
-		// Set world transform
-		shader->SetMatrixUniform("uWorldTransform", world);
-		// Set current texture
-		mTexture->SetActive();
-		// Draw quad
+		//Scale the quad by the width/height of texture
+		matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(texWidth_), static_cast<float>(texHeight_), 1.0f);
+		matrix4 world = scaleMat * owner_->worldTransform();
+		//Since all sprites use the same shader/vertices,
+		//the game first sets them active before any sprite draws
+		//Set world transform
+		shader->setMatrixUniform("uWorldTransform", world);
+		//Set current texture
+		texture_->setActive();
+		//Draw quad
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	}
 }
-void SpriteComponent::SetTexture(Texture* texture)
+void SpriteComponent::setTexture(Texture* texture)
 {
-	mTexture = texture;
-	// Set width/height
-	mTexWidth = texture->GetWidth();
-	mTexHeight = texture->GetHeight();
+	texture_ = texture;
+	//Set width/height
+	texWidth_ = texture->getWidth();
+	texHeight_ = texture->getHeight();
 }
-void SpriteComponent::LoadProperties(const rapidjson::Value& inObj)
+void SpriteComponent::loadProperties(const rapidjson::Value& inObj)
 {
-	Component::LoadProperties(inObj);
+	Component::loadProperties(inObj);
 	std::string texFile;
-	if (JsonHelper::GetString(inObj, "textureFile", texFile))
+	if(JsonHelper::getString(inObj, "textureFile", texFile))
 	{
-		SetTexture(mOwner->GetGame()->GetRenderer()->GetTexture(texFile));
+		setTexture(owner_->game()->renderer()->getTexture(texFile));
 	}
-	JsonHelper::GetInt(inObj, "drawOrder", mDrawOrder);
-	JsonHelper::GetBool(inObj, "visible", mVisible);
+	JsonHelper::getInt(inObj, "drawOrder", drawOrder_);
+	JsonHelper::getBool(inObj, "visible", visible_);
 }
-void SpriteComponent::SaveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
+void SpriteComponent::saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const
 {
-	Component::SaveProperties(alloc, inObj);
-	if (mTexture)
+	Component::saveProperties(alloc, inObj);
+	if(texture_)
 	{
-		JsonHelper::AddString(alloc, inObj, "textureFile", mTexture->GetFileName());
+		JsonHelper::addString(alloc, inObj, "textureFile", texture_->fileName());
 	}
-	JsonHelper::AddInt(alloc, inObj, "drawOrder", mDrawOrder);
-	JsonHelper::AddBool(alloc, inObj, "visible", mVisible);
+	JsonHelper::addInt(alloc, inObj, "drawOrder", drawOrder_);
+	JsonHelper::addBool(alloc, inObj, "visible", visible_);
 }

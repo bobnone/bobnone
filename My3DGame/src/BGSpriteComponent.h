@@ -6,11 +6,12 @@
 //----------------------------------------------------------------
 
 #pragma once
-#include "SpriteComponent.h"
 #include <vector>
-#include "Math.h"
+#include <SDL/SDL.h>
+#include "SpriteComponent.h"
+#include "Math/Math.h"
 
-class BGSpriteComponent : public SpriteComponent
+class BGSpriteComponent: public SpriteComponent
 {
 public:
 	//Set draw order to default to lower (so it's in the background)
@@ -21,7 +22,7 @@ public:
 	//Set the textures used for the background
 	void setBGTextures(const std::vector<SDL_Texture*>& textures);
 	//Get/set screen size and scroll speed
-	void setScreenSize(const vector2& size)
+	void setScreenSize(const Vector2& size)
 	{
 		screenSize_ = size;
 	}
@@ -38,9 +39,9 @@ private:
 	struct BGTexture
 	{
 		SDL_Texture* texture_;
-		vector2 offset_;
+		Vector2 offset_;
 	};
 	std::vector<BGTexture> bGTextures_;
-	vector2 screenSize_;
+	Vector2 screenSize_;
 	float scrollSpeed_;
 };

@@ -49,7 +49,7 @@ void Font::unload()
 		TTF_CloseFont(font.second);
 	}
 }
-Texture* Font::renderText(const std::string& textKey, const vector3& color, int pointSize)
+Texture* Font::renderText(const std::string& textKey, const Vector3& color, int pointSize)
 {
 	Texture* texture = nullptr;
 	//Convert to SDL_Color

@@ -17,21 +17,21 @@ void FPSCamera::update(float deltaTime)
 	//Call parent update (doesn't do anything right now)
 	CameraComponent::update(deltaTime);
 	//Camera position is owner position
-	vector3 cameraPos = owner_->position();
+	Vector3 cameraPos = owner_->position();
 	//Update pitch based on pitch speed
 	pitch_ += pitchSpeed_ * deltaTime;
 	//Clamp pitch to [-max, +max]
-	pitch_ = Math::Clamp(pitch_, -maxPitch_, maxPitch_);
+	pitch_ = Math::clamp(pitch_, -maxPitch_, maxPitch_);
 	//Make a quaternion representing pitch rotation,
 	//which is about owner's right vector
-	quaternion q(owner_->getRight(), pitch_);
+	Quaternion q(owner_->getRight(), pitch_);
 	//Rotate owner forward by pitch quaternion
-	vector3 viewForward = vector3::Transform(owner_->getForward(), q);
+	Vector3 viewForward = Math::transform(owner_->getForward(), q);
 	//Target position 100 units in front of view forward
-	vector3 target = cameraPos + viewForward * 100.0f;
+	Vector3 target = cameraPos + viewForward * 100.0f;
 	//Also rotate up by pitch quaternion
-	vector3 up = vector3::Transform(vector3::UnitZ, q);
+	Vector3 up = Math::transform(Vector3::UNIT_Z, q);
 	//Create look at matrix, set as view
-	matrix4 view = matrix4::CreateLookAt(cameraPos, target, up);
+	Matrix4x4 view = Math::lookAt(cameraPos, target, up);
 	setViewMatrix(view);
 }

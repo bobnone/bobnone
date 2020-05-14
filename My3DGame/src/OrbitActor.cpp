@@ -17,7 +17,7 @@ OrbitActor::OrbitActor(Game* game):Actor(game)
 {
 	meshComp_ = new MeshComponent(this);
 	meshComp_->setMesh(game->renderer()->getMesh("Assets/RacingCar.gpmesh"));
-	setPosition(vector3(0.0f, 0.0f, -100.0f));
+	setPosition(Vector3(0.0f, 0.0f, -100.0f));
 	cameraComp_ = new OrbitCamera(this);
 }
 void OrbitActor::actorInput(const uint8_t* keys)
@@ -32,7 +32,7 @@ void OrbitActor::actorInput(const uint8_t* keys)
 		//Assume mouse movement is usually between -500 and +500
 		const int maxMouseSpeed = 500;
 		//Rotation/sec at maximum speed
-		const float maxOrbitSpeed = Math::Pi * 8;
+		const float maxOrbitSpeed = Math::PI * 8;
 		float yawSpeed = 0.0f;
 		if(x != 0)
 		{

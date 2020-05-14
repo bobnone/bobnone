@@ -130,7 +130,7 @@ bool SoundEvent::is3D() const
 }
 namespace
 {
-	FMOD_VECTOR vecToFMOD(const vector3& in)
+	FMOD_VECTOR vecToFMOD(const Vector3& in)
 	{
 		//FMOD_VECTOR(+x right, +y up, +z forward)
 		FMOD_VECTOR v;
@@ -146,13 +146,13 @@ void SoundEvent::set3DAttributes(Actor* owner)
 	if(event)
 	{
 		FMOD_3D_ATTRIBUTES attr;
-		const matrix4 worldTrans = owner->worldTransform();
+		const Matrix4x4 worldTrans = owner->worldTransform();
 		//Set position, forward, up
-		attr.position = vecToFMOD(worldTrans.GetTranslation());
+		attr.position = vecToFMOD(worldTrans.getTranslation());
 		//In world transform, first row is forward
-		attr.forward = vecToFMOD(worldTrans.GetXAxis());
+		attr.forward = vecToFMOD(worldTrans.getXAxis());
 		//Third row is up
-		attr.up = vecToFMOD(worldTrans.GetZAxis());
+		attr.up = vecToFMOD(worldTrans.getZAxis());
 		//Set velocity
 		attr.velocity = vecToFMOD(owner->velocity());
 		event->set3DAttributes(&attr);

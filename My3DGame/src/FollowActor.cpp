@@ -17,7 +17,7 @@ FollowActor::FollowActor(Game* game):Actor(game), animated_(false)
 	meshComp_->setShader(renderer->getShader("Skinned"));
 	meshComp_->setSkeleton(game_->getSkeleton("Assets/CatWarrior.gpskel"));
 	meshComp_->playAnimation(game->getAnimation("Assets/CatActionIdle.gpanim"));
-	setPosition(vector3(0.0f, -100.0f, 0.0f));
+	setPosition(Vector3(0.0f, -100.0f, 0.0f));
 	moveComp_ = new MoveComponent(this);
 	cameraComp_ = new FollowCamera(this);
 	cameraComp_->snapToIdeal();
@@ -35,7 +35,7 @@ void FollowActor::updateActor(float deltaTime)
 	Actor::updateActor(deltaTime);
 	//Play the footstep if we're moving and haven't recently
 	lastFootstep_ -= deltaTime;
-	if(!Math::NearZero(moveComp_->forwardSpeed()) && lastFootstep_ <= 0.0f)
+	if(!Math::nearZero(moveComp_->forwardSpeed()) && lastFootstep_ <= 0.0f)
 	{
 		footstep_.setPaused(false);
 		footstep_.restart();
@@ -77,36 +77,36 @@ void FollowActor::actorInput(const uint8_t* keys)
 	}
 	if(keys[SDL_SCANCODE_INSERT])
 	{
-		angularXSpeed -= Math::Pi;
+		angularXSpeed -= Math::PI;
 	}
 	else if(keys[SDL_SCANCODE_DELETE])
 	{
-		angularXSpeed += Math::Pi;
+		angularXSpeed += Math::PI;
 	}
 	if(keys[SDL_SCANCODE_HOME])
 	{
-		angularYSpeed -= Math::Pi;
+		angularYSpeed -= Math::PI;
 	}
 	else if(keys[SDL_SCANCODE_END])
 	{
-		angularYSpeed += Math::Pi;
+		angularYSpeed += Math::PI;
 	}
 	if(keys[SDL_SCANCODE_PAGEUP])
 	{
-		angularZSpeed -= Math::Pi;
+		angularZSpeed -= Math::PI;
 	}
 	else if(keys[SDL_SCANCODE_PAGEDOWN])
 	{
-		angularZSpeed += Math::Pi;
+		angularZSpeed += Math::PI;
 	}
 	//Did we just start moving forward?
-	if(!animated_ && !Math::NearZero(forwardSpeed))
+	if(!animated_ && !Math::nearZero(forwardSpeed))
 	{
 		animated_ = true;
 		meshComp_->playAnimation(game()->getAnimation("Assets/CatRunSprint.gpanim"), 1.25f);
 	}
 	//Or did we just stop moving forward?
-	else if(animated_ && Math::NearZero(forwardSpeed))
+	else if(animated_ && Math::nearZero(forwardSpeed))
 	{
 		animated_ = false;
 		meshComp_->playAnimation(game()->getAnimation("Assets/CatActionIdle.gpanim"));

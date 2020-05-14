@@ -17,10 +17,10 @@ void NavComponent::update(float deltaTime)
 	if(nextNode_)
 	{
 		//If we're at the next node, advance along path
-		vector2 diff;
+		Vector2 diff;
 		diff.x = owner_->position().x - nextNode_->position().x;
 		diff.y = owner_->position().y - nextNode_->position().y;
-		if (Math::NearZero(diff.Length(), 2.0f))
+		if(Math::nearZero(diff.length(), 2.0f))
 		{
 			nextNode_ = nextNode_->parent();
 			turnTo(nextNode_->position());
@@ -33,11 +33,11 @@ void NavComponent::startPath(const Tile* start)
 	nextNode_ = start->parent();
 	turnTo(nextNode_->position());
 }
-void NavComponent::turnTo(const vector2& pos)
+void NavComponent::turnTo(const Vector2& pos)
 {
 	//Vector from me to pos
-	vector2 dir = pos - owner_->position();
+	Vector2 dir = pos - owner_->position();
 	//New angle is just atan2 of this dir vector
 	//(Negate y because +y is down on screen)
-	owner_->setRotation(Math::Atan2(-dir.y, dir.x));
+	owner_->setRotation(Math::atan2(-dir.y, dir.x));
 }

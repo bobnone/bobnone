@@ -227,14 +227,14 @@ void AudioSystem::update(float deltaTime)
 	{
 		eventInstances_.erase(id);
 	}
-	// Update FMOD
+	//Update FMOD
 	system_->update();
 }
 namespace
 {
-	FMOD_VECTOR VecToFMOD(const vector3& in)
+	FMOD_VECTOR VecToFMOD(const Vector3& in)
 	{
-		// FMOD_VECTOR (+x right, +y up, +z forward)
+		//FMOD_VECTOR (+x right, +y up, +z forward)
 		FMOD_VECTOR v;
 		v.x = in.x;
 		v.y = in.y;
@@ -242,35 +242,35 @@ namespace
 		return v;
 	}
 }
-void AudioSystem::setListener(class Actor* owner, const matrix4& viewMatrix)
+void AudioSystem::setListener(class Actor* owner, const Matrix4x4& viewMatrix)
 {
 	//Invert the view matrix to get the correct vectors
-	matrix4 invView = viewMatrix;
-	invView.Invert();
+	Matrix4x4 invView = viewMatrix;
+	invView.invert();
 	FMOD_3D_ATTRIBUTES listener;
 	//Set position, forward, up
-	listener.position = VecToFMOD(invView.GetTranslation());
+	listener.position = VecToFMOD(invView.getTranslation());
 	//In the inverted view, third row is forward
-	listener.forward = VecToFMOD(invView.GetZAxis());
+	listener.forward = VecToFMOD(invView.getZAxis());
 	//In the inverted view, second row is up
-	listener.up = VecToFMOD(invView.GetYAxis());
+	listener.up = VecToFMOD(invView.getYAxis());
 	//Set velocity
 	listener.velocity = VecToFMOD(owner->velocity());
 	//Send to FMOD
 	system_->setListenerAttributes(0, &listener);
 }
-void AudioSystem::setListener(class Actor* owner, const matrix4& viewMatrix, const vector3 position)
+void AudioSystem::setListener(class Actor* owner, const Matrix4x4& viewMatrix, const Vector3 position)
 {
 	//Invert the view matrix to get the correct vectors
-	matrix4 invView = viewMatrix;
-	invView.Invert();
+	Matrix4x4 invView = viewMatrix;
+	invView.invert();
 	FMOD_3D_ATTRIBUTES listener;
 	//Set position, forward, up
 	listener.position = VecToFMOD(position);
 	//In the inverted view, third row is forward
-	listener.forward = VecToFMOD(invView.GetZAxis());
+	listener.forward = VecToFMOD(invView.getZAxis());
 	//In the inverted view, second row is up
-	listener.up = VecToFMOD(invView.GetYAxis());
+	listener.up = VecToFMOD(invView.getYAxis());
 	//Set velocity
 	listener.velocity = VecToFMOD(owner->velocity());
 	//Send to FMOD

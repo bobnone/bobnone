@@ -32,19 +32,19 @@ void HUD::draw(Shader* shader)
 {
 	//Crosshair
 	Texture* cross = targetEnemy_ ? crosshairEnemy_:crosshair_;
-	drawTexture(shader, cross, vector2::Zero, 2.0f);
+	drawTexture(shader, cross, Vector2(), 2.0f);
 	//Radar
-	const vector2 cRadarPos(-390.0f, 275.0f);
+	const Vector2 cRadarPos(-390.0f, 275.0f);
 	drawTexture(shader, radar_, cRadarPos, 1.0f);
 	//Blips
-	for(vector2& blip: blips_)
+	for(Vector2& blip: blips_)
 	{
 		drawTexture(shader, blipTex_, cRadarPos + blip, 1.0f);
 	}
 	//Radar arrow
 	drawTexture(shader, radarArrow_, cRadarPos);
 	//// Health bar
-	drawTexture(shader, healthBar_, vector2(-350.0f, -350.0f));
+	drawTexture(shader, healthBar_, Vector2(-350.0f, -350.0f));
 	//Draw the mirror (bottom left)
 	Texture* mirror = game_->renderer()->mirrorTexture();
 	//DrawTexture(shader, mirror, Vector2(-350.0f, -250.0f), 1.0f, true);
@@ -66,7 +66,7 @@ void HUD::updateCrosshair()
 	targetEnemy_ = false;
 	//Make a line segment
 	const float cAimDist = 5000.0f;
-	vector3 start, dir;
+	Vector3 start, dir;
 	game_->renderer()->getScreenDirection(start, dir);
 	LineSegment l(start, start + dir * cAimDist);
 	//Segment cast
@@ -89,30 +89,30 @@ void HUD::updateRadar()
 	//Clear blip positions from last frame
 	blips_.clear();
 	//Convert player position to radar coordinates (x forward, z up)
-	vector3 playerPos = game_->player()->position();
-	vector2 playerPos2D(playerPos.y, playerPos.x);
+	Vector3 playerPos = game_->player()->position();
+	Vector2 playerPos2D(playerPos.y, playerPos.x);
 	//Ditto for player forward
-	vector3 playerForward = game_->player()->getForward();
-	vector2 playerForward2D(playerForward.x, playerForward.y);
+	Vector3 playerForward = game_->player()->getForward();
+	Vector2 playerForward2D(playerForward.x, playerForward.y);
 	//Use atan2 to get rotation of radar
-	float angle = Math::Atan2(playerForward2D.y, playerForward2D.x);
+	float angle = Math::atan2(playerForward2D.y, playerForward2D.x);
 	//Make a 2D rotation matrix
-	matrix3 rotMat = matrix3::CreateRotation(angle);
+	Matrix3x3 rotMat = Math::createRotationMatrix(angle);
 	//Get positions of blips
 	for(auto tc : targetComps_)
 	{
-		vector3 targetPos = tc->owner()->position();
-		vector2 actorPos2D(targetPos.y, targetPos.x);
+		Vector3 targetPos = tc->owner()->position();
+		Vector2 actorPos2D(targetPos.y, targetPos.x);
 		//Calculate vector between player and target
-		vector2 playerToTarget = actorPos2D - playerPos2D;
+		Vector2 playerToTarget = actorPos2D - playerPos2D;
 		//See if within range
-		if(playerToTarget.Length2() <= (radarRange_ * radarRange_))
+		if(playerToTarget.length2() <= (radarRange_ * radarRange_))
 		{
 			//Convert playerToTarget into an offset from the center of the on-screen radar
-			vector2 blipPos = playerToTarget;
+			Vector2 blipPos = playerToTarget;
 			blipPos *= radarRadius_ / radarRange_;
 			//Rotate blipPos
-			blipPos = vector2::Transform(blipPos, rotMat);
+			blipPos = Math::transform(blipPos, rotMat);
 			blips_.emplace_back(blipPos);
 		}
 	}

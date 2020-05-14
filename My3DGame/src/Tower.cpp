@@ -30,12 +30,12 @@ void Tower::updateActor(float deltaTime)
 		if(e != nullptr)
 		{
 			//Vector from me to enemy
-			vector2 dir = e->position() - position();
-			float dist = dir.Length();
+			Vector2 dir = e->position() - position();
+			float dist = dir.length();
 			if(dist < attackRange_)
 			{
 				//Rotate to face enemy
-				setRotation(Math::Atan2(-dir.y, dir.x));
+				setRotation(Math::atan2(-dir.y, dir.x));
 				//Spawn bullet at tower position facing enemy
 				Bullet* b = new Bullet(game());
 				b->setPosition(position());

@@ -41,20 +41,20 @@ public:
 		return state_;
 	}
 	//Change the title text
-	void setTitle(const std::string& text, const vector3& color = Color::White, int pointSize = 40);
+	void setTitle(const std::string& text, const Vector3& color = Color::White, int pointSize = 40);
 	//Add a button to this screen
 	void addButton(const std::string& name, std::function<void()> onClick);
 protected:
 	//Helper to draw a texture
-	void drawTexture(class Shader* shader, class Texture* texture, const vector2& offset = vector2::Zero, float scale = 1.0f, bool flipY = false);
+	void drawTexture(class Shader* shader, class Texture* texture, const Vector2& offset = Vector2(), float scale = 1.0f, bool flipY = false);
 	class Game* game_;
 	class Font* font_;
 	class Texture* title_;
 	class Texture* background_;
 	//Configure positions
-	vector2 titlePos_;
-	vector2 nextButtonPos_;
-	vector2 bGPos_;
+	Vector2 titlePos_;
+	Vector2 nextButtonPos_;
+	Vector2 bGPos_;
 	//State
 	UIState state_;
 	//List of buttons

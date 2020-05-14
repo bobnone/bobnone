@@ -40,8 +40,8 @@ void Enemy::updateActor(float deltaTime)
 {
 	Actor::updateActor(deltaTime);
 	//Am I near the end tile?
-	vector2 diff = position() - game()->getGrid()->getEndTile()->getPosition();
-	if(Math::NearZero(diff.Length(), 10.0f))
+	Vector2 diff = position() - game()->getGrid()->getEndTile()->getPosition();
+	if(Math::nearZero(diff.length(), 10.0f))
 	{
 		setState(ACTOR_DEAD);
 	}

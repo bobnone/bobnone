@@ -137,7 +137,7 @@ void LevelLoader::saveLevel(Game* game, const std::string& fileName)
 void LevelLoader::loadGlobalProperties(Game* game, const rapidjson::Value& inObject)
 {
 	//Get ambient light
-	vector3 ambient;
+	Vector3 ambient;
 	if (JsonHelper::getVector3(inObject, "ambientLight", ambient))
 	{
 		game->renderer()->setAmbientLight(ambient);

@@ -31,13 +31,13 @@ namespace
 		uint32_t numVerts_ = 0;
 		uint32_t numIndices_ = 0;
 		// Box/radius of mesh, used for collision
-		AABB box_{vector3::Zero, vector3::Zero};
+		AABB box_{Vector3(), Vector3()};
 		//std::string shaderName_ = "Mesh";
 		float radius_ = 0.0f;
 		float specularPower_ = 100.0f;
 	};
 }
-Mesh::Mesh():box_(vector3::Infinity, vector3::NegInfinity), vertexArray_(nullptr), radius_(0.0f), specularPower_(100.0f)
+Mesh::Mesh():box_(Vector3::INFINITE_VECTOR, Vector3::NEGATIVE_INFINITE_VECTOR), vertexArray_(nullptr), radius_(0.0f), specularPower_(100.0f)
 {
 	//EMPTY:
 }
@@ -117,8 +117,8 @@ bool Mesh::load(const std::string& fileName, Renderer* renderer)
 			SDL_Log("Unexpected vertex format for %s", fileName.c_str());
 			return false;
 		}
-		vector3 pos(vert[0].GetDouble(), vert[1].GetDouble(), vert[2].GetDouble());
-		radius_ = Math::Max(radius_, pos.Length2());
+		Vector3 pos(vert[0].GetDouble(), vert[1].GetDouble(), vert[2].GetDouble());
+		radius_ = Math::maximum(radius_, pos.length2());
 		box_.updateMinMax(pos);
 		if(layout == VertexArray::PosNormTex)
 		{
@@ -161,7 +161,7 @@ bool Mesh::load(const std::string& fileName, Renderer* renderer)
 		}
 	}
 	//We were computing length squared earlier
-	radius_ = Math::Sqrt(radius_);
+	radius_ = Math::sqrt(radius_);
 	//Load in the indices
 	const rapidjson::Value& indJson = doc["indices"];
 	if(!indJson.IsArray() || indJson.Size() < 1)

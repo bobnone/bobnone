@@ -34,7 +34,7 @@ FPSActor::FPSActor(Game* game):Actor(game)
 	meshComp_->setMesh(game->renderer()->getMesh("Assets/Rifle.gpmesh"));
 	//Add a box component
 	boxComp_ = new BoxComponent(this);
-	AABB myBox(vector3(-25.0f, -25.0f, -87.5f), vector3(25.0f, 25.0f, 87.5f));
+	AABB myBox(Vector3(-25.0f, -25.0f, -87.5f), Vector3(25.0f, 25.0f, 87.5f));
 	boxComp_->setObjectBox(myBox);
 	boxComp_->setShouldRotate(false);
 }
@@ -44,23 +44,23 @@ void FPSActor::updateActor(float deltaTime)
 	fixCollisions();
 	//Play the footstep if we're moving and haven't recently
 	lastFootstep_ -= deltaTime;
-	if((!Math::NearZero(moveComp_->forwardSpeed()) || !Math::NearZero(moveComp_->strafeSpeed())) && lastFootstep_ <= 0.0f)
+	if((!Math::nearZero(moveComp_->forwardSpeed()) || !Math::nearZero(moveComp_->strafeSpeed())) && lastFootstep_ <= 0.0f)
 	{
 		footstep_.setPaused(false);
 		footstep_.restart();
 		lastFootstep_ = 0.5f;
 	}
 	//Update position of FPS model relative to actor position
-	const vector3 modelOffset(vector3(10.0f, 10.0f, -10.0f));
-	vector3 modelPos = position();
+	const Vector3 modelOffset(Vector3(10.0f, 10.0f, -10.0f));
+	Vector3 modelPos = position();
 	modelPos += getForward() * modelOffset.x;
 	modelPos += getRight() * modelOffset.y;
 	modelPos.z += modelOffset.z;
 	fPSModel_->setPosition(modelPos);
 	//Initialize rotation to actor rotation
-	quaternion q = rotation();
+	Quaternion q = rotation();
 	//Rotate by pitch from camera
-	q = quaternion::Concatenate(q, quaternion(getRight(), cameraComp_->pitch()));
+	q = Math::concatenate(q, Quaternion(getRight(), cameraComp_->pitch()));
 	fPSModel_->setRotation(q);
 }
 void FPSActor::actorInput(const uint8_t* keys)
@@ -93,7 +93,7 @@ void FPSActor::actorInput(const uint8_t* keys)
 	//Assume mouse movement is usually between -500 and +500
 	const int maxMouseSpeed = 500;
 	//Rotation/sec at maximum speed
-	const float maxAngularSpeed = Math::Pi * 8;
+	const float maxAngularSpeed = Math::PI * 8;
 	float angularSpeed = 0.0f;
 	if(x != 0)
 	{
@@ -104,7 +104,7 @@ void FPSActor::actorInput(const uint8_t* keys)
 	}
 	moveComp_->setAngularXSpeed(angularSpeed);
 	//Compute pitch
-	const float maxPitchSpeed = Math::Pi * 8;
+	const float maxPitchSpeed = Math::PI * 8;
 	float pitchSpeed = 0.0f;
 	if(y != 0)
 	{
@@ -117,7 +117,7 @@ void FPSActor::actorInput(const uint8_t* keys)
 void FPSActor::shoot()
 {
 	//Get direction vector
-	vector3 start, dir;
+	Vector3 start, dir;
 	game()->renderer()->getScreenDirection(start, dir);
 	//Spawn a ball
 	BallActor* ball = new BallActor(game());
@@ -144,7 +144,7 @@ void FPSActor::fixCollisions()
 	//Need to recompute my world transform to update world box
 	computeWorldTransform();
 	const AABB& playerBox = boxComp_->worldBox();
-	vector3 pos = position();
+	Vector3 pos = position();
 	auto& planes = game()->getPlanes();
 	for(auto pa : planes)
 	{
@@ -160,17 +160,17 @@ void FPSActor::fixCollisions()
 			float dz1 = planeBox.max_.z - playerBox.min_.z;
 			float dz2 = planeBox.min_.z - playerBox.max_.z;
 			//Set dx to whichever of dx1/dx2 have a lower abs
-			float dx = Math::Abs(dx1) < Math::Abs(dx2) ? dx1 : dx2;
+			float dx = Math::abs(dx1) < Math::abs(dx2) ? dx1 : dx2;
 			//Ditto for dy
-			float dy = Math::Abs(dy1) < Math::Abs(dy2) ? dy1 : dy2;
+			float dy = Math::abs(dy1) < Math::abs(dy2) ? dy1 : dy2;
 			//Ditto for dz
-			float dz = Math::Abs(dz1) < Math::Abs(dz2) ? dz1 : dz2;
+			float dz = Math::abs(dz1) < Math::abs(dz2) ? dz1 : dz2;
 			//Whichever is closest, adjust x/y position
-			if(Math::Abs(dx) <= Math::Abs(dy) && Math::Abs(dx) <= Math::Abs(dz))
+			if(Math::abs(dx) <= Math::abs(dy) && Math::abs(dx) <= Math::abs(dz))
 			{
 				pos.x += dx;
 			}
-			else if(Math::Abs(dy) <= Math::Abs(dx) && Math::Abs(dy) <= Math::Abs(dz))
+			else if(Math::abs(dy) <= Math::abs(dx) && Math::abs(dy) <= Math::abs(dz))
 			{
 				pos.y += dy;
 			}

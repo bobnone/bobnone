@@ -70,7 +70,7 @@ bool JsonHelper::getBool(const rapidjson::Value& inObject, const char* inPropert
 	outBool = property.GetBool();
 	return true;
 }
-bool JsonHelper::getVector3(const rapidjson::Value& inObject, const char* inProperty, vector3& outVector)
+bool JsonHelper::getVector3(const rapidjson::Value& inObject, const char* inProperty, Vector3& outVector)
 {
 	auto itr = inObject.FindMember(inProperty);
 	if(itr == inObject.MemberEnd())
@@ -94,7 +94,7 @@ bool JsonHelper::getVector3(const rapidjson::Value& inObject, const char* inProp
 	outVector.z = property[2].GetDouble();
 	return true;
 }
-bool JsonHelper::getQuaternion(const rapidjson::Value& inObject, const char* inProperty, quaternion& outQuat)
+bool JsonHelper::getQuaternion(const rapidjson::Value& inObject, const char* inProperty, Quaternion& outQuat)
 {
 	auto itr = inObject.FindMember(inProperty);
 	if (itr == inObject.MemberEnd())
@@ -136,7 +136,7 @@ void JsonHelper::addBool(rapidjson::Document::AllocatorType& alloc, rapidjson::V
 	rapidjson::Value v(value);
 	inObject.AddMember(rapidjson::StringRef(name), v, alloc);
 }
-void JsonHelper::addVector3(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const vector3& value)
+void JsonHelper::addVector3(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const Vector3& value)
 {
 	//Create an array
 	rapidjson::Value v(rapidjson::kArrayType);
@@ -147,7 +147,7 @@ void JsonHelper::addVector3(rapidjson::Document::AllocatorType& alloc, rapidjson
 	//Add array to inObject
 	inObject.AddMember(rapidjson::StringRef(name), v, alloc);
 }
-void JsonHelper::addQuaternion(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const quaternion& value)
+void JsonHelper::addQuaternion(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const Quaternion& value)
 {
 	//Create an array
 	rapidjson::Value v(rapidjson::kArrayType);

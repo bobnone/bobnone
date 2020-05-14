@@ -7,16 +7,16 @@
 
 #pragma once
 #include "MoveComponent.h"
-#include "Math.h"
+#include "Math/Math.h"
 
-class NavComponent : public MoveComponent
+class NavComponent: public MoveComponent
 {
 public:
 	//Lower update order to update first
 	NavComponent(class Actor* owner, int updateOrder = 10);
 	void update(float deltaTime) override;
 	void startPath(const class Tile* start);
-	void turnTo(const vector2& pos);
+	void turnTo(const Vector2& pos);
 private:
 	const class Tile* nextNode_;
 };

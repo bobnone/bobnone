@@ -10,7 +10,7 @@
 #include "Game.h"
 #include "HUD.h"
 
-TargetComponent::TargetComponent(Actor* owner) :Component(owner)
+TargetComponent::TargetComponent(Actor* owner):Component(owner)
 {
 	owner_->game()->getHUD()->addTargetComponent(this);
 }

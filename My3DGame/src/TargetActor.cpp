@@ -16,7 +16,7 @@
 
 TargetActor::TargetActor(Game* game):Actor(game)
 {
-	setRotation(quaternion(vector3::UnitZ, Math::Pi));
+	setRotation(Quaternion(Vector3::UNIT_Z, Math::PI));
 	MeshComponent* mc = new MeshComponent(this);
 	Mesh* mesh = game->renderer()->getMesh("Assets/Target.gpmesh");
 	mc->setMesh(mesh);

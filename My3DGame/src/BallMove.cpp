@@ -22,9 +22,9 @@ void BallMove::update(float deltaTime)
 	const float segmentLength = 30.0f;
 	Physics* physics = owner_->game()->physics();
 	// Construct segment in direction of travel
-	vector3 start = owner_->position();
-	vector3 dir = owner_->getForward();
-	vector3 end = start + dir * segmentLength;
+	Vector3 start = owner_->position();
+	Vector3 dir = owner_->getForward();
+	Vector3 end = start + dir * segmentLength;
 	// Create line segment
 	LineSegment l(start, end);
 	// Test segment vs world
@@ -32,7 +32,7 @@ void BallMove::update(float deltaTime)
 	if(physics->segmentCast(l, info))
 	{
 		// If we collided, reflect the ball about the normal
-		dir = vector3::Reflect(dir, info.normal_);
+		dir = Math::reflect(dir, info.normal_);
 		owner_->rotateToNewForward(dir);
 		// Did we hit a target?
 		TargetActor* target = dynamic_cast<TargetActor*>(info.actor_);

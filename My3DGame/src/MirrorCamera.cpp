@@ -19,20 +19,20 @@ void MirrorCamera::update(float deltaTime)
 {
 	CameraComponent::update(deltaTime);
 	//Compute ideal position
-	vector3 idealPos = computeCameraPos();
+	Vector3 idealPos = computeCameraPos();
 	//Target is target dist in front of owning actor
-	vector3 target = owner_->position() - owner_->getForward() * targetDist_;
+	Vector3 target = owner_->position() - owner_->getForward() * targetDist_;
 	//Use actual position here, not ideal
-	matrix4 view = matrix4::CreateLookAt(idealPos, target, vector3::UnitZ);
+	Matrix4x4 view = Math::lookAt(idealPos, target, Vector3::UNIT_Z);
 	owner_->game()->renderer()->setMirrorView(view);
 }
 void MirrorCamera::snapToIdeal()
 {
-	vector3 idealPos = computeCameraPos();
+	Vector3 idealPos = computeCameraPos();
 	//Compute target and view
-	vector3 target = owner_->position() - owner_->getForward() * targetDist_;
+	Vector3 target = owner_->position() - owner_->getForward() * targetDist_;
 	//Use actual position here, not ideal
-	matrix4 view = matrix4::CreateLookAt(idealPos, target, vector3::UnitZ);
+	Matrix4x4 view = Math::lookAt(idealPos, target, Vector3::UNIT_Z);
 	owner_->game()->renderer()->setMirrorView(view);
 }
 void MirrorCamera::loadProperties(const rapidjson::Value& inObj)
@@ -49,11 +49,11 @@ void MirrorCamera::saveProperties(rapidjson::Document::AllocatorType& alloc, rap
 	JsonHelper::addFloat(alloc, inObj, "vertDist", vertDist_);
 	JsonHelper::addFloat(alloc, inObj, "targetDist", targetDist_);
 }
-vector3 MirrorCamera::computeCameraPos() const
+Vector3 MirrorCamera::computeCameraPos() const
 {
 	//Set camera position in front of
-	vector3 cameraPos = owner_->position();
+	Vector3 cameraPos = owner_->position();
 	cameraPos += owner_->getForward() * horzDist_;
-	cameraPos += vector3::UnitZ * vertDist_;
+	cameraPos += Vector3::UNIT_Z * vertDist_;
 	return cameraPos;
 }

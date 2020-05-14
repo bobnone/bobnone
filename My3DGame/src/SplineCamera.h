@@ -6,18 +6,18 @@
 //----------------------------------------------------------------
 
 #pragma once
-#include "CameraComponent.h"
 #include <vector>
+#include "CameraComponent.h"
 
 struct Spline
 {
 	//Control points for spline
 	//(Requires n+2 points where n is number
 	//of points in segment)
-	std::vector<vector3> controlPoints_;
+	std::vector<Vector3> controlPoints_;
 	//Given spline segment where startIdx = P1,
 	//compute position based on t value
-	vector3 compute(size_t startIdx, float t) const;
+	Vector3 compute(size_t startIdx, float t) const;
 	//Returns number of control points
 	size_t getNumPoints() const
 	{

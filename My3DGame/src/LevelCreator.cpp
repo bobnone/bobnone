@@ -89,15 +89,15 @@ void LevelCreator::unloadLevel(class Game* game)
 void LevelCreator::newGlobalProperties(rapidjson::Document::AllocatorType& alloc, Game* game, rapidjson::Value& inObject)
 {
 	//Ambient light
-	vector3 ambientLight = vector3(0.3f, 0.3f, 0.3f);
+	Vector3 ambientLight = Vector3(0.3f, 0.3f, 0.3f);
 	game->renderer()->setAmbientLight(ambientLight);
 	JsonHelper::addVector3(alloc, inObject, "ambientLight", ambientLight);
 	//Directional light
 	rapidjson::Value dirObj(rapidjson::kObjectType);
 	DirectionalLight& light = game->renderer()->getDirectionalLight();
-	light.direction_ = vector3(-1.0, -1.0, -10.0);
-	light.diffuseColor_ = vector3(0.5, 0.5, 0.5);
-	light.specularColor_ = vector3(0.5, 0.5, 0.5);
+	light.direction_ = Vector3(-1.0, -1.0, -10.0);
+	light.diffuseColor_ = Vector3(0.5, 0.5, 0.5);
+	light.specularColor_ = Vector3(0.5, 0.5, 0.5);
 	JsonHelper::addVector3(alloc, dirObj, "direction", light.direction_);
 	JsonHelper::addVector3(alloc, dirObj, "diffuseColor", light.diffuseColor_);
 	JsonHelper::addVector3(alloc, dirObj, "specularColor", light.specularColor_);
@@ -107,32 +107,32 @@ void LevelCreator::createActors(Game* game)
 {
 	FollowActor* player = new FollowActor(game);
 	PlaneActor* levelFloor0 = new PlaneActor(game);
-	levelFloor0->setPosition(vector3(0.0, 0.0, -100.0));
+	levelFloor0->setPosition(Vector3(0.0, 0.0, -100.0));
 	PlaneActor* levelFloor1 = new PlaneActor(game);
-	levelFloor1->setPosition(vector3(1000.0, 0.0, -100.0));
+	levelFloor1->setPosition(Vector3(1000.0, 0.0, -100.0));
 	PlaneActor* levelFloor2 = new PlaneActor(game);
-	levelFloor2->setPosition(vector3(2000.0, 0.0, -100.0));
+	levelFloor2->setPosition(Vector3(2000.0, 0.0, -100.0));
 	TargetActor* target0 = new TargetActor(game);
-	target0->setPosition(vector3(1000.0, 0.0, 0.0));
+	target0->setPosition(Vector3(1000.0, 0.0, 0.0));
 	target0->setScale(10.0);
 	Actor* posLight0 = new Actor(game);
 	PointLightComponent* plc0 = new PointLightComponent(posLight0);
-	plc0->diffuseColor_ = vector3(1.0, 0.0, 0.0);
-	plc0->specularColor_ = vector3(0.5, 0.5, 0.5);
+	plc0->diffuseColor_ = Vector3(1.0, 0.0, 0.0);
+	plc0->specularColor_ = Vector3(0.5, 0.5, 0.5);
 	plc0->innerRadius_ = 100;
 	plc0->outerRadius_ = 200;
 	Actor* posLight1 = new Actor(game);
-	posLight1->setPosition(vector3(500.0, 500.0, 0.0));
+	posLight1->setPosition(Vector3(500.0, 500.0, 0.0));
 	PointLightComponent* plc1 = new PointLightComponent(posLight1);
-	plc1->diffuseColor_ = vector3(0.0, 1.0, 0.0);
-	plc1->specularColor_ = vector3(0.5, 0.5, 0.5);
+	plc1->diffuseColor_ = Vector3(0.0, 1.0, 0.0);
+	plc1->specularColor_ = Vector3(0.5, 0.5, 0.5);
 	plc1->innerRadius_ = 100;
 	plc1->outerRadius_ = 200;
 	Actor* posLight3 = new Actor(game);
-	posLight3->setPosition(vector3(500.0, 0.0, 0.0));
+	posLight3->setPosition(Vector3(500.0, 0.0, 0.0));
 	PointLightComponent* plc3 = new PointLightComponent(posLight3);
-	plc3->diffuseColor_ = vector3(0.5, 0.5, 0.0);
-	plc3->specularColor_ = vector3(0.5, 0.5, 0.5);
+	plc3->diffuseColor_ = Vector3(0.5, 0.5, 0.0);
+	plc3->specularColor_ = Vector3(0.5, 0.5, 0.5);
 	plc3->innerRadius_ = 100;
 	plc3->outerRadius_ = 200;
 }

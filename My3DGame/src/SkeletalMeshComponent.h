@@ -35,7 +35,7 @@ public:
 	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 protected:
 	void computeMatrixPalette();
-	class MatrixPalette palette_;
+	struct MatrixPalette palette_;
 	class Skeleton* skeleton_;
 	class Animation* animation_;
 	float animPlayRate_;

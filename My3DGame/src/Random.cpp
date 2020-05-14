@@ -30,14 +30,14 @@ int Random::getIntRange(int min, int max)
 	std::uniform_int_distribution<int> dist(min, max);
 	return dist(sGenerator);
 }
-vector2 Random::getVector(const vector2& min, const vector2& max)
+Vector2 Random::getVector(const Vector2& min, const Vector2& max)
 {
-	vector2 r = vector2(getFloat(), getFloat());
+	Vector2 r = Vector2(getFloat(), getFloat());
 	return min + (max - min) * r;
 }
-vector3 Random::getVector(const vector3& min, const vector3& max)
+Vector3 Random::getVector(const Vector3& min, const Vector3& max)
 {
-	vector3 r = vector3(getFloat(), getFloat(), getFloat());
+	Vector3 r = Vector3(getFloat(), getFloat(), getFloat());
 	return min + (max - min) * r;
 }
 

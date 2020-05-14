@@ -18,8 +18,8 @@ bool Physics::segmentCast(const LineSegment& l, CollisionInfo& outColl)
 	bool collided = false;
 	//Initialize closestT to infinity, so first
 	//intersection will always update closestT
-	float closestT = Math::Infinity;
-	vector3 norm;
+	float closestT = Math::INFINITE_FLOAT;
+	Vector3 norm;
 	//Test against all boxes
 	for(auto box: boxes_)
 	{

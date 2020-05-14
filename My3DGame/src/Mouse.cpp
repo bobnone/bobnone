@@ -16,7 +16,7 @@ void Mouse::update(float deltaTime)
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 	//Convert to (0,0) center coordinates
-	position_ = vector2(static_cast<float>(x), static_cast<float>(y));
+	position_ = Vector2(static_cast<float>(x), static_cast<float>(y));
 	position_.x -= game_->renderer()->screenWidth() * 0.5f;
 	position_.y = game_->renderer()->screenHeight() * 0.5f - position_.y;
 	//Calculate the change in position

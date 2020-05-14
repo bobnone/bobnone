@@ -27,9 +27,9 @@ void PointLightComponent::draw(Shader* shader, Mesh* mesh)
 	//and the sphere mesh is active
 	//World transform is scaled to the outer radius (divided by the mesh radius)
 	//and positioned to the world position
-	matrix4 scale = matrix4::CreateScale(owner_->scale() * outerRadius_ / mesh->radius());
-	matrix4 trans = matrix4::CreateTranslation(owner_->position());
-	matrix4 worldTransform = scale * trans;
+	Matrix4x4 scale = Math::createScaleMatrix(owner_->scale() * outerRadius_ / mesh->radius());
+	Matrix4x4 trans = Math::createTranslationMatrix(owner_->position());
+	Matrix4x4 worldTransform = scale * trans;
 	shader->setMatrixUniform("uWorldTransform", worldTransform);
 	//Set point light shader constants
 	shader->setVectorUniform("uPointLight.worldPos_", owner_->position());

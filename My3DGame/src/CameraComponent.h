@@ -7,9 +7,9 @@
 
 #pragma once
 #include "Component.h"
-#include "Math.h"
+#include "Math/Math.h"
 
-class CameraComponent : public Component
+class CameraComponent: public Component
 {
 public:
 	CameraComponent(class Actor* owner, int updateOrder = 200);
@@ -18,5 +18,5 @@ public:
 		return TCameraComponent;
 	}
 protected:
-	virtual void setViewMatrix(const matrix4& view);
+	virtual void setViewMatrix(const Matrix4x4& view);
 };

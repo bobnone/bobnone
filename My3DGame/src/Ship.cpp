@@ -21,11 +21,11 @@ void Ship::updateActor(float deltaTime)
 {
 	laserCooldown_ -= deltaTime;
 	//Update position based on velocity
-	vector2 pos = position();
+	Vector2 pos = position();
 	pos += velocityDir_ * speed_ * deltaTime;
 	setPosition(pos);
 	//Update rotation
-	setRotation(Math::Atan2(rotationDir_.y, rotationDir_.x));
+	setRotation(Math::atan2(rotationDir_.y, rotationDir_.x));
 }
 void Ship::actorInput(const InputState& state)
 {
@@ -41,7 +41,7 @@ void Ship::actorInput(const InputState& state)
 	if(state.Controller.isConnected())
 	{
 		velocityDir_ = state.Controller.leftStick();
-		if(!Math::NearZero(state.Controller.rightStick().Length()))
+		if(!Math::nearZero(state.Controller.rightStick().Length()))
 		{
 			rotationDir_ = state.Controller.rightStick();
 		}

@@ -15,8 +15,8 @@ public:
 	void updateActor(float deltaTime) override;
 	void actorInput(const struct InputState& state) override;
 private:
-	vector2 velocityDir_;
-	vector2 rotationDir_;
+	Vector2 velocityDir_;
+	Vector2 rotationDir_;
 	float speed_;
 	float laserCooldown_;
 };

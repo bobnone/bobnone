@@ -12,7 +12,7 @@ CircleComponent::CircleComponent(class Actor* owner):Component(owner), radius_(0
 {
 	//EMPTY:
 }
-const vector3& CircleComponent::getCenter() const
+const Vector3& CircleComponent::getCenter() const
 {
 	return owner_->position();
 }
@@ -23,8 +23,8 @@ float CircleComponent::getRadius() const
 bool intersect(const CircleComponent& a, const CircleComponent& b)
 {
 	//Calculate distance squared
-	vector3 diff = a.getCenter() - b.getCenter();
-	float distSq = diff.Length2();
+	Vector3 diff = a.getCenter() - b.getCenter();
+	float distSq = diff.length2();
 	//Calculate sum of radii squared
 	float radiiSq = a.getRadius() + b.getRadius();
 	radiiSq *= radiiSq;

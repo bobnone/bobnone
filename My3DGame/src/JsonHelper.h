@@ -7,7 +7,7 @@
 
 #pragma once
 #include <rapidjson/document.h>
-#include "Math.h"
+#include "Math/Math.h"
 
 class JsonHelper
 {
@@ -19,13 +19,13 @@ public:
 	static bool getFloat(const rapidjson::Value& inObject, const char* inProperty, float& outFloat);
 	static bool getString(const rapidjson::Value& inObject, const char* inProperty, std::string& outStr);
 	static bool getBool(const rapidjson::Value& inObject, const char* inProperty, bool& outBool);
-	static bool getVector3(const rapidjson::Value& inObject, const char* inProperty, vector3& outVector);
-	static bool getQuaternion(const rapidjson::Value& inObject, const char* inProperty, quaternion& outQuat);
+	static bool getVector3(const rapidjson::Value& inObject, const char* inProperty, Vector3& outVector);
+	static bool getQuaternion(const rapidjson::Value& inObject, const char* inProperty, Quaternion& outQuat);
 	//Setter functions
 	static void addInt(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, int value);
 	static void addFloat(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, float value);
 	static void addString(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const std::string& value);
 	static void addBool(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, bool value);
-	static void addVector3(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const vector3& value);
-	static void addQuaternion(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const quaternion& value);
+	static void addVector3(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const Vector3& value);
+	static void addQuaternion(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObject, const char* name, const Quaternion& value);
 };

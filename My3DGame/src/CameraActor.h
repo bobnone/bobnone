@@ -16,14 +16,14 @@ public:
 	void updateActor(float deltaTime) override;
 	void actorInput(const uint8_t* keys) override;
 	void setFootstepSurface(float value);
-	const vector3& getCameraPosition() const
+	const Vector3& getCameraPosition() const
 	{
 		return cameraPos_;
 	}
 private:
 	class MoveComponent* moveComp_;
 	class AudioComponent* audioComp_;
-	vector3 cameraPos_;
+	Vector3 cameraPos_;
 	SoundEvent footstep_;
 	float lastFootstep_;
 };

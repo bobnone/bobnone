@@ -6,8 +6,10 @@
 //----------------------------------------------------------------
 
 #pragma once
-#include "SpriteComponent.h"
 #include <vector>
+#include <SDL/SDL.h>
+#include "SpriteComponent.h"
+
 class AnimatedSpriteComponent: public SpriteComponent
 {
 public:

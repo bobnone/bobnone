@@ -6,11 +6,11 @@
 //----------------------------------------------------------------
 
 #pragma once
-#include "Math.h"
+#include "Math/Math.h"
 
 const size_t MAX_SKELETON_BONES = 96;
 
 struct MatrixPalette
 {
-	matrix4 entry_[MAX_SKELETON_BONES];
+	Matrix4x4 entry_[MAX_SKELETON_BONES];
 };

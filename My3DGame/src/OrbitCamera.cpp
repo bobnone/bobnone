@@ -16,24 +16,24 @@ void OrbitCamera::update(float deltaTime)
 {
 	CameraComponent::update(deltaTime);
 	//Create a quaternion for yaw about world up
-	quaternion yaw(vector3::UnitZ, yawSpeed_ * deltaTime);
+	Quaternion yaw(Vector3::UNIT_Z, yawSpeed_ * deltaTime);
 	//Transform offset and up by yaw
-	offset_ = vector3::Transform(offset_, yaw);
-	up_ = vector3::Transform(up_, yaw);
+	offset_ = Math::transform(offset_, yaw);
+	up_ = Math::transform(up_, yaw);
 	//Compute camera forward/right from these vectors
 	//Forward owner.position - (owner.position + offset) = -offset
-	vector3 forward = -1.0f * offset_;
-	forward.Normalize();
-	vector3 right = vector3::Cross(up_, forward);
-	right.Normalize();
+	Vector3 forward = -1.0f * offset_;
+	forward.normalize();
+	Vector3 right = Math::cross(up_, forward);
+	right.normalize();
 	//Create quaternion for pitch about camera right
-	quaternion pitch(right, pitchSpeed_ * deltaTime);
+	Quaternion pitch(right, pitchSpeed_ * deltaTime);
 	//Transform camera offset and up by pitch
-	offset_ = vector3::Transform(offset_, pitch);
-	up_ = vector3::Transform(up_, pitch);
+	offset_ = Math::transform(offset_, pitch);
+	up_ = Math::transform(up_, pitch);
 	//Compute transform matrix
-	vector3 target = owner_->position();
-	vector3 cameraPos = target + offset_;
-	matrix4 view = matrix4::CreateLookAt(cameraPos, target, up_);
+	Vector3 target = owner_->position();
+	Vector3 cameraPos = target + offset_;
+	Matrix4x4 view = Math::lookAt(cameraPos, target, up_);
 	setViewMatrix(view);
 }

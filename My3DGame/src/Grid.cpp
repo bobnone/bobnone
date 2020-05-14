@@ -25,7 +25,7 @@ Grid::Grid(class Game* game):Actor(game), selectedTile_(nullptr)
 		for(size_t j = 0; j < NumCols; j++)
 		{
 			tiles_[i][j] = new Tile(game);
-			tiles_[i][j]->setPosition(vector3(TileSize/2.0f + j * TileSize, StartY + i * TileSize, 0));
+			tiles_[i][j]->setPosition(Vector3(TileSize/2.0f + j * TileSize, StartY + i * TileSize, 0));
 		}
 	}
 	//Set start/end tiles
@@ -119,7 +119,7 @@ bool Grid::findPath(Tile* start, Tile* goal)
 				{
 					//Not in the open set, so set parent
 					neighbor->parent_ = current;
-					neighbor->h_ = (neighbor->position() - goal->position()).Length();
+					neighbor->h_ = (neighbor->position() - goal->position()).length();
 					//g(x) is the parent's g plus cost of traversing edge
 					neighbor->g_ = current->g_ + TileSize;
 					neighbor->f_ = neighbor->g_ + neighbor->h_;

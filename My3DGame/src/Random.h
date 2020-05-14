@@ -7,7 +7,7 @@
 
 #pragma  once
 #include <random>
-#include "Math.h"
+#include "Math/Math.h"
 
 class Random
 {
@@ -23,8 +23,8 @@ public:
 	//Get an int from the specified range
 	static int getIntRange(int min, int max);
 	//Get a random vector given the min/max bounds
-	static vector2 getVector(const vector2& min, const vector2& max);
-	static vector3 getVector(const vector3& min, const vector3& max);
+	static Vector2 getVector(const Vector2& min, const Vector2& max);
+	static Vector3 getVector(const Vector3& min, const Vector3& max);
 private:
 	static std::mt19937 sGenerator;
 };

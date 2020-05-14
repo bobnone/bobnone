@@ -30,17 +30,17 @@ void CameraActor::updateActor(float deltaTime)
 	Actor::updateActor(deltaTime);
 	//Play the footstep if we're moving and haven't recently
 	lastFootstep_ -= deltaTime;
-	if(!Math::NearZero(moveComp_->forwardSpeed()) && lastFootstep_ <= 0.0f)
+	if(!Math::nearZero(moveComp_->forwardSpeed()) && lastFootstep_ <= 0.0f)
 	{
 		footstep_.setPaused(false);
 		footstep_.restart();
 		lastFootstep_ = 0.5f;
 	}
 	// Compute new camera from this actor
-	cameraPos_ = position() - getForward() * 200.0f + vector3::UnitZ * 100.0f;
-	vector3 target = position() + getForward() * 100.0f;
-	vector3 up = vector3::UnitZ;
-	matrix4 view = matrix4::CreateLookAt(cameraPos_, target, up);
+	cameraPos_ = position() - getForward() * 200.0f + Vector3::UNIT_Z * 100.0f;
+	Vector3 target = position() + getForward() * 100.0f;
+	Vector3 up = Vector3::UNIT_Z;
+	Matrix4x4 view = Math::lookAt(cameraPos_, target, up);
 	game()->renderer()->setViewMatrix(view);
 	game()->audioSystem()->setListener(this, view, position_);
 }
@@ -59,11 +59,11 @@ void CameraActor::actorInput(const uint8_t* keys)
 	}
 	if (keys[SDL_SCANCODE_A])
 	{
-		angularSpeed -= Math::TwoPi;
+		angularSpeed -= Math::TWO_PI;
 	}
 	if (keys[SDL_SCANCODE_D])
 	{
-		angularSpeed += Math::TwoPi;
+		angularSpeed += Math::TWO_PI;
 	}
 	moveComp_->setForwardSpeed(forwardSpeed);
 	moveComp_->setAngularXSpeed(angularSpeed);

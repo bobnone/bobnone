@@ -15,9 +15,9 @@
 Asteroid::Asteroid(Game* game):Actor(game),circle_(nullptr)
 {
 	// Initialize to random position/orientation
-	vector2 randPos = Random::getVector(vector2(-512.0f, -384.0f), vector2(512.0f, 384.0f));
+	Vector2 randPos = Random::getVector(Vector2(-512.0f, -384.0f), Vector2(512.0f, 384.0f));
 	setPosition(randPos);
-	setRotation(Random::getFloatRange(0.0f, Math::TwoPi));
+	setRotation(Random::getFloatRange(0.0f, Math::TWO_PI));
 	// Create a sprite component
 	SpriteComponent* sc = new SpriteComponent(this);
 	sc->setTexture(game->renderer()->getTexture("Assets/Asteroid.png"));

@@ -96,8 +96,8 @@ void SkeletalMeshComponent::saveProperties(rapidjson::Document::AllocatorType& a
 }
 void SkeletalMeshComponent::computeMatrixPalette()
 {
-	const std::vector<matrix4>& globalInvBindPoses = skeleton_->globalInvBindPoses();
-	std::vector<matrix4> currentPoses;
+	const std::vector<Matrix4x4>& globalInvBindPoses = skeleton_->globalInvBindPoses();
+	std::vector<Matrix4x4> currentPoses;
 	animation_->getGlobalPoseAtTime(currentPoses, skeleton_, animTime_);
 	//Setup the palette for each bone
 	for(size_t i = 0; i < skeleton_->getNumBones(); i++)

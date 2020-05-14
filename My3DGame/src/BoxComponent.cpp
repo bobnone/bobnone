@@ -11,7 +11,7 @@
 #include "Physics.h"
 #include "JsonHelper.h"
 
-BoxComponent::BoxComponent(Actor* owner, int updateOrder):Component(owner, updateOrder), objectBox_(vector3::Zero, vector3::Zero), worldBox_(vector3::Zero, vector3::Zero), shouldRotate_(true)
+BoxComponent::BoxComponent(Actor* owner, int updateOrder):Component(owner, updateOrder), objectBox_(Vector3(), Vector3()), worldBox_(Vector3(), Vector3()), shouldRotate_(true)
 {
 	owner->game()->physics()->addBox(this);
 }

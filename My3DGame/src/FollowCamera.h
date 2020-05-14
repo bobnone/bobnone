@@ -38,13 +38,13 @@ public:
 	void loadProperties(const rapidjson::Value& inObj) override;
 	void saveProperties(rapidjson::Document::AllocatorType& alloc, rapidjson::Value& inObj) const override;
 private:
-	void setViewMatrix(const matrix4& view) override;
-	vector3 getVirtualPosition();
-	vector3 computeCameraPos() const;
+	void setViewMatrix(const Matrix4x4& view) override;
+	Vector3 getVirtualPosition();
+	Vector3 computeCameraPos() const;
 	//Actual position of camera
-	vector3 actualPos_;
+	Vector3 actualPos_;
 	//Velocity of actual camera
-	vector3 velocity_;
+	Vector3 velocity_;
 	//Horizontal follow distance
 	float horzDist_;
 	//Vertical follow distance

@@ -12,11 +12,11 @@
 DialogBox::DialogBox(Game* game, const std::string& text, std::function<void()> onOK): UIScreen(game)
 {
 	//Adjust positions for dialog box
-	bGPos_ = vector2(0.0f, 0.0f);
-	titlePos_ = vector2(0.0f, 100.0f);
-	nextButtonPos_ = vector2(0.0f, 0.0f);
+	bGPos_ = Vector2(0.0f, 0.0f);
+	titlePos_ = Vector2(0.0f, 100.0f);
+	nextButtonPos_ = Vector2(0.0f, 0.0f);
 	background_ = game->renderer()->getTexture("Assets/DialogBG.png");
-	setTitle(text, vector3::Zero, 30);
+	setTitle(text, Vector3(), 30);
 	addButton("OKButton", [onOK]() {
 		onOK();
 	});

@@ -92,7 +92,7 @@ bool Animation::load(const std::string& fileName)
 	}
 	return true;
 }
-void Animation::getGlobalPoseAtTime(std::vector<matrix4>& outPoses, const Skeleton* inSkeleton, float inTime) const
+void Animation::getGlobalPoseAtTime(std::vector<Matrix4x4>& outPoses, const Skeleton* inSkeleton, float inTime) const
 {
 	if(outPoses.size() != numBones_)
 	{
@@ -113,13 +113,13 @@ void Animation::getGlobalPoseAtTime(std::vector<matrix4>& outPoses, const Skelet
 	}
 	else
 	{
-		outPoses[0] = matrix4();
+		outPoses[0] = Matrix4x4();
 	}
 	const std::vector<Skeleton::Bone>& bones = inSkeleton->bones();
 	//Now setup the poses for the rest
 	for(size_t bone = 1; bone < numBones_; bone++)
 	{
-		matrix4 localMat; //(Defaults to identity)
+		Matrix4x4 localMat; //(Defaults to identity)
 		if (tracks_[bone].size() > 0)
 		{
 			BoneTransform interp = BoneTransform::interpolate(tracks_[bone][frame], tracks_[bone][nextFrame], pct);

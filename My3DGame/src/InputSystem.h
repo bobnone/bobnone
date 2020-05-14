@@ -9,7 +9,7 @@
 #include <SDL/SDL_scancode.h>
 #include <SDL/SDL_gamecontroller.h>
 #include <SDL/SDL_mouse.h>
-#include "Math.h"
+#include "Math/Math.h"
 
 //The different button states
 enum ButtonState
@@ -42,11 +42,11 @@ public:
 	friend class InputSystem;
 
 	//For mouse position
-	const vector2& getPosition() const
+	const Vector2& getPosition() const
 	{
 		return mousePos_;
 	}
-	const vector2& scrollWheel() const
+	const Vector2& scrollWheel() const
 	{
 		return scrollWheel_;
 	}
@@ -59,9 +59,9 @@ public:
 	ButtonState getButtonState(int button) const;
 private:
 	//Store current mouse position
-	vector2 mousePos_;
+	Vector2 mousePos_;
 	//Motion of scroll wheel
-	vector2 scrollWheel_;
+	Vector2 scrollWheel_;
 	//Store button data
 	Uint32 currButtons_;
 	Uint32 prevButtons_;
@@ -77,11 +77,11 @@ public:
 	//For buttons
 	bool getButtonValue(SDL_GameControllerButton button) const;
 	ButtonState getButtonState(SDL_GameControllerButton button) const;
-	const vector2& leftStick() const
+	const Vector2& leftStick() const
 	{
 		return leftStick_;
 	}
-	const vector2& rightStick() const
+	const Vector2& rightStick() const
 	{
 		return rightStick_;
 	}
@@ -102,8 +102,8 @@ private:
 	Uint8 currButtons_[SDL_CONTROLLER_BUTTON_MAX];
 	Uint8 prevButtons_[SDL_CONTROLLER_BUTTON_MAX];
 	//Left/right sticks
-	vector2 leftStick_;
-	vector2 rightStick_;
+	Vector2 leftStick_;
+	Vector2 rightStick_;
 	//Left/right trigger
 	float leftTrigger_;
 	float rightTrigger_;
@@ -135,7 +135,7 @@ public:
 	void setRelativeMouseMode(bool value);
 private:
 	float filter1D(int input);
-	vector2 filter2D(int inputX, int inputY);
+	Vector2 filter2D(int inputX, int inputY);
 	InputState state_;
 	SDL_GameController* controller_;
 };

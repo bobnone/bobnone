@@ -31,9 +31,9 @@ public:
 	}
 private:
 	//Offset from target
-	vector3 offset_;
+	Vector3 offset_;
 	//Up vector of camera
-	vector3 up_;
+	Vector3 up_;
 	//Rotation/sec speed of pitch
 	float pitchSpeed_;
 	//Rotation/sec speed of yaw

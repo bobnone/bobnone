@@ -46,7 +46,7 @@ void BGSpriteComponent::draw(SDL_Renderer* renderer)
 void BGSpriteComponent::setBGTextures(const std::vector<SDL_Texture*>& textures)
 {
 	int count = 0;
-	for (auto tex : textures)
+	for(auto tex : textures)
 	{
 		BGTexture temp;
 		temp.texture_ = tex;

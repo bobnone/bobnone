@@ -6,7 +6,6 @@
 //----------------------------------------------------------------
 
 #include "AnimatedSpriteComponent.h"
-#include "Math.h"
 
 AnimatedSpriteComponent::AnimatedSpriteComponent(Actor* owner, int drawOrder):SpriteComponent(owner, drawOrder), currentFrame_(0.0f), FPS_(24.0f)
 {

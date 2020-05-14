@@ -483,7 +483,7 @@ void Renderer::unlinkMeshes(std::vector<MeshComponent*>* meshVector)
 		meshShaders_.erase(it);
 	}
 }
-void Renderer::draw3DScene(unsigned int framebuffer, const matrix4& view, const matrix4& proj, bool lit)
+void Renderer::draw3DScene(unsigned int framebuffer, const Matrix4x4& view, const Matrix4x4& proj, bool lit)
 {
 	//Set the current frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -602,7 +602,7 @@ bool Renderer::loadShaders()
 		return false;
 	}
 	//Set the view-projection matrix
-	matrix4 spriteViewProj = matrix4::CreateSimpleViewProj(screenWidth_, screenHeight_);
+	Matrix4x4 spriteViewProj = Math::createSimpleViewProjectionMatrix(screenWidth_, screenHeight_);
 	currentShader_->setMatrixUniform("uViewProj", spriteViewProj);
 	//Create basic mesh shader
 	currentShader_ = createShader("Mesh", "Shaders/Phong.vert", "Shaders/GBufferWrite.frag");
@@ -611,8 +611,8 @@ bool Renderer::loadShaders()
 		return false;
 	}
 	//Set the view-projection matrix
-	view_ = matrix4::CreateLookAt(vector3::Zero, vector3::UnitZ, vector3::UnitY);
-	projection_ = matrix4::CreatePerspectiveFOV(Math::ToRadians(70.0f), screenWidth_, screenHeight_, 10.0f, 10000.0f);
+	view_ = Math::lookAt(Vector3(), Vector3::UNIT_Z, Vector3::UNIT_Y);
+	projection_ = Math::perspectiveFOV(Math::toRadians(70.0f), screenWidth_, screenHeight_, 10.0f, 10000.0f);
 	currentShader_->setMatrixUniform("uViewProj", view_ * projection_);
 	//Create skinned shader
 	currentShader_ = createShader("Skinned", "Shaders/Skinned.vert", "Shaders/GBufferWrite.frag");
@@ -634,7 +634,7 @@ bool Renderer::loadShaders()
 	//The view projection is just the sprite one
 	currentShader_->setMatrixUniform("uViewProj", spriteViewProj);
 	//The world transform scales to the screen and flips y
-	matrix4 gbufferWorld = matrix4::CreateScale(screenWidth_, -screenHeight_, 1.0f);
+	Matrix4x4 gbufferWorld = Math::createScaleMatrix(screenWidth_, -screenHeight_, 1.0f);
 	currentShader_->setMatrixUniform("uWorldTransform", gbufferWorld);
 	//Create a shader for point lights from GBuffer
 	currentShader_ = createShader("PointLight","Shaders/BasicMesh.vert", "Shaders/GBufferPointLight.frag");
@@ -646,7 +646,7 @@ bool Renderer::loadShaders()
 	currentShader_->setIntUniform("uGTexColor", 0);
 	currentShader_->setIntUniform("uGNormal", 1);
 	currentShader_->setIntUniform("uGWorldPos", 2);
-	currentShader_->setVector2Uniform("uScreenDimensions", vector2(screenWidth_, screenHeight_));
+	currentShader_->setVector2Uniform("uScreenDimensions", Vector2(screenWidth_, screenHeight_));
 	return true;
 }
 void Renderer::createSpriteVerts()
@@ -663,12 +663,12 @@ void Renderer::createSpriteVerts()
 	};
 	spriteVerts_ = new VertexArray(vertices, 4, VertexArray::PosNormTexRGB, indices, 6);
 }
-void Renderer::setLightUniforms(Shader* shader, const matrix4& view)
+void Renderer::setLightUniforms(Shader* shader, const Matrix4x4& view)
 {
 	//Camera position is from inverted view
-	matrix4 invView = view;
-	invView.Invert();
-	shader->setVectorUniform("uCameraPos", invView.GetTranslation());
+	Matrix4x4 invView = view;
+	invView.invert();
+	shader->setVectorUniform("uCameraPos", invView.getTranslation());
 	//Ambient light
 	shader->setVectorUniform("uAmbientLight", ambientLight_);
 	//Directional light
@@ -676,26 +676,26 @@ void Renderer::setLightUniforms(Shader* shader, const matrix4& view)
 	shader->setVectorUniform("uDirLight.diffuseColor_", dirLight_.diffuseColor_);
 	shader->setVectorUniform("uDirLight.specularColor_", dirLight_.specularColor_);
 }
-vector3 Renderer::unproject(const vector3& screenPoint) const
+Vector3 Renderer::unproject(const Vector3& screenPoint) const
 {
 	//Convert screenPoint to device coordinates (between -1 and +1)
-	vector3 deviceCoord = screenPoint;
+	Vector3 deviceCoord = screenPoint;
 	deviceCoord.x /= (screenWidth_) * 0.5f;
 	deviceCoord.y /= (screenHeight_) * 0.5f;
 	//Transform vector by unprojection matrix
-	matrix4 unprojection = view_ * projection_;
-	unprojection.Invert();
-	return vector3::TransformWithPerspDiv(deviceCoord, unprojection);
+	Matrix4x4 unprojection = view_ * projection_;
+	unprojection.invert();
+	return Math::transformWithPerspDiv(deviceCoord, unprojection);
 }
-void Renderer::getScreenDirection(vector3& outStart, vector3& outDir) const
+void Renderer::getScreenDirection(Vector3& outStart, Vector3& outDir) const
 {
 	//Get start point (in center of screen on near plane)
-	vector3 screenPoint(0.0f, 0.0f, 0.0f);
+	Vector3 screenPoint(0.0f, 0.0f, 0.0f);
 	outStart = unproject(screenPoint);
 	//Get end point (in center of screen, between near and far)
 	screenPoint.z = 0.9f;
-	vector3 end = unproject(screenPoint);
+	Vector3 end = unproject(screenPoint);
 	//Get direction vector
 	outDir = end - outStart;
-	outDir.Normalize();
+	outDir.normalize();
 }

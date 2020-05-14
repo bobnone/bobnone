@@ -20,16 +20,16 @@ SplineActor::SplineActor(Game* game):Actor(game)
 	cameraComp_ = new SplineCamera(this);
 	//Create a spline
 	Spline path;
-	path.controlPoints_.emplace_back(vector3::Zero);
+	path.controlPoints_.emplace_back(Vector3());
 	for(int i = 0; i < 5; i++)
 	{
 		if(i % 2 == 0)
 		{
-			path.controlPoints_.emplace_back(vector3(300.0f * (i + 1), 300.0f, 300.0f));
+			path.controlPoints_.emplace_back(Vector3(300.0f * (i + 1), 300.0f, 300.0f));
 		}
 		else
 		{
-			path.controlPoints_.emplace_back(vector3(300.0f * (i + 1), 0.0f, 0.0f));
+			path.controlPoints_.emplace_back(Vector3(300.0f * (i + 1), 0.0f, 0.0f));
 		}
 	}
 	cameraComp_->setSpline(path);

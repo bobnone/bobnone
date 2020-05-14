@@ -37,7 +37,7 @@ public:
 		return fileName_;
 	}
 	//is >= 0.0f and <= mDuration
-	void getGlobalPoseAtTime(std::vector<matrix4>& outPoses, const class Skeleton* inSkeleton, float inTime) const;
+	void getGlobalPoseAtTime(std::vector<Matrix4x4>& outPoses, const class Skeleton* inSkeleton, float inTime) const;
 private:
 	//Number of bones for the animation
 	size_t numBones_;

@@ -127,7 +127,7 @@ void InputSystem::prepareForUpdate()
 	//Mouse
 	state_.Mouse.prevButtons_ = state_.Mouse.currButtons_;
 	state_.Mouse.isRelative_ = false;
-	state_.Mouse.scrollWheel_ = vector2::Zero;
+	state_.Mouse.scrollWheel_ = Vector2();
 	//Controller
 	memcpy(state_.Controller.prevButtons_, state_.Controller.currButtons_, SDL_CONTROLLER_BUTTON_MAX);
 }
@@ -167,7 +167,7 @@ void InputSystem::processEvent(SDL_Event& event)
 	switch(event.type)
 	{
 	case SDL_MOUSEWHEEL:
-		state_.Mouse.scrollWheel_ = vector2(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
+		state_.Mouse.scrollWheel_ = Vector2(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
 		break;
 	default:
 		break;
@@ -196,30 +196,30 @@ float InputSystem::filter1D(int input)
 		//Make sure sign matches original value
 		retVal = input > 0 ? retVal : -1.0f * retVal;
 		//Clamp between -1.0f and 1.0f
-		retVal = Math::Clamp(retVal, -1.0f, 1.0f);
+		retVal = Math::clamp(retVal, -1.0f, 1.0f);
 	}
 	return retVal;
 }
-vector2 InputSystem::filter2D(int inputX, int inputY)
+Vector2 InputSystem::filter2D(int inputX, int inputY)
 {
 	const float deadZone = 8000.0f;
 	const float maxValue = 30000.0f;
 	//Make into 2D vector
-	vector2 dir;
+	Vector2 dir;
 	dir.x = static_cast<float>(inputX);
 	dir.y = static_cast<float>(inputY);
-	float length = dir.Length();
+	float length = dir.length();
 	//If length < deadZone, should be no input
 	if(length < deadZone)
 	{
-		dir = vector2::Zero;
+		dir = Vector2();
 	}
 	else
 	{
 		//Calculate fractional value between dead zone and max value circles
 		float f = (length - deadZone) / (maxValue - deadZone);
 		//Clamp f between 0.0f and 1.0f
-		f = Math::Clamp(f, 0.0f, 1.0f);
+		f = Math::clamp(f, 0.0f, 1.0f);
 		//Normalize the vector, and then scale it to the fractional value
 		dir *= f / length;
 	}

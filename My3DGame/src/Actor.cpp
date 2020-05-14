@@ -10,7 +10,7 @@ const char* Actor::TypeNames[NUM_ACTOR_TYPES] = {
 	"TargetActor",
 };
 
-Actor::Actor(Game* game):state_(ACTOR_ACTIVE), position_(vector3::Zero), oldPosition_(vector3::Zero), velocity_(vector3::Zero), oldVelocity_(vector3::Zero), acceleration_(vector3::Zero), rotation_(quaternion()), scale_(1.0f), game_(game), recomputeTransform_(true), moving_(false)
+Actor::Actor(Game* game):state_(ACTOR_ACTIVE), position_(Vector3()), oldPosition_(Vector3()), velocity_(Vector3()), oldVelocity_(Vector3()), acceleration_(Vector3()), rotation_(Quaternion()), scale_(1.0f), game_(game), recomputeTransform_(true), moving_(false)
 {
 	game_->addActor(this);
 }
@@ -35,14 +35,14 @@ void Actor::update(float deltaTime)
 			{
 				//Calculate velocity
 				//Note: velocity = (change in position)/time
-				vector3 positionChange(oldPosition_.x - position_.x, oldPosition_.y - position_.y, oldPosition_.z - position_.z);
+				Vector3 positionChange(oldPosition_.x - position_.x, oldPosition_.y - position_.y, oldPosition_.z - position_.z);
 				velocity_.x = positionChange.x / deltaTime;
 				velocity_.y = positionChange.y / deltaTime;
 				velocity_.z = positionChange.z / deltaTime;
 				oldPosition_ = position_;
 				//Calculate acceleration
 				//Note: acceleration = (change in velocity)/time
-				vector3 velocityChange(oldVelocity_.x - velocity_.x, oldVelocity_.y - velocity_.y, oldVelocity_.z - velocity_.z);
+				Vector3 velocityChange(oldVelocity_.x - velocity_.x, oldVelocity_.y - velocity_.y, oldVelocity_.z - velocity_.z);
 				acceleration_.x = velocityChange.x / deltaTime;
 				acceleration_.y = velocityChange.y / deltaTime;
 				acceleration_.z = velocityChange.z / deltaTime;
@@ -90,36 +90,36 @@ void Actor::computeWorldTransform()
 {
 	recomputeTransform_ = false;
 	//Scale, then rotate, then translate
-	worldTransform_ = matrix4::CreateScale(scale_);
-	worldTransform_ *= matrix4::CreateFromQuaternion(rotation_);
-	worldTransform_ *= matrix4::CreateTranslation(position_);
+	worldTransform_ = Matrix4::createScale(scale_);
+	worldTransform_ *= Matrix4::fromQuaternion(rotation_);
+	worldTransform_ *= Matrix4::createTranslation(position_);
 	//Inform components world transform updated
 	for(auto comp : components_)
 	{
 		comp->onUpdateWorldTransform();
 	}
 }
-void Actor::rotateToNewForward(const vector3& forward)
+void Actor::rotateToNewForward(const Vector3& forward)
 {
 	//Figure out difference between original (unit x) and new
-	float dot = vector3::Dot(vector3::UnitX, forward);
-	float angle = Math::Acos(dot);
+	float dot = Vector3::dot(Vector3::UNIT_X, forward);
+	float angle = Math::acos(dot);
 	//Facing down X
 	if(dot > 0.9999f)
 	{
-		setRotation(quaternion());
+		setRotation(Quaternion());
 	}
 	//Facing down -X
 	else if (dot < -0.9999f)
 	{
-		setRotation(quaternion(vector3::UnitZ, Math::Pi));
+		setRotation(Quaternion(Vector3::UNIT_Z, Math::PI));
 	}
 	else
 	{
 		//Rotate about axis from cross product
-		vector3 axis = vector3::Cross(vector3::UnitX, forward);
-		axis.Normalize();
-		setRotation(quaternion(axis, angle));
+		Vector3 axis = Vector3::cross(Vector3::UNIT_X, forward);
+		axis.normalize();
+		setRotation(Quaternion(axis, angle));
 	}
 }
 void Actor::addComponent(Component* component)

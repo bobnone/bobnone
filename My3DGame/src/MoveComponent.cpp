@@ -8,42 +8,42 @@ MoveComponent::MoveComponent(class Actor* owner, int updateOrder):Component(owne
 }
 void MoveComponent::update(float deltaTime)
 {
-	if(!Math::NearZero(angularXSpeed_))
+	if(!Math::nearZero(angularXSpeed_))
 	{
-		quaternion rot = owner_->rotation();
+		Quaternion rot = owner_->rotation();
 		float angle = angularXSpeed_ * deltaTime;
 		//Create quaternion for incremental rotation
 		//(Rotate about up axis)
-		quaternion inc(vector3::UnitX, angle);
+		Quaternion inc(Vector3::UNIT_X, angle);
 		//Concatenate old and new quaternion
-		rot = quaternion::Concatenate(rot, inc);
+		rot = Quaternion::concatenate(rot, inc);
 		owner_->setRotation(rot);
 	}
-	if(!Math::NearZero(angularYSpeed_))
+	if(!Math::nearZero(angularYSpeed_))
 	{
-		quaternion rot = owner_->rotation();
+		Quaternion rot = owner_->rotation();
 		float angle = angularYSpeed_ * deltaTime;
 		//Create quaternion for incremental rotation
 		//(Rotate about up axis)
-		quaternion inc(vector3::UnitY, angle);
+		Quaternion inc(Vector3::UNIT_Y, angle);
 		//Concatenate old and new quaternion
-		rot = quaternion::Concatenate(rot, inc);
+		rot = Quaternion::concatenate(rot, inc);
 		owner_->setRotation(rot);
 	}
-	if(!Math::NearZero(angularZSpeed_))
+	if(!Math::nearZero(angularZSpeed_))
 	{
-		quaternion rot = owner_->rotation();
+		Quaternion rot = owner_->rotation();
 		float angle = angularZSpeed_ * deltaTime;
 		//Create quaternion for incremental rotation
 		//(Rotate about up axis)
-		quaternion inc(vector3::UnitZ, angle);
+		Quaternion inc(Vector3::UNIT_Z, angle);
 		//Concatenate old and new quaternion
-		rot = quaternion::Concatenate(rot, inc);
+		rot = Quaternion::concatenate(rot, inc);
 		owner_->setRotation(rot);
 	}
-	if(!Math::NearZero(forwardSpeed_) || !Math::NearZero(strafeSpeed_) || !Math::NearZero(jumpSpeed_))
+	if(!Math::nearZero(forwardSpeed_) || !Math::nearZero(strafeSpeed_) || !Math::nearZero(jumpSpeed_))
 	{
-		vector3 pos = owner_->position();
+		Vector3 pos = owner_->position();
 		pos += owner_->getForward() * forwardSpeed_ * deltaTime;
 		pos += owner_->getRight() * strafeSpeed_ * deltaTime;
 		pos += owner_->getUp() * jumpSpeed_ * deltaTime;

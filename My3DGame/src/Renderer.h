@@ -16,11 +16,11 @@
 struct DirectionalLight
 {
 	//Direction of light
-	vector3 direction_;
+	Vector3 direction_;
 	//Diffuse color
-	vector3 diffuseColor_;
+	Vector3 diffuseColor_;
 	//Specular color
-	vector3 specularColor_;
+	Vector3 specularColor_;
 };
 class Renderer
 {
@@ -64,15 +64,15 @@ public:
 	void unlinkShader(class Shader* shader);
 	void unlinkMesh(class MeshComponent* mesh);
 	void unlinkMeshes(std::vector<class MeshComponent*>* meshVector);
-	void setViewMatrix(const matrix4& view)
+	void setViewMatrix(const Matrix4& view)
 	{
 		view_ = view;
 	}
-	const vector3& ambientLight() const
+	const Vector3& ambientLight() const
 	{
 		return ambientLight_;
 	}
-	void setAmbientLight(const vector3& ambient)
+	void setAmbientLight(const Vector3& ambient)
 	{
 		ambientLight_ = ambient;
 	}
@@ -90,9 +90,9 @@ public:
 	// x = [-screenWidth/2, +screenWidth/2]
 	// y = [-screenHeight/2, +screenHeight/2]
 	// z = [0, 1) -- 0 is closer to camera, 1 is further
-	vector3 unproject(const vector3& screenPoint) const;
+	Vector3 unproject(const Vector3& screenPoint) const;
 	// Gets start point and direction of screen vector
-	void getScreenDirection(vector3& outStart, vector3& outDir) const;
+	void getScreenDirection(Vector3& outStart, Vector3& outDir) const;
 	float screenWidth() const
 	{
 		return screenWidth_;
@@ -101,7 +101,7 @@ public:
 	{
 		return screenHeight_;
 	}
-	void setMirrorView(const matrix4& view)
+	void setMirrorView(const Matrix4& view)
 	{
 		mirrorView_ = view;
 	}
@@ -114,12 +114,12 @@ public:
 		return gBuffer_;
 	}
 private:
-	void draw3DScene(unsigned int framebuffer, const matrix4& view, const matrix4& proj, bool lit = true);
+	void draw3DScene(unsigned int framebuffer, const Matrix4& view, const Matrix4& proj, bool lit = true);
 	bool createMirrorTarget();
 	void drawFromGBuffer();
 	bool loadShaders();
 	void createSpriteVerts();
-	void setLightUniforms(class Shader* shader, const matrix4& view);
+	void setLightUniforms(class Shader* shader, const Matrix4& view);
 	//Gets the requested shader and sets it as the active shader
 	void setShader(const std::string& name);
 	//Map of textures loaded
@@ -144,10 +144,10 @@ private:
 	//Sprite vertex array
 	class VertexArray* spriteVerts_;
 	//View/projection for 3D shaders
-	matrix4 view_;
-	matrix4 projection_;
+	Matrix4 view_;
+	Matrix4 projection_;
 	//Lighting data
-	vector3 ambientLight_;
+	Vector3 ambientLight_;
 	DirectionalLight dirLight_;
 	//Window
 	SDL_Window* window_;
@@ -158,7 +158,7 @@ private:
 	float screenHeight_;
 	unsigned int mirrorBuffer_;
 	class Texture* mirrorTexture_;
-	matrix4 mirrorView_;
+	Matrix4 mirrorView_;
 	class GBuffer* gBuffer_;
 	std::vector<class PointLightComponent*> pointLights_;
 	class Mesh* pointLightMesh_;

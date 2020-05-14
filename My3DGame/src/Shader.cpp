@@ -52,30 +52,30 @@ void Shader::setActive()
 	//Set this program as the active one
 	glUseProgram(shaderProgram_);
 }
-void Shader::setMatrixUniform(const char* name, const matrix4& matrix)
+void Shader::setMatrixUniform(const char* name, const Matrix4& matrix)
 {
 	//Find the uniform by this name
 	GLuint loc = glGetUniformLocation(shaderProgram_, name);
 	//Send the matrix data to the uniform
-	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.GetAsFloatPtr());
+	glUniformMatrix4fv(loc, 1, GL_TRUE, matrix.getAsFloatPtr());
 }
-void Shader::setMatrixUniforms(const char* name, matrix4* matrices, unsigned count)
+void Shader::setMatrixUniforms(const char* name, Matrix4* matrices, unsigned count)
 {
 	GLuint loc = glGetUniformLocation(shaderProgram_, name);
 	//Send the matrix data to the uniform
-	glUniformMatrix4fv(loc, count, GL_TRUE, matrices->GetAsFloatPtr());
+	glUniformMatrix4fv(loc, count, GL_TRUE, matrices->getAsFloatPtr());
 }
-void Shader::setVectorUniform(const char* name, const vector3& vector)
+void Shader::setVectorUniform(const char* name, const Vector3& vector)
 {
 	GLuint loc = glGetUniformLocation(shaderProgram_, name);
 	//Send the vector data
-	glUniform3fv(loc, 1, vector.GetAsFloatPtr());
+	glUniform3fv(loc, 1, vector.getAsFloatPtr());
 }
-void Shader::setVector2Uniform(const char* name, const vector2& vector)
+void Shader::setVector2Uniform(const char* name, const Vector2& vector)
 {
 	GLuint loc = glGetUniformLocation(shaderProgram_, name);
 	//Send the vector data
-	glUniform2fv(loc, 1, vector.GetAsFloatPtr());
+	glUniform2fv(loc, 1, vector.getAsFloatPtr());
 }
 void Shader::setFloatUniform(const char* name, float value)
 {

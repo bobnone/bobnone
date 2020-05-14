@@ -12,12 +12,12 @@ public:
 	void update(float deltaTime);
 	void processInput(SDL_Event* event);
 	//Returns the mouse's position vector
-	vector2 position()
+	Vector2 position()
 	{
 		return position_;
 	}
 	//Returns a vector representing the change in position
-	vector2 getPositionChange()
+	Vector2 getPositionChange()
 	{
 		return change_;
 	}
@@ -35,9 +35,9 @@ public:
 	}
 private:
 	class Game* game_;
-	vector2 position_;
-	vector2 old_;
-	vector2 change_;
+	Vector2 position_;
+	Vector2 old_;
+	Vector2 change_;
 	bool relative_;
 	bool clicked_;
 };

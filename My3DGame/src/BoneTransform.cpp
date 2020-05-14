@@ -7,16 +7,16 @@
 
 #include "BoneTransform.h"
 
-matrix4 BoneTransform::toMatrix() const
+Matrix4 BoneTransform::toMatrix() const
 {
-	matrix4 rot = matrix4::CreateFromQuaternion(rotation_);
-	matrix4 trans = matrix4::CreateTranslation(translation_);
+	Matrix4 rot = Matrix4::fromQuaternion(rotation_);
+	Matrix4 trans = Matrix4::createTranslation(translation_);
 	return rot * trans;
 }
 BoneTransform BoneTransform::interpolate(const BoneTransform& a, const BoneTransform& b, float f)
 {
 	BoneTransform retVal;
-	retVal.rotation_ = quaternion::Slerp(a.rotation_, b.rotation_, f);
-	retVal.translation_ = vector3::Lerp(a.translation_, b.translation_, f);
+	retVal.rotation_ =Quaternion::slerp(a.rotation_, b.rotation_, f);
+	retVal.translation_ = Vector3::lerp(a.translation_, b.translation_, f);
 	return retVal;
 }

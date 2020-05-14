@@ -15,7 +15,7 @@ public:
 		BUTTON_HOVER,
 		BUTTON_CLICKED
 	};
-	Button(const std::string& name, class Game* game, class Font* font, std::function<void()> onClick, const vector2& pos);
+	Button(const std::string& name, class Game* game, class Font* font, std::function<void()> onClick, const Vector2& pos);
 	~Button();
 	//Getters/setters
 	class Texture* getNameTexture()
@@ -23,11 +23,11 @@ public:
 		return texture_;
 	}
 	class Texture* getButtonTexure();
-	const vector2& position() const
+	const Vector2& position() const
 	{
 		return position_;
 	}
-	const vector2& dimensions() const
+	const Vector2& dimensions() const
 	{
 		return dimensions_;
 	}
@@ -51,9 +51,9 @@ public:
 		return state_ == BUTTON_CLICKED;
 	}
 	//Handles mouse positions
-	void processInput(const vector2& mousePos);
+	void processInput(const Vector2& mousePos);
 	//Returns true if the point is within the button's bounds
-	bool containsPoint(const vector2& pt) const;
+	bool containsPoint(const Vector2& pt) const;
 	//Called when button is clicked
 	void onClick();
 private:
@@ -64,8 +64,8 @@ private:
 	class Texture* buttonHover_;
 	class Texture* buttonClicked_;
 	class Font* font_;
-	vector2 position_;
-	vector2 dimensions_;
+	Vector2 position_;
+	Vector2 dimensions_;
 	ButtonState state_;
 	//Set the name of the button
 	void setName(const std::string& name);

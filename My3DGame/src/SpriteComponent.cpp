@@ -27,8 +27,8 @@ void SpriteComponent::draw(Shader* shader)
 	if(texture_)
 	{
 		//Scale the quad by the width/height of texture
-		matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(texWidth_), static_cast<float>(texHeight_), 1.0f);
-		matrix4 world = scaleMat * owner_->worldTransform();
+		Matrix4 scaleMat = Matrix4::createScale(static_cast<float>(texWidth_), static_cast<float>(texHeight_), 1.0f);
+		Matrix4 world = scaleMat * owner_->worldTransform();
 		//Since all sprites use the same shader/vertices,
 		//the game first sets them active before any sprite draws
 		//Set world transform

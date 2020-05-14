@@ -71,7 +71,7 @@ void UIScreen::close()
 {
 	state_ = UI_CLOSING;
 }
-void UIScreen::setTitle(const std::string& text, const vector3& color, int pointSize)
+void UIScreen::setTitle(const std::string& text, const Vector3& color, int pointSize)
 {
 	//Clear out previous title texture if it exists
 	if(title_)
@@ -90,7 +90,7 @@ void UIScreen::addButton(const std::string& name, std::function<void()> onClick)
 	//Move down by height of button plus padding
 	nextButtonPos_.y -= b->dimensions().y + 20.0f;
 }
-void UIScreen::drawTexture(Shader* shader, Texture* texture, const vector2& offset, float scale, bool flipY)
+void UIScreen::drawTexture(Shader* shader, Texture* texture, const Vector2& offset, float scale, bool flipY)
 {
 	//Scale the quad by the width/height of texture
 	//and flip the y if we need to
@@ -99,11 +99,11 @@ void UIScreen::drawTexture(Shader* shader, Texture* texture, const vector2& offs
 	{
 		yScale *= -1.0f;
 	}
-	matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(texture->getWidth()) * scale, yScale, 1.0f);
+	Matrix4 scaleMat = Matrix4::createScale(static_cast<float>(texture->getWidth()) * scale, yScale, 1.0f);
 	//Translate to position on screen
-	matrix4 transMat = matrix4::CreateTranslation(vector3(offset.x, offset.y, 0.0f));
+	Matrix4 transMat = Matrix4::createTranslation(Vector3(offset.x, offset.y, 0.0f));
 	//Set world transform
-	matrix4 world = scaleMat * transMat;
+	Matrix4 world = scaleMat * transMat;
 	shader->setMatrixUniform("uWorldTransform", world);
 	//Set current texture
 	texture->setActive();

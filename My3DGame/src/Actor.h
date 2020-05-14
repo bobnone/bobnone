@@ -42,20 +42,20 @@ public:
 	//Any actor-specific input code (overridable)
 	virtual void actorInput(const uint8_t* keyState);
 	//Getters/setters
-	const vector3& position() const
+	const Vector3& position() const
 	{
 		return position_;
 	}
-	void setPosition(const vector3& position)
+	void setPosition(const Vector3& position)
 	{
 		position_ = position;
 		recomputeTransform_ = true;
 	}
-	const vector3& velocity() const
+	const Vector3& velocity() const
 	{
 		return velocity_;
 	}
-	const vector3& acceleration() const
+	const Vector3& acceleration() const
 	{
 		return acceleration_;
 	}
@@ -72,33 +72,33 @@ public:
 		scale_ = scale;
 		recomputeTransform_ = true;
 	}
-	const quaternion& rotation() const
+	const Quaternion& rotation() const
 	{
 		return rotation_;
 	}
-	void setRotation(const quaternion& rotation)
+	void setRotation(const Quaternion& rotation)
 	{
 		rotation_ = rotation;
 		recomputeTransform_ = true;
 	}
 	void computeWorldTransform();
-	const matrix4& worldTransform() const
+	const Matrix4& worldTransform() const
 	{
 		return worldTransform_;
 	}
-	vector3 getRight() const
+	Vector3 getRight() const
 	{
-		return vector3::Transform(vector3::UnitY, rotation_);
+		return Vector3::transform(Vector3::UNIT_Y, rotation_);
 	}
-	vector3 getUp() const
+	Vector3 getUp() const
 	{
-		return vector3::Transform(vector3::UnitZ, rotation_);
+		return Vector3::transform(Vector3::UNIT_Z, rotation_);
 	}
-	vector3 getForward() const
+	Vector3 getForward() const
 	{
-		return vector3::Transform(vector3::UnitX, rotation_);
+		return Vector3::transform(Vector3::UNIT_X, rotation_);
 	}
-	void rotateToNewForward(const vector3& forward);
+	void rotateToNewForward(const Vector3& forward);
 	ActorState state() const
 	{
 		return state_;
@@ -153,13 +153,13 @@ protected:
 	//Actor's state
 	ActorState state_;
 	//Transform
-	matrix4 worldTransform_;
-	vector3 position_;
-	vector3 oldPosition_;
-	vector3 velocity_;
-	vector3 oldVelocity_;
-	vector3 acceleration_;
-	quaternion rotation_;
+	Matrix4 worldTransform_;
+	Vector3 position_;
+	Vector3 oldPosition_;
+	Vector3 velocity_;
+	Vector3 oldVelocity_;
+	Vector3 acceleration_;
+	Quaternion rotation_;
 	float scale_;
 	bool recomputeTransform_;
 	bool moving_;

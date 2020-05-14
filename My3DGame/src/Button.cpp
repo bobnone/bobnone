@@ -2,13 +2,13 @@
 #include "Texture.h"
 #include "Font.h"
 
-Button::Button(const std::string& name, Game* game, Font* font, std::function<void()> onClick, const vector2& pos):f_onClick_(onClick), texture_(nullptr), font_(font), position_(pos), state_(BUTTON_NORMAL)
+Button::Button(const std::string& name, Game* game, Font* font, std::function<void()> onClick, const Vector2& pos):f_onClick_(onClick), texture_(nullptr), font_(font), position_(pos), state_(BUTTON_NORMAL)
 {
 	setName(name);
 	buttonNormal_ = game->renderer()->getTexture("Assets/ButtonNormal.png");
 	buttonHover_ = game->renderer()->getTexture("Assets/ButtonHover.png");
 	buttonClicked_ = game->renderer()->getTexture("Assets/ButtonClicked.png");
-	dimensions_ = vector2(static_cast<float>(buttonNormal_->getWidth()), static_cast<float>(buttonNormal_->getHeight()));
+	dimensions_ = Vector2(static_cast<float>(buttonNormal_->getWidth()), static_cast<float>(buttonNormal_->getHeight()));
 }
 Button::~Button()
 {
@@ -20,7 +20,7 @@ Button::~Button()
 	}
 	//Note: mButtonNormal, mButtonHover, and mButtonClicked are pointers to Textures that get deleted by Renderer
 }
-void Button::processInput(const vector2& mousePos)
+void Button::processInput(const Vector2& mousePos)
 {
 	if(containsPoint(mousePos))
 	{
@@ -34,7 +34,7 @@ void Button::processInput(const vector2& mousePos)
 		state_ = BUTTON_NORMAL;
 	}
 }
-bool Button::containsPoint(const vector2& pt) const
+bool Button::containsPoint(const Vector2& pt) const
 {
 	return !(pt.x < (position_.x - dimensions_.x / 2.0f) || pt.x >(position_.x + dimensions_.x / 2.0f) || pt.y < (position_.y - dimensions_.y / 2.0f) || pt.y >(position_.y + dimensions_.y / 2.0f));
 }
@@ -61,11 +61,11 @@ void Button::draw(class Shader* shader)
 }
 void Button::drawTexture(class Shader* shader, class Texture* texture)
 {
-	matrix4 scaleMat = matrix4::CreateScale(static_cast<float>(texture->getWidth()), static_cast<float>(texture->getHeight()), 1.0f);
+	Matrix4 scaleMat = Matrix4::createScale(static_cast<float>(texture->getWidth()), static_cast<float>(texture->getHeight()), 1.0f);
 	//Translate to position on screen
-	matrix4 transMat = matrix4::CreateTranslation(vector3(position_, 0.0f));
+	Matrix4 transMat = Matrix4::createTranslation(Vector3(position_, 0.0f));
 	//Set world transform
-	matrix4 world = scaleMat * transMat;
+	Matrix4 world = scaleMat * transMat;
 	shader->setMatrixUniform("uWorldTransform", world);
 	//Set current texture
 	texture->setActive();

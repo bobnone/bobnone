@@ -35,7 +35,7 @@ public:
 	{
 		return bones_;
 	}
-	const std::vector<matrix4>& globalInvBindPoses() const
+	const std::vector<Matrix4>& globalInvBindPoses() const
 	{
 		return globalInvBindPoses_;
 	}
@@ -51,6 +51,6 @@ private:
 	//The bones in the skeleton
 	std::vector<Bone> bones_;
 	//The global inverse bind poses for each bone
-	std::vector<matrix4> globalInvBindPoses_;
+	std::vector<Matrix4> globalInvBindPoses_;
 	std::string fileName_;
 };

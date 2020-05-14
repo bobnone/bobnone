@@ -34,7 +34,7 @@ protected:
 	//All the target components in the game
 	std::vector<class TargetComponent*> targetComps_;
 	//2D offsets of blips relative to radar
-	std::vector<vector2> blips_;
+	std::vector<Vector2> blips_;
 	//Adjust range of radar and radius
 	float radarRange_;
 	float radarRadius_;

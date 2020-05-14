@@ -21,7 +21,7 @@ public:
 	bool load(const std::string& fileName);
 	void unload();
 	//Given string and this font, draw to a texture
-	class Texture* renderText(const std::string& textKey, const vector3& color = Color::White, int pointSize = 30);
+	class Texture* renderText(const std::string& textKey, const Vector3& color = Color::White, int pointSize = 30);
 private:
 	//Map of point sizes to font data
 	std::unordered_map<int, TTF_Font*> fontData_;

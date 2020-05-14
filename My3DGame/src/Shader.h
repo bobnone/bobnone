@@ -20,12 +20,12 @@ public:
 	//Set this as the active shader program
 	void setActive();
 	//Sets a Matrix uniform
-	void setMatrixUniform(const char* name, const matrix4& matrix);
+	void setMatrixUniform(const char* name, const Matrix4& matrix);
 	//Sets an array of matrix uniforms
-	void setMatrixUniforms(const char* name, matrix4* matrices, unsigned count);
+	void setMatrixUniforms(const char* name, Matrix4* matrices, unsigned count);
 	//Sets a Vector3 uniform
-	void setVectorUniform(const char* name, const vector3& vector);
-	void setVector2Uniform(const char* name, const vector2& vector);
+	void setVectorUniform(const char* name, const Vector3& vector);
+	void setVector2Uniform(const char* name, const Vector2& vector);
 	//Sets a float uniform
 	void setFloatUniform(const char* name, float value);
 	//Sets an integer uniform

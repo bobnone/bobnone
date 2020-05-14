@@ -7,92 +7,89 @@
 
 #include "Math.h"
 
-const vector2 vector2::Zero(0.0f, 0.0f);
-const vector2 vector2::UnitX(1.0f, 0.0f);
-const vector2 vector2::UnitY(0.0f, 1.0f);
-const vector2 vector2::NegUnitX(-1.0f, 0.0f);
-const vector2 vector2::NegUnitY(0.0f, -1.0f);
-const vector3 vector3::Zero(0.0f, 0.0f, 0.f);
-const vector3 vector3::UnitX(1.0f, 0.0f, 0.0f);
-const vector3 vector3::UnitY(0.0f, 1.0f, 0.0f);
-const vector3 vector3::UnitZ(0.0f, 0.0f, 1.0f);
-const vector3 vector3::NegUnitX(-1.0f, 0.0f, 0.0f);
-const vector3 vector3::NegUnitY(0.0f, -1.0f, 0.0f);
-const vector3 vector3::NegUnitZ(0.0f, 0.0f, -1.0f);
-const vector3 vector3::Infinity(Math::Infinity, Math::Infinity, Math::Infinity);
-const vector3 vector3::NegInfinity(Math::NegInfinity, Math::NegInfinity, Math::NegInfinity);
+const Vector2 Vector2::UNIT_X(1.0f, 0.0f);
+const Vector2 Vector2::UNIT_Y(0.0f, 1.0f);
+const Vector2 Vector2::NEGATIVE_UNIT_X(-1.0f, 0.0f);
+const Vector2 Vector2::NEGATIVE_UNIT_Y(0.0f, -1.0f);
+const Vector2 Vector2::INFINITE_VECTOR(Math::INFINITE_FLOAT);
+const Vector2 Vector2::NEGATIVE_INFINITE_VECTOR(Math::NEGATIVE_INFINITE_FLOAT);
+const Vector3 Vector3::UNIT_X(1.0f, 0.0f, 0.0f);
+const Vector3 Vector3::UNIT_Y(0.0f, 1.0f, 0.0f);
+const Vector3 Vector3::UNIT_Z(0.0f, 0.0f, 1.0f);
+const Vector3 Vector3::NEGATIVE_UNIT_X(-1.0f, 0.0f, 0.0f);
+const Vector3 Vector3::NEGATIVE_UNIT_Y(0.0f, -1.0f, 0.0f);
+const Vector3 Vector3::NEGATIVE_UNIT_Z(0.0f, 0.0f, -1.0f);
+const Vector3 Vector3::INFINITE_VECTOR(Math::INFINITE_FLOAT);
+const Vector3 Vector3::NEGATIVE_INFINITE_VECTOR(Math::NEGATIVE_INFINITE_FLOAT);
 
-vector2 vector2::Transform(const vector2& v, const matrix3& m, float w /*= 1.0f*/)
+Vector2 Vector2::transform(const Vector2& v, const Matrix3& m, float w)
 {
-	vector2 retVal;
+	Vector2 retVal;
 	retVal.x = v.x * m.matrix[0][0] + v.y * m.matrix[1][0] + w * m.matrix[2][0];
 	retVal.y = v.x * m.matrix[0][1] + v.y * m.matrix[1][1] + w * m.matrix[2][1];
 	//ignore w since we aren't returning a new value for it...
 	return retVal;
 }
-vector3 vector3::Transform(const vector3& v, const matrix4& m, float w /*= 1.0f*/)
+Vector3 Vector3::transform(const Vector3& v, const Matrix4& m, float w)
 {
-	vector3 retVal;
+	Vector3 retVal;
 	retVal.x = v.x * m.matrix[0][0] + v.y * m.matrix[1][0] + v.z * m.matrix[2][0] + w * m.matrix[3][0];
 	retVal.y = v.x * m.matrix[0][1] + v.y * m.matrix[1][1] + v.z * m.matrix[2][1] + w * m.matrix[3][1];
 	retVal.z = v.x * m.matrix[0][2] + v.y * m.matrix[1][2] + v.z * m.matrix[2][2] + w * m.matrix[3][2];
 	//ignore w since we aren't returning a new value for it...
 	return retVal;
 }
-// This will transform the vector and renormalize the w component
-vector3 vector3::TransformWithPerspDiv(const vector3& v, const matrix4& m, float w /*= 1.0f*/)
+Vector3 Vector3::transformWithPerspDiv(const Vector3& v, const Matrix4& m, float w)
 {
-	vector3 retVal;
+	Vector3 retVal;
 	retVal.x = v.x * m.matrix[0][0] + v.y * m.matrix[1][0] + v.z * m.matrix[2][0] + w * m.matrix[3][0];
 	retVal.y = v.x * m.matrix[0][1] + v.y * m.matrix[1][1] + v.z * m.matrix[2][1] + w * m.matrix[3][1];
 	retVal.z = v.x * m.matrix[0][2] + v.y * m.matrix[1][2] + v.z * m.matrix[2][2] + w * m.matrix[3][2];
 	float transformedW = v.x * m.matrix[0][3] + v.y * m.matrix[1][3] + v.z * m.matrix[2][3] + w * m.matrix[3][3];
-	if (!Math::NearZero(Math::Abs(transformedW)))
+	if (!Math::nearZero(Math::abs(transformedW)))
 	{
 		transformedW = 1.0f / transformedW;
 		retVal *= transformedW;
 	}
 	return retVal;
 }
-// Transform a Vector3 by a quaternion
-vector3 vector3::Transform(const vector3& v, const quaternion& q)
+Vector3 Vector3::transform(const Vector3& v, const Quaternion& q)
 {
-	// v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
-	vector3 qv(q.x, q.y, q.z);
-	vector3 retVal = v;
-	retVal += 2.0f * vector3::Cross(qv, vector3::Cross(qv, v) + q.w * v);
+	//v + 2.0*cross(q.xyz, cross(q.xyz,v) + q.w*v);
+	Vector3 qv(q.x, q.y, q.z);
+	Vector3 retVal = v;
+	retVal += 2.0f * Vector3::cross(qv, Vector3::cross(qv, v) + q.w * v);
 	return retVal;
 }
-void matrix4::Invert()
+void Matrix4::invert()
 {
-	// Thanks slow math
-	// This is a really unstable way to unroll everything...
+	//This is a really slow and unstable way to unroll everything...
 	float tmp[12];
 	float src[16];
 	float dst[16];
 	float det;
-	// Transpose matrix
-	// row 1 to col 1
+	//Transpose matrix:
+	//row 1 to col 1
 	src[0] = matrix[0][0];
 	src[4] = matrix[0][1];
 	src[8] = matrix[0][2];
 	src[12] = matrix[0][3];
-	// row 2 to col 2
+	//row 2 to col 2
 	src[1] = matrix[1][0];
 	src[5] = matrix[1][1];
 	src[9] = matrix[1][2];
 	src[13] = matrix[1][3];
-	// row 3 to col 3
+	//row 3 to col 3
 	src[2] = matrix[2][0];
 	src[6] = matrix[2][1];
 	src[10] = matrix[2][2];
 	src[14] = matrix[2][3];
-	// row 4 to col 4
+	//row 4 to col 4
 	src[3] = matrix[3][0];
 	src[7] = matrix[3][1];
 	src[11] = matrix[3][2];
 	src[15] = matrix[3][3];
-	// Calculate cofactors
+	//Calculate cofactors:
 	tmp[0] = src[10] * src[15];
 	tmp[1] = src[11] * src[14];
 	tmp[2] = src[9] * src[15];
@@ -149,15 +146,15 @@ void matrix4::Invert()
 	dst[14] -= tmp[10] * src[11] + tmp[2] * src[8] + tmp[7] * src[9];
 	dst[15] = tmp[10] * src[10] + tmp[4] * src[8] + tmp[9] * src[9];
 	dst[15] -= tmp[8] * src[9] + tmp[11] * src[10] + tmp[5] * src[8];
-	// Calculate determinant
+	//Calculate determinant
 	det = src[0] * dst[0] + src[1] * dst[1] + src[2] * dst[2] + src[3] * dst[3];
-	// Inverse of matrix is divided by determinant
+	//Inverse of matrix is divided by determinant
 	det = 1 / det;
 	for (int j = 0; j < 16; j++)
 	{
 		dst[j] *= det;
 	}
-	// Set it back
+	//Set it back
 	for (int i = 0; i < 4; i++)
 	{
 		for (int j = 0; j < 4; j++)
@@ -166,7 +163,7 @@ void matrix4::Invert()
 		}
 	}
 }
-matrix4 matrix4::CreateFromQuaternion(const class quaternion& q)
+Matrix4 Matrix4::fromQuaternion(const class Quaternion& q)
 {
 	float matrix[4][4];
 	matrix[0][0] = 1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z;
@@ -185,5 +182,5 @@ matrix4 matrix4::CreateFromQuaternion(const class quaternion& q)
 	matrix[3][1] = 0.0f;
 	matrix[3][2] = 0.0f;
 	matrix[3][3] = 1.0f;
-	return matrix4(matrix);
+	return Matrix4(matrix);
 }

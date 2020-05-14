@@ -124,7 +124,7 @@ void Game::handleKeyPress(int key)
 	{
 		//Reduce master volume
 		float volume = audioSystem_->getBusVolume("bus:/");
-		volume = Math::Max(0.0f, volume - 0.1f);
+		volume = Math::maximum(0.0f, volume - 0.1f);
 		audioSystem_->setBusVolume("bus:/", volume);
 		break;
 	}
@@ -132,7 +132,7 @@ void Game::handleKeyPress(int key)
 	{
 		//Increase master volume
 		float volume = audioSystem_->getBusVolume("bus:/");
-		volume = Math::Min(1.0f, volume + 0.1f);
+		volume = Math::minimum(1.0f, volume + 0.1f);
 		audioSystem_->setBusVolume("bus:/", volume);
 		break;
 	}

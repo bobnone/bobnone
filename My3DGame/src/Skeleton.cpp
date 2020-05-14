@@ -99,12 +99,12 @@ void Skeleton::computeGlobalInvBindPose()
 	//multiplied by the parent's global bind pose
 	for(size_t i = 1; i < globalInvBindPoses_.size(); i++)
 	{
-		matrix4 localMat = bones_[i].localBindPose_.toMatrix();
+		Matrix4 localMat = bones_[i].localBindPose_.toMatrix();
 		globalInvBindPoses_[i] = localMat * globalInvBindPoses_[bones_[i].parent_];
 	}
 	//Step 2: Invert
 	for(size_t i = 0; i < globalInvBindPoses_.size(); i++)
 	{
-		globalInvBindPoses_[i].Invert();
+		globalInvBindPoses_[i].invert();
 	}
 }

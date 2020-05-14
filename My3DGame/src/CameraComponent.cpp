@@ -15,7 +15,7 @@ CameraComponent::CameraComponent(Actor* owner, int updateOrder):Component(owner,
 {
 	//EMPTY:
 }
-void CameraComponent::setViewMatrix(const matrix4& view)
+void CameraComponent::setViewMatrix(const Matrix4& view)
 {
 	//Pass view matrix to renderer and audio system
 	owner_->game()->renderer()->setViewMatrix(view);

@@ -144,11 +144,11 @@ private:
 	//Sprite vertex array
 	class VertexArray* spriteVerts_;
 	//View/projection for 3D shaders
-	Matrix4x4 view_;
-	Matrix4x4 projection_;
+	class Matrix4x4 view_;
+	class Matrix4x4 projection_;
 	//Lighting data
-	Vector3 ambientLight_;
-	DirectionalLight dirLight_;
+	class Vector3 ambientLight_;
+	class DirectionalLight dirLight_;
 	//Window
 	SDL_Window* window_;
 	//OpenGL context
@@ -158,8 +158,9 @@ private:
 	float screenHeight_;
 	unsigned int mirrorBuffer_;
 	class Texture* mirrorTexture_;
-	Matrix4x4 mirrorView_;
+	class Matrix4x4 mirrorView_;
 	class GBuffer* gBuffer_;
 	std::vector<class PointLightComponent*> pointLights_;
 	class Mesh* pointLightMesh_;
+	class Texture* defaultTexture_;
 };

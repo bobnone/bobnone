@@ -78,7 +78,7 @@ void GBuffer::setTexturesActive()
 	for(int i = 0; i < NUM_GBUFFER_TEXTURES; i++)
 	{
 		//FIXME: idk why this had an index, mipmaps?
-		textures_[i]->setActive();
+		textures_[i]->setActive(i);
 		//textures_[i]->setMipmap(i);
 	}
 }

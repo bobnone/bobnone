@@ -34,6 +34,16 @@
                     -100.0,
                     0.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
@@ -93,6 +103,12 @@
                     }
                 },
                 {
+                    "type": "AudioComponent",
+                    "properties": {
+                        "updateOrder": 200
+                    }
+                },
+                {
                     "type": "MirrorCamera",
                     "properties": {
                         "updateOrder": 200,
@@ -112,13 +128,24 @@
                     0.0,
                     -100.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     0.0,
                     1.0
                 ],
-                "scale": 10.0
+                "scale": 10.0,
+                "moving": false
             },
             "components": [
                 {
@@ -171,13 +198,24 @@
                     0.0,
                     -100.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     0.0,
                     1.0
                 ],
-                "scale": 10.0
+                "scale": 10.0,
+                "moving": false
             },
             "components": [
                 {
@@ -230,13 +268,24 @@
                     0.0,
                     -100.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     0.0,
                     1.0
                 ],
-                "scale": 10.0
+                "scale": 10.0,
+                "moving": false
             },
             "components": [
                 {
@@ -289,13 +338,24 @@
                     0.0,
                     0.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     1.0,
                     -4.371138828673793e-8
                 ],
-                "scale": 10.0
+                "scale": 10.0,
+                "moving": false
             },
             "components": [
                 {
@@ -354,13 +414,24 @@
                     0.0,
                     0.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     0.0,
                     1.0
                 ],
-                "scale": 1.0
+                "scale": 1.0,
+                "moving": false
             },
             "components": [
                 {
@@ -396,13 +467,24 @@
                     500.0,
                     0.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     0.0,
                     1.0
                 ],
-                "scale": 1.0
+                "scale": 1.0,
+                "moving": false
             },
             "components": [
                 {
@@ -438,13 +520,24 @@
                     0.0,
                     0.0
                 ],
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "acceleration": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
                 "rotation": [
                     0.0,
                     0.0,
                     0.0,
                     1.0
                 ],
-                "scale": 1.0
+                "scale": 1.0,
+                "moving": false
             },
             "components": [
                 {

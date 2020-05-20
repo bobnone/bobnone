@@ -13,6 +13,7 @@ public:
 	TextureHandler();
 	~TextureHandler();
 	bool initialize();
+	void errorCheck();
 	ILboolean screenshot();
 protected:
 	//EMPTY:

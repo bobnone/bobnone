@@ -41,11 +41,10 @@ public:
 	Note: All pixels around a pixel get averaged.
 	Note: More blurring the higher iter is, but beware, as it will be slow.*/
 	ILboolean applyBlurAverageFilter(ILuint iter);
-	void createFromSDLSurface(struct SDL_Surface* surface);
-	void createForRendering(int width, int height, unsigned int format);
 	/*Sets this texture as the current texture so that DevIL and OpenGL performs all subsequent operations it
 	Note: resets animation frame and mipmap level*/
 	void setActive();
+	void setActive(int index);
 	/*Sets the frame in an animation chain (image array)
 	Note: resets mipmap level*/
 	void setFrame(int frame);
@@ -78,7 +77,7 @@ public:
 	//Image height
 	ILuint getHeight() const
 	{
-		return info_->Height;
+		return height_;
 	}
 	//NumLayers - ILenum which contains the image number of layer
 	//NumMips - ILenum which contains the number of image mipmaps
@@ -90,7 +89,7 @@ public:
 	//Image width
 	ILuint getWidth() const
 	{
-		return info_->Width;
+		return width_;
 	}
 	bool isLoaded() const
 	{
@@ -102,6 +101,9 @@ private:
 	std::string fileName_;
 	ILinfo* info_;
 	bool loaded_;
+	int width_;
+	int height_;
+	unsigned int format_;
 /*
 ilActiveFace(ILuint Number);
 ilActiveLayer(ILuint Number);

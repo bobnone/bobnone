@@ -12,8 +12,7 @@
 int main(int argc, char** argv)
 {
 	Game game;
-	bool success = game.initialize();
-	if (success)
+	if(game.initialize())
 	{
 		game.runLoop();
 	}

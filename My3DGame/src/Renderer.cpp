@@ -7,7 +7,7 @@
 #include "UIScreen.h"
 #include "GBuffer.h"
 
-Renderer::Renderer(Game* game):game_(game), currentShader_(nullptr), mirrorBuffer_(0), mirrorTexture_(nullptr), gBuffer_(nullptr)
+Renderer::Renderer(Game* game):game_(game), mirrorBuffer_(0)
 {
 	//EMPTY:
 }
@@ -74,11 +74,17 @@ bool Renderer::initialize(float screenWidth, float screenHeight)
 		SDL_Log("Failed to create TextureHandler.");
 		return false;
 	}
+	defaultTexture_ = new Texture("Assets/Default.png");
+	if(!defaultTexture_->isLoaded())
+	{
+		SDL_Log("Failed to create a default texture.");
+		exit(1);
+	}
 	//Create G-buffer
 	gBuffer_ = new GBuffer();
 	int width = static_cast<int>(screenWidth_);
 	int height = static_cast<int>(screenHeight_);
-	if (!gBuffer_->create(width, height))
+	if(!gBuffer_->create(width, height))
 	{
 		SDL_Log("Failed to create G-buffer.");
 		return false;
@@ -252,12 +258,7 @@ Texture* Renderer::getTexture(const std::string& fileName)
 		}
 		else
 		{
-			//TODO: find a better way to handle loading the default texture
-			tex = new Texture("Assets/Default.png");
-			if(!tex->isLoaded())
-			{
-				//exit(1);
-			}
+			return defaultTexture_;
 		}
 	}
 	return tex;

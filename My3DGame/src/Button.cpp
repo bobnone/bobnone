@@ -14,7 +14,7 @@ Button::~Button()
 {
 	if(texture_)
 	{
-		texture_->~Texture();
+		texture_->unload();
 		delete texture_;
 		texture_ = nullptr;
 	}
@@ -86,7 +86,7 @@ void Button::setName(const std::string& name)
 	name_ = name;
 	if(texture_)
 	{
-		texture_->~Texture();
+		texture_->unload();
 		delete texture_;
 		texture_ = nullptr;
 	}

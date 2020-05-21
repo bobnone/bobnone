@@ -7,7 +7,7 @@
 #include "UIScreen.h"
 #include "GBuffer.h"
 
-Renderer::Renderer(Game* game):game_(game), mirrorBuffer_(0)
+Renderer::Renderer(Game* game):game_(game), currentShader_(nullptr), mirrorBuffer_(0), mirrorTexture_(nullptr), gBuffer_(nullptr)
 {
 	//EMPTY:
 }
@@ -35,6 +35,7 @@ bool Renderer::initialize(float screenWidth, float screenHeight)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	//Force OpenGL to use hardware acceleration
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	//TODO: Change title
 	window_ = SDL_CreateWindow("<Window Title>", 100, 100, static_cast<int>(screenWidth_), static_cast<int>(screenHeight_), SDL_WINDOW_OPENGL);
 	if(!window_)
 	{
@@ -53,6 +54,19 @@ bool Renderer::initialize(float screenWidth, float screenHeight)
 	//On some platforms, GLEW will emit a benign error code,
 	//so clear it
 	glGetError();
+	//Create TextureHandler
+	textureHandler_ = new TextureHandler();
+	if (!textureHandler_->initialize())
+	{
+		SDL_Log("Failed to create TextureHandler.");
+		return false;
+	}
+	defaultTexture_ = new Texture();
+	if(!defaultTexture_->oldLoad("Assets/Cube.png"))
+	{
+		SDL_Log("Failed to create a default texture.");
+		return false;
+	}
 	//Make sure we can create/compile shaders
 	if(!loadShaders())
 	{
@@ -67,24 +81,9 @@ bool Renderer::initialize(float screenWidth, float screenHeight)
 		SDL_Log("Failed to create render target for mirror.");
 		return false;
 	}
-	//Create TextureHandler
-	textureHandler_ = new TextureHandler();
-	if(!textureHandler_->initialize())
-	{
-		SDL_Log("Failed to create TextureHandler.");
-		return false;
-	}
-	defaultTexture_ = new Texture("Assets/Default.png");
-	if(!defaultTexture_->isLoaded())
-	{
-		SDL_Log("Failed to create a default texture.");
-		exit(1);
-	}
 	//Create G-buffer
 	gBuffer_ = new GBuffer();
-	int width = static_cast<int>(screenWidth_);
-	int height = static_cast<int>(screenHeight_);
-	if(!gBuffer_->create(width, height))
+	if(!gBuffer_->create(static_cast<int>(screenWidth_), static_cast<int>(screenHeight_)))
 	{
 		SDL_Log("Failed to create G-buffer.");
 		return false;
@@ -99,7 +98,7 @@ void Renderer::shutdown()
 	if(mirrorTexture_ != nullptr)
 	{
 		glDeleteFramebuffers(1, &mirrorBuffer_);
-		mirrorTexture_->~Texture();
+		mirrorTexture_->unload();
 		delete mirrorTexture_;
 	}
 	//Get rid of G-buffer
@@ -130,7 +129,7 @@ void Renderer::unloadData()
 	//Destroy textures
 	for(auto i : textures_)
 	{
-		i.second->~Texture();
+		i.second->unload();
 		delete i.second;
 	}
 	textures_.clear();
@@ -251,15 +250,12 @@ Texture* Renderer::getTexture(const std::string& fileName)
 	}
 	else
 	{
-		tex = new Texture(fileName);
-		if(tex->isLoaded())
+		tex = new Texture();
+		if(!tex->oldLoad(fileName))
 		{
-			textures_.emplace(fileName, tex);
+			tex = defaultTexture_;
 		}
-		else
-		{
-			return defaultTexture_;
-		}
+		textures_.emplace(fileName, tex);
 	}
 	return tex;
 }
@@ -496,7 +492,7 @@ void Renderer::draw3DScene(unsigned int framebuffer, const Matrix4x4& view, cons
 	//Enable depth buffering/disable alpha blend
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	for (auto it = meshShaders_.begin(); it != meshShaders_.end(); it++)
+	for(auto it = meshShaders_.begin(); it != meshShaders_.end(); it++)
 	{
 		//Set the specific mesh shader as active
 		currentShader_ = it->first;
@@ -528,7 +524,8 @@ bool Renderer::createMirrorTarget()
 	//Create the texture we'll use for rendering
 	int width = static_cast<int>(screenWidth_);
 	int height = static_cast<int>(screenHeight_);
-	mirrorTexture_ = new Texture(width, height, GL_RGB);
+	mirrorTexture_ = new Texture();
+	mirrorTexture_->createForRendering(width, height, GL_RGB);
 	//Add a depth buffer to this target
 	GLuint depthBuffer;
 	glGenRenderbuffers(1, &depthBuffer);
@@ -546,7 +543,7 @@ bool Renderer::createMirrorTarget()
 		//If it didn't work, delete the frame-buffer,
 		//unload/delete the texture and return false
 		glDeleteFramebuffers(1, &mirrorBuffer_);
-		mirrorTexture_->~Texture();
+		mirrorTexture_->unload();
 		delete mirrorTexture_;
 		mirrorTexture_ = nullptr;
 		return false;

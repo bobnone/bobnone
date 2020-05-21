@@ -22,6 +22,7 @@ struct DirectionalLight
 	//Specular color
 	Vector3 specularColor_;
 };
+
 class Renderer
 {
 public:
@@ -148,7 +149,7 @@ private:
 	class Matrix4x4 projection_;
 	//Lighting data
 	class Vector3 ambientLight_;
-	class DirectionalLight dirLight_;
+	struct DirectionalLight dirLight_;
 	//Window
 	SDL_Window* window_;
 	//OpenGL context

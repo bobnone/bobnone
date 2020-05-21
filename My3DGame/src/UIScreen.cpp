@@ -12,7 +12,7 @@ UIScreen::~UIScreen()
 {
 	if(title_)
 	{
-		title_->~Texture();
+		title_->unload();
 		delete title_;
 	}
 	for(auto b : buttons_)
@@ -76,7 +76,7 @@ void UIScreen::setTitle(const std::string& text, const Vector3& color, int point
 	//Clear out previous title texture if it exists
 	if(title_)
 	{
-		title_->~Texture();
+		title_->unload();
 		delete title_;
 		title_ = nullptr;
 	}

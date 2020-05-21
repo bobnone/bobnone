@@ -3,16 +3,26 @@
 #include <codecvt>
 #include <iostream>
 
-Texture::Texture(const std::string fileName):loaded_(false)
+Texture::Texture():fileName_(""), textureID_(0), imageID_(0), info_(nullptr), width_(0), height_(0), format_(GL_RGBA)
+{
+	//EMPTY:
+}
+bool Texture::load(const std::string& fileName)
 {
 	fileName_ = fileName;
 	//Creating a blank image to work with
 	ilGenImages(1, &imageID_);
-	errorCheck();
+	if(errorCheck())
+	{
+		return false;
+	}
 	//Bind image so that DevIL performs all subsequent operations on this image
 	ilBindImage(imageID_);
-	errorCheck();
-	if(!load((ILstring)fileName.c_str()))
+	if(errorCheck())
+	{
+		return false;
+	}
+	if(!loadImage((ILstring)fileName.c_str()))
 	{
 		SDL_Log("DevIL failed to load image: \"%s\"", fileName.c_str());
 		//Unbind the current image in case the current image is this image
@@ -21,9 +31,12 @@ Texture::Texture(const std::string fileName):loaded_(false)
 		//Delete the DevIL image
 		ilDeleteImages(1, &imageID_);
 		errorCheck();
-		return;
+		return false;
 	}
-	errorCheck();
+	if(errorCheck())
+	{
+		return false;
+	}
 	if(!iluBuildMipmaps())
 	{
 		SDL_Log("DevIL failed to build mipmaps for: \"%s\"", fileName.c_str());
@@ -33,20 +46,31 @@ Texture::Texture(const std::string fileName):loaded_(false)
 		//Delete the DevIL image
 		ilDeleteImages(1, &imageID_);
 		errorCheck();
-		return;
+		return false;
 	}
-	errorCheck();
+	if(errorCheck())
+	{
+		return false;
+	}
 	//Note: data pointer deleted when the image is deleted
 	ILubyte* data = ilGetData();
-	errorCheck();
+	if(errorCheck())
+	{
+		return false;
+	}
 	//create an empty ILinfo struct.
 	info_ = new ILinfo();
 	//Retrieves information about the current image in an ILinfo struct.
 	iluGetImageInfo(info_);
-	errorCheck();
+	if (errorCheck())
+	{
+		return false;
+	}
 	width_ = info_->Width;
 	height_ = info_->Height;
 	format_ = info_->Format;
+	glGenTextures(1, &textureID_);
+	glBindTexture(GL_TEXTURE_2D, textureID_);
 	/*Note: It has been reported that on some ATI drivers, glGenerateMipmap(GL_TEXTURE_2D) has no effect unless you precede it with a call to glEnable(GL_TEXTURE_2D) in this particular case.
 	Once again, to be clear, bind the texture, glEnable, then glGenerateMipmap.
 	This is a bug and has been in the ATI drivers for a while.
@@ -54,8 +78,12 @@ Texture::Texture(const std::string fileName):loaded_(false)
 	glEnable(GL_TEXTURE_2D);
 	//Have DevIL generate bind, and create an OpenGL texture.
 	//Note: This is done via glGenTextures, glBindTexture, glTexImage2D, and gluBuild2DMipmaps after performing any required conversions.
-	textureID_ = ilutGLBindTexImage();
-	errorCheck();
+	ilutGLTexImage(0);
+	//textureID_ = ilutGLBindTexImage();
+	if(errorCheck())
+	{
+		return false;
+	}
 	//Texture created?
 	if(textureID_ == 0)
 	{
@@ -69,12 +97,12 @@ Texture::Texture(const std::string fileName):loaded_(false)
 		//Delete the OpenGL texture
 		glDeleteTextures(1, &textureID_);
 		errorCheck();
-		if (info_ != NULL)
+		if(info_ != NULL)
 		{
 			delete info_;
 			info_ = NULL;
 		}
-		return;
+		return false;
 	}
 	// Enable linear filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -93,62 +121,115 @@ Texture::Texture(const std::string fileName):loaded_(false)
 		// Enable it
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest);
 	}
-	loaded_ = true;
+	return true;
 }
-Texture::Texture(SDL_Surface* surface)
+bool Texture::oldLoad(const std::string& fileName)
 {
-	fileName_ = "CreateFromSurface";
-	width_ = surface->w;
-	height_ = surface->h;
-	format_ = GL_RGBA;
-	// Generate a GL texture
-	glGenTextures(1, &textureID_);
-	glBindTexture(GL_TEXTURE_2D, textureID_);
-	glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
-	// Use linear filtering
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	loaded_ = true;
-}
-Texture::Texture(int width, int height, unsigned int format)
-{
-	fileName_ = "CreateForRendering";
-	width_ = width;
-	height_ = height;
-	format_ = format;
-	// Create the texture id
-	glGenTextures(1, &textureID_);
-	glBindTexture(GL_TEXTURE_2D, textureID_);
-	// Set the image width/height with null initial data
-	glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, GL_RGB, GL_FLOAT, nullptr);
-	// For a texture we'll render to, just use nearest neighbor
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	loaded_ = true;
-}
-Texture::~Texture()
-{
-	if(loaded_)
+	fileName_ = fileName;
+	// Creating a blank image to work with
+	imageID_ = iluGenImage();
+	if(errorCheck())
 	{
-		//Unbind the current image in case the current image is this image
-		ilBindImage(NULL);
-		errorCheck();
-		//Delete the DevIL image
-		ilDeleteImages(1, &imageID_);
-		errorCheck();
-		//Delete the OpenGL texture
-		glDeleteTextures(1, &textureID_);
-		errorCheck();
-		if(info_ != NULL)
+		return false;
+	}
+	// Bind image name so that DevIL performs all subsequent operations on this image
+	ilBindImage(imageID_);
+	if(errorCheck())
+	{
+		return false;
+	}
+	if(!loadImage((ILstring)fileName.c_str()))
+	{
+		// Use the default image as a place holder
+		imageID_ = 0;
+		if(errorCheck())
 		{
-			delete info_;
-			info_ = NULL;
+			return false;
+		}
+		ilBindImage(0);
+		if(errorCheck())
+		{
+			return false;
 		}
 	}
+	if(errorCheck())
+	{
+		return false;
+	}
+	//Note: data pointer deleted when the image is deleted
+	ILubyte* data = ilGetData();
+	if(errorCheck())
+	{
+		return false;
+	}
+	info_ = new ILinfo();
+	/*Retrieves information about the current image in an ILinfo struct.
+	This is useful when you are repeatedly calling ilGetInteger and is more efficient in this case.*/
+	iluGetImageInfo(info_);
+	if(errorCheck())
+	{
+		return false;
+	}
+	width_ = info_->Width;
+	height_ = info_->Height;
+	format_ = info_->Format;
+	glGenTextures(1, &textureID_);
+	glBindTexture(GL_TEXTURE_2D, textureID_);
+	/*Note: It has been reported that on some ATI drivers, glGenerateMipmap(GL_TEXTURE_2D) has no effect unless you precede it with a call to glEnable(GL_TEXTURE_2D) in this particular case.
+	Once again, to be clear, bind the texture, glEnable, then glGenerateMipmap.
+	This is a bug and has been in the ATI drivers for a while.
+	Perhaps by the time you read this, it will have been corrected. (glGenerateMipmap doesn't work on ATI as of 2011)*/
+	glEnable(GL_TEXTURE_2D);
+	//Old API:
+	glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, format_, GL_UNSIGNED_BYTE, data);
+	//New API:
+	//Number of mipmaps to generate
+	//GLsizei num_mipmaps = 10;
+	//glTexStorage2D(GL_TEXTURE_2D, num_mipmaps, mInfo->Format, mInfo->Width, mInfo->Height);
+	//glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mInfo->Width, mInfo->Height, mInfo->Format, GL_UNSIGNED_BYTE, data);
+	// Generate mipmaps for texture
+	glGenerateMipmap(GL_TEXTURE_2D);
+	// Enable linear filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Set texture wrapping:
+	// Note: default is GL_REPEAT
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	// Enable anisotropic filtering, if supported
+	if(GLEW_EXT_texture_filter_anisotropic)
+	{
+		// Get the maximum anisotropy value
+		GLfloat largest;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest);
+		// Enable it
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, largest);
+	}
+	return true;
 }
-void Texture::errorCheck()
+void Texture::unload()
+{
+	//Unbind the current image in case the current image is this image
+	ilBindImage(NULL);
+	errorCheck();
+	//Delete the DevIL image
+	if(info_ != NULL)
+	{
+		delete info_;
+		info_ = NULL;
+	}
+	errorCheck();
+	ilDeleteImages(1, &imageID_);
+	errorCheck();
+	//Delete the OpenGL texture
+	glDeleteTextures(1, &textureID_);
+	errorCheck();
+}
+bool Texture::errorCheck()
 {
 	ILenum error;
+	bool hasError = false;
 	while((error = ilGetError()) != IL_NO_ERROR)
 	{
 		switch(error)
@@ -214,13 +295,15 @@ void Texture::errorCheck()
 			SDL_Log("DevIL Error \"%d\" on \"%s\": %s", error, fileName_.c_str(), "Unknown Error!");
 			break;
 		}
+		hasError = true;
 	}
+	return hasError;
 }
-ILboolean Texture::load(const ILstring fileName)
+ILboolean Texture::loadImage(const ILstring fileName)
 {
-	return ilLoadImage(fileName);
+	return ilLoadImage(fileName) && !errorCheck();
 }
-ILboolean Texture::load(const wchar_t* fileName, ILenum type)
+ILboolean Texture::loadImage(const wchar_t* fileName, ILenum type)
 {
 	/*Types:
 		IL_BMP-Load the image as a Microsoft bitmap (.bmp).
@@ -251,13 +334,13 @@ ILboolean Texture::load(const wchar_t* fileName, ILenum type)
 		IL_TYPE_UNKNOWN-Tells OpenIL to try to determine the type of image present in FileName, File or Lump.
 		IL_WAL-Load a Quake .wal texture.
 		IL_XPM-Load an .xpm file.*/
-	return ilLoad(type, fileName);
+	return ilLoad(type, fileName) && !errorCheck();
 }
-ILboolean Texture::load(ILHANDLE* file, ILenum type)
+ILboolean Texture::loadImage(ILHANDLE* file, ILenum type)
 {
-	return ilLoadF(type, file);
+	return ilLoadF(type, file) && !errorCheck();
 }
-ILboolean Texture::load(const void* lump, ILenum type, ILuint size)
+ILboolean Texture::loadImage(const void* lump, ILenum type, ILuint size)
 {
 	/*Example:
 	FILE* file = fopen("test.tga", "rb");
@@ -269,13 +352,13 @@ ILboolean Texture::load(const void* lump, ILenum type, ILuint size)
 	fclose(file);
 	ILboolean loaded = ilLoadL(IL_TGA, lump, size);
 	free(lump);*/
-	return ilLoadL(type, lump, size);
+	return ilLoadL(type, lump, size) && !errorCheck();
 }
-ILboolean Texture::save(const wchar_t* fileName)
+ILboolean Texture::saveImage(const wchar_t* fileName)
 {
-	return ilSaveImage(fileName);
+	return ilSaveImage(fileName) && !errorCheck();
 }
-ILboolean Texture::save(const wchar_t* fileName, ILenum type)
+ILboolean Texture::saveImage(const wchar_t* fileName, ILenum type)
 {
 	/*Types:
 		IL_BMP-Save the image as a Microsoft bitmap (.bmp).
@@ -286,23 +369,24 @@ ILboolean Texture::save(const wchar_t* fileName, ILenum type)
 		IL_SGI-Save an SGI (.bw, .rgb, .rgba or .sgi).
 		IL_TGA-Save a TrueVision Targa.
 		IL_TYPE_UNKNOWN-Tells OpenIL to try to determine the type of image present in FileName, File or Lump.*/
-	return ilSave(type, fileName);
+	return ilSave(type, fileName) && !errorCheck();
 }
-ILboolean Texture::save(ILHANDLE* file, ILenum type)
+ILboolean Texture::saveImage(ILHANDLE* file, ILenum type)
 {
-	return ilSaveF(type, file);
+	return ilSaveF(type, file) && !errorCheck();
 }
-ILboolean Texture::save(void* lump, ILenum type, ILuint size)
+ILboolean Texture::saveImage(void* lump, ILenum type, ILuint size)
 {
-	return ilSaveL(type, lump, size);
+	return ilSaveL(type, lump, size) && !errorCheck();
 }
 ILboolean Texture::applyAlienFilter()
 {
-	return iluAlienify();
+
+	return iluAlienify() && !errorCheck();
 }
 ILboolean Texture::applyBlurAverageFilter(ILuint iter)
 {
-	return iluBlurAvg(iter);
+	return iluBlurAvg(iter) && !errorCheck();
 }
 /*ILboolean Texture::ApplyFilter(ILuint iter)
 {
@@ -341,14 +425,34 @@ ILboolean Texture::applyBlurAverageFilter(ILuint iter)
 		//Note: This function "sharpens" the current image, making the edges more noticeable and the whole image "less blurry".
 		iluSharpen(ILfloat factor, iter);
 }*/
-void Texture::setActive()
+void Texture::createFromSurface(SDL_Surface* surface)
 {
-	//Bind image so that DevIL performs all subsequent operations on this image
-	ilBindImage(imageID_);
-	errorCheck();
-	//Bind texture so that OpenGL performs all subsequent operations on this texture
-	glActiveTexture(GL_TEXTURE0);
+	fileName_ = "CreateFromSurface";
+	width_ = surface->w;
+	height_ = surface->h;
+	format_ = GL_RGBA;
+	// Generate a GL texture
+	glGenTextures(1, &textureID_);
 	glBindTexture(GL_TEXTURE_2D, textureID_);
+	glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+	// Use linear filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+void Texture::createForRendering(int width, int height, unsigned int format)
+{
+	fileName_ = "CreateForRendering";
+	width_ = width;
+	height_ = height;
+	format_ = format;
+	// Create the texture id
+	glGenTextures(1, &textureID_);
+	glBindTexture(GL_TEXTURE_2D, textureID_);
+	// Set the image width/height with null initial data
+	glTexImage2D(GL_TEXTURE_2D, 0, format_, width_, height_, 0, GL_RGB, GL_FLOAT, nullptr);
+	// For a texture we'll render to, just use nearest neighbor
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 void Texture::setActive(int index)
 {

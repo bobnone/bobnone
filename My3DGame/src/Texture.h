@@ -10,30 +10,28 @@ class Texture
 {
 public:
 	//Default Constructor
-	Texture(const std::string fileName);
-	//Used to create a texture from an SDL Surface
-	Texture(SDL_Surface* surface);
-	//Used to create a texture for rendering
-	Texture(int width, int height, unsigned int format);
-	~Texture();
+	Texture();
+	bool load(const std::string& fileName);
+	bool oldLoad(const std::string& fileName);
+	void unload();
 	//Detects if an error has occurred with DevIL
-	void errorCheck();
+	bool errorCheck();
 	//Used to load an image file
-	ILboolean load(const ILstring fileName);
+	ILboolean loadImage(const ILstring fileName);
 	//Used to load an image file but it ignores file extensions and uses "type" instead
-	ILboolean load(const ILstring fileName, ILenum type);
+	ILboolean loadImage(const ILstring fileName, ILenum type);
 	//Used to load an image from a previously opened file
-	ILboolean load(ILHANDLE* file, ILenum type);
+	ILboolean loadImage(ILHANDLE* file, ILenum type);
 	//Loads an image from a lump/section of memory
-	ILboolean load(const void* lump, ILenum type, ILuint size);
+	ILboolean loadImage(const void* lump, ILenum type, ILuint size);
 	//Used to save an image file
-	ILboolean save(const ILstring fileName);
+	ILboolean saveImage(const ILstring fileName);
 	///Used to save an image file with extension "type" instead
-	ILboolean save(const ILstring fileName, ILenum type);
+	ILboolean saveImage(const ILstring fileName, ILenum type);
 	//Used to save an image to a previously opened file
-	ILboolean save(ILHANDLE* file, ILenum type);
+	ILboolean saveImage(ILHANDLE* file, ILenum type);
 	//Saves an image to a lump/section of memory
-	ILboolean save(void* lump, ILenum type, ILuint size);
+	ILboolean saveImage(void* lump, ILenum type, ILuint size);
 	/*Applies an "Alien" filter to the image
 	Note: Images with people in them turn out the best with this filter*/
 	ILboolean applyAlienFilter();
@@ -41,10 +39,11 @@ public:
 	Note: All pixels around a pixel get averaged.
 	Note: More blurring the higher iter is, but beware, as it will be slow.*/
 	ILboolean applyBlurAverageFilter(ILuint iter);
+	void createFromSurface(SDL_Surface* surface);
+	void createForRendering(int width, int height, unsigned int format);
 	/*Sets this texture as the current texture so that DevIL and OpenGL performs all subsequent operations it
 	Note: resets animation frame and mipmap level*/
-	void setActive();
-	void setActive(int index);
+	void setActive(int index = 0);
 	/*Sets the frame in an animation chain (image array)
 	Note: resets mipmap level*/
 	void setFrame(int frame);
@@ -91,16 +90,11 @@ public:
 	{
 		return width_;
 	}
-	bool isLoaded() const
-	{
-		return loaded_;
-	}
 private:
 	GLuint textureID_;
 	ILuint imageID_;
 	std::string fileName_;
 	ILinfo* info_;
-	bool loaded_;
 	int width_;
 	int height_;
 	unsigned int format_;

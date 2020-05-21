@@ -69,7 +69,8 @@ Texture* Font::renderText(const std::string& textKey, const Vector3& color, int 
 		if(surf != nullptr)
 		{
 			//Convert from surface to texture
-			texture = new Texture(surf);
+			texture = new Texture();
+			texture->createFromSurface(surf);
 			SDL_FreeSurface(surf);
 		}
 	}

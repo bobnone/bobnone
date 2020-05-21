@@ -31,8 +31,9 @@ bool GBuffer::create(int width, int height)
 	//Create textures for each output in the G-buffer
 	for(int i = 0; i < NUM_GBUFFER_TEXTURES; i++)
 	{
-		//We want three 32-bit float components for each texture
-		Texture* tex = new Texture(width, height, GL_RGB32F);
+		Texture* tex = new Texture();
+		// We want three 32-bit float components for each texture
+		tex->createForRendering(width, height, GL_RGB32F);
 		textures_.emplace_back(tex);
 		//Attach this texture to a color output
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, tex->textureID(), 0);
@@ -58,7 +59,7 @@ void GBuffer::destroy()
 	glDeleteFramebuffers(1, &bufferID_);
 	for(Texture* t : textures_)
 	{
-		t->~Texture();
+		t->unload();
 		delete t;
 	}
 }
@@ -77,8 +78,6 @@ void GBuffer::setTexturesActive()
 {
 	for(int i = 0; i < NUM_GBUFFER_TEXTURES; i++)
 	{
-		//FIXME: idk why this had an index, mipmaps?
 		textures_[i]->setActive(i);
-		//textures_[i]->setMipmap(i);
 	}
 }

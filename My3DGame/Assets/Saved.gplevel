@@ -15586,8 +15586,8 @@
             "properties": {
                 "state": "active",
                 "position": [
-                    0.0,
-                    0.0,
+                    -107.20013427734375,
+                    -22.40011978149414,
                     -100.0
                 ],
                 "velocity": [
@@ -15635,7 +15635,7 @@
                         "skelFile": "Assets/CatWarrior.gpskel",
                         "animFile": "Assets/CatActionIdle.gpanim",
                         "animPlayRate": 1.0,
-                        "animTime": 1.3189985752105713
+                        "animTime": 1.918001413345337
                     }
                 },
                 {
@@ -15643,13 +15643,13 @@
                     "properties": {
                         "updateOrder": 200,
                         "actualPos": [
-                            -350.0,
-                            0.0,
+                            -457.2000427246094,
+                            -22.402406692504884,
                             150.0
                         ],
                         "velocity": [
-                            0.0,
-                            0.0,
+                            -0.0005193137913011015,
+                            0.019237294793128969,
                             0.0
                         ],
                         "horzDist": 350.0,
